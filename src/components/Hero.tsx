@@ -55,6 +55,19 @@ export default function Hero() {
         סרטון לולאה: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
+      {/* ── LOGO ────────────────────────────────────────────────────── */}
+      <div className="absolute inset-x-0 top-0 z-20 flex justify-center px-5 pb-4 pt-5 sm:pt-7">
+        <a href="#" aria-label="מסודר — חזרה לראש הדף">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/logo.png"
+            alt="מסודר"
+            className="h-16 w-auto brightness-0 invert drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)] sm:h-20 lg:h-24"
+            draggable={false}
+          />
+        </a>
+      </div>
+
       {/* ── MOBILE VIDEO CARD ─────────────────────────────────────────── */}
       {/*
         On mobile the video is a card in normal document flow (aspect-[4/5]).

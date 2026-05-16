@@ -28,12 +28,14 @@ export default function Nav() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-14 sm:h-16 flex items-center justify-between">
-        <a
-          href="#top"
-          className="font-display text-2xl sm:text-[26px] font-medium leading-none"
-          aria-label="מסודר"
-        >
-          מסודר
+        <a href="#" aria-label="מסודר — חזרה לראש הדף">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/logo.png"
+            alt="מסודר"
+            className="h-8 w-auto md:h-10"
+            draggable={false}
+          />
         </a>
 
         <nav className="hidden md:flex items-center gap-10 text-sm text-stone">
