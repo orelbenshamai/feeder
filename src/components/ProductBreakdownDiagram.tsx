@@ -240,7 +240,7 @@ export default function ProductBreakdownDiagram() {
           <p className="text-sm font-medium text-stone">
             <span className="inline-flex items-center gap-2 rounded-full border border-line/70 bg-cream/90 px-3 py-1.5 shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
-              פירוק המוצר
+              תיאור מרכיבי המוצר
             </span>
           </p>
           <h2

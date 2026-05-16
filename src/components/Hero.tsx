@@ -98,13 +98,15 @@ export default function Hero() {
           {/* Bottom fade — blends card into the section bg */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-soft via-soft/60 to-transparent" />
 
-          {/* Scarcity badge pinned to top-left of the card */}
-          <div className="absolute top-4 start-4 flex items-center gap-2 rounded-full border border-white/25 bg-ink/70 px-3 py-1.5 text-[11px] font-medium text-cream/95 backdrop-blur-md">
+          {/* Scarcity badge — centered at bottom of card on mobile */}
+          <div className="absolute bottom-5 inset-x-0 flex justify-center">
+          <div className="flex items-center gap-2 rounded-full border border-white/25 bg-ink/70 px-3 py-1.5 text-[11px] font-medium text-cream/95 backdrop-blur-md">
             <span className="relative flex h-1.5 w-1.5" aria-hidden>
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
             </span>
             מהדורת השקה ראשונה · כמות מוגבלת
+          </div>
           </div>
         </div>
       </div>
