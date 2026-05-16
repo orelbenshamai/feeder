@@ -10,6 +10,30 @@ const QUICK_BENEFITS = [
   "יציב על כל ריצוף · לא זז, לא שורט",
 ];
 
+function VideoEl({
+  src,
+  poster,
+  className,
+}: {
+  src: string;
+  poster?: string;
+  className?: string;
+}) {
+  return (
+    <video
+      className={className}
+      autoPlay
+      muted
+      loop
+      playsInline
+      poster={poster}
+      aria-hidden
+    >
+      <source src={src} type="video/mp4" />
+    </video>
+  );
+}
+
 export default function Hero() {
   const envSrc = process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim();
   const videoSrc = envSrc || DEFAULT_HERO_VIDEO;
@@ -19,39 +43,80 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative isolate min-h-[100svh] overflow-hidden"
+      className="
+        isolate overflow-hidden
+        flex min-h-[100svh] flex-col bg-soft
+        lg:block lg:bg-transparent lg:relative
+      "
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >
       <span id="hero-visual-desc" className="sr-only">
-        סרטון לולאה במסך מלא: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
+        סרטון לולאה: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      {/* Full-bleed cinematic layer */}
-      <div className="absolute inset-0 min-h-[100svh]" aria-hidden>
+      {/* ── MOBILE VIDEO CARD ─────────────────────────────────────────── */}
+      {/*
+        On mobile the video is a card in normal document flow (aspect-[4/5]).
+        object-cover centre-crops the 16:9 source so the dog/station fill
+        the portrait frame naturally. Hidden on lg+.
+      */}
+      <div className="relative w-full shrink-0 lg:hidden" aria-hidden>
+        <div
+          className="
+            relative aspect-[4/5] w-full overflow-hidden
+            rounded-b-[1.75rem]
+            ring-1 ring-black/[0.07]
+            shadow-[0_28px_64px_-28px_rgba(26,23,20,0.38)]
+          "
+        >
+          {videoSrc ? (
+            <VideoEl
+              src={videoSrc}
+              poster={posterSrc}
+              className="h-full w-full object-cover object-center"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
+              <ProductIllustration className="h-full w-full p-10 opacity-90" />
+            </div>
+          )}
+
+          {/* Bottom fade — blends card into the section bg */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-soft via-soft/60 to-transparent" />
+
+          {/* Scarcity badge pinned to top-left of the card */}
+          <div className="absolute top-4 start-4 flex items-center gap-2 rounded-full border border-white/25 bg-ink/70 px-3 py-1.5 text-[11px] font-medium text-cream/95 backdrop-blur-md">
+            <span className="relative flex h-1.5 w-1.5" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
+            </span>
+            מהדורת השקה ראשונה · כמות מוגבלת
+          </div>
+        </div>
+      </div>
+
+      {/* ── DESKTOP FULL-BLEED BACKDROP ───────────────────────────────── */}
+      {/* Hidden on mobile. On lg+ it becomes the cinematic background. */}
+      <div
+        className="hidden lg:block absolute inset-0 min-h-[100svh]"
+        aria-hidden
+      >
         {videoSrc ? (
-          <video
+          <VideoEl
+            src={videoSrc}
+            poster={posterSrc}
             className="hero-video-scale absolute inset-0 z-0 h-full w-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster={posterSrc || undefined}
-            aria-hidden
-          >
-            <source src={videoSrc} type="video/mp4" />
-          </video>
+          />
         ) : (
           <div className="absolute inset-0 z-0 bg-gradient-to-br from-soft via-cream to-sand">
-            <ProductIllustration className="relative z-[1] h-full w-full p-8 opacity-90 sm:p-14" />
+            <ProductIllustration className="relative z-[1] h-full w-full p-14 opacity-90" />
           </div>
         )}
 
-        {/* Mobile: bottom-weighted scrim so copy at the bottom is sharp */}
-        <div className="absolute inset-0 z-[1] bg-gradient-to-t from-ink via-ink/65 to-ink/20 lg:hidden" />
-        {/* Desktop: weighted toward the right (copy column in RTL visual reading) */}
+        {/* Scrims: darken toward the right column where copy sits */}
         <div
-          className="absolute inset-0 z-[1] hidden lg:block"
+          className="absolute inset-0 z-[1]"
           style={{
             background: `
               linear-gradient(270deg, rgba(26,23,20,0.94) 0%, rgba(26,23,20,0.45) 40%, rgba(26,23,20,0.08) 60%, transparent 78%),
@@ -60,7 +125,7 @@ export default function Hero() {
           }}
         />
         <div
-          className="pointer-events-none absolute inset-0 z-[2] opacity-[0.85] mix-blend-soft-light lg:opacity-[0.55]"
+          className="pointer-events-none absolute inset-0 z-[2] opacity-[0.55] mix-blend-soft-light"
           style={{
             background:
               "radial-gradient(ellipse 100% 70% at 50% 45%, transparent 32%, rgba(26,23,20,0.55) 100%)",
@@ -69,18 +134,34 @@ export default function Hero() {
         <div className="absolute inset-0 z-[3] noise opacity-[0.08]" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[88rem] flex-col justify-end px-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-20 sm:px-8 sm:pb-14 sm:pt-28 lg:justify-center lg:px-10 lg:pb-16 lg:pt-20 xl:px-12">
+      {/* ── COPY ──────────────────────────────────────────────────────── */}
+      {/*
+        Mobile:  flex-1, sits below the card, bg-soft, dark text.
+        Desktop: absolute overlay, sits over the full-bleed video, light text.
+        The text colour tokens swap via lg: variants.
+      */}
+      <div
+        className="
+          relative z-10 flex-1
+          px-5 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-8
+          sm:px-8 sm:pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pt-10
+          lg:absolute lg:inset-0 lg:flex lg:min-h-[100svh] lg:items-center
+          lg:px-10 lg:pb-16 lg:pt-20 xl:px-12
+        "
+      >
         <div
           dir="ltr"
-          className="grid w-full grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center lg:gap-16"
+          className="grid w-full grid-cols-1 gap-10 lg:mx-auto lg:max-w-[88rem] lg:grid-cols-2 lg:items-center lg:gap-16"
         >
+          {/* Left spacer on desktop (the video fills that visual area) */}
           <div className="hidden min-h-[12rem] lg:block" aria-hidden />
 
           <article
             dir="rtl"
             className="hero-rise mx-auto flex w-full max-w-xl flex-col text-start lg:mx-0 lg:max-w-[28rem] xl:max-w-[30rem]"
           >
-            <p className="text-sm font-medium text-cream/80">
+            {/* Badge — desktop only (mobile badge is pinned to the video card above) */}
+            <p className="hidden lg:block text-sm font-medium text-cream/80">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md">
                 <span className="relative flex h-2 w-2" aria-hidden>
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
@@ -92,22 +173,38 @@ export default function Hero() {
 
             <h1
               id="hero-heading"
-              className="font-display mt-7 text-[2.125rem] font-medium leading-[1.08] tracking-tight text-cream drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)] sm:text-[2.5rem] sm:leading-[1.06] md:text-5xl lg:text-[3.15rem] lg:leading-[1.02]"
+              className="
+                font-display font-medium tracking-tight leading-[1.08]
+                text-[2rem] text-ink
+                mt-0 lg:mt-7
+                sm:text-[2.25rem] sm:leading-[1.07]
+                md:text-[2.6rem]
+                lg:text-[3.15rem] lg:leading-[1.02] lg:text-cream
+                drop-shadow-[0_2px_24px_rgba(0,0,0,0.0)]
+                lg:drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]
+              "
             >
               סוף לרצפות רטובות ולאוכל מפוזר בכל הבית.
             </h1>
 
-            <p className="mt-6 max-w-md text-[17px] leading-relaxed text-cream/85 sm:text-lg">
-              עמדת האכלה מעוצבת שעוצרת התזות, מנקזת מים ושומרת על הרצפה יבשה — גם
-              כשהכלב אוכל בתאבון.
+            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-stone sm:text-[17px] lg:text-cream/85 lg:text-lg">
+              עמדת האכלה מעוצבת שעוצרת התזות, מנקזת מים ושומרת על הרצפה יבשה —
+              גם כשהכלב אוכל בתאבון.
             </p>
 
-            <div className="mt-9 flex w-full flex-col gap-3 sm:max-w-[28rem] sm:flex-row sm:items-stretch sm:gap-3">
-              <LeadCaptureTrigger className="group inline-flex min-h-[54px] w-full shrink-0 items-center justify-center gap-2 rounded-full bg-cream px-6 text-[15px] font-semibold text-ink shadow-[0_24px_48px_-18px_rgba(0,0,0,0.55)] transition duration-300 hover:bg-white hover:shadow-[0_28px_56px_-16px_rgba(0,0,0,0.5)] active:scale-[0.99] sm:flex-1">
+            <div className="mt-8 flex w-full flex-col gap-3 sm:max-w-[28rem] sm:flex-row sm:items-stretch sm:gap-3">
+              <LeadCaptureTrigger
+                className="
+                  group inline-flex min-h-[54px] w-full shrink-0 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold
+                  transition duration-300 active:scale-[0.99] sm:flex-1
+                  bg-ink text-cream shadow-[0_20px_48px_-18px_rgba(26,23,20,0.5)] hover:bg-ink/90
+                  lg:bg-cream lg:text-ink lg:shadow-[0_24px_48px_-18px_rgba(0,0,0,0.55)] lg:hover:bg-white lg:hover:shadow-[0_28px_56px_-16px_rgba(0,0,0,0.5)]
+                "
+              >
                 <span>שרינו לי 10% הנחה להשקה</span>
                 <svg
                   viewBox="0 0 20 20"
-                  className="h-4 w-4 shrink-0 -translate-x-0 transition-transform duration-300 group-hover:-translate-x-1"
+                  className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:-translate-x-1"
                   fill="none"
                   aria-hidden
                 >
@@ -120,29 +217,35 @@ export default function Hero() {
                   />
                 </svg>
               </LeadCaptureTrigger>
+
               <a
                 href="#product-features-anatomy"
-                className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full border border-white/35 bg-white/10 px-6 text-[15px] font-medium text-cream backdrop-blur-md transition hover:bg-white/15 sm:min-h-[54px] sm:flex-1"
+                className="
+                  inline-flex min-h-[48px] w-full items-center justify-center rounded-full px-6 text-[15px] font-medium transition
+                  sm:min-h-[54px] sm:flex-1
+                  border border-line/80 bg-soft/60 text-ink hover:bg-soft
+                  lg:border-white/35 lg:bg-white/10 lg:text-cream lg:backdrop-blur-md lg:hover:bg-white/15
+                "
               >
                 איך זה עובד
               </a>
             </div>
 
-            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-cream/65">
+            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-stone/90 lg:text-cream/65">
               <span className="inline-flex items-center gap-1.5">
                 <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
                   <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 משלוחים לכל הארץ
               </span>
-              <span className="text-white/25" aria-hidden>·</span>
+              <span className="text-stone/30 lg:text-white/25" aria-hidden>·</span>
               <span className="inline-flex items-center gap-1.5">
                 <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
                   <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 אחריות מלאה
               </span>
-              <span className="text-white/25" aria-hidden>·</span>
+              <span className="text-stone/30 lg:text-white/25" aria-hidden>·</span>
               <span className="inline-flex items-center gap-1.5">
                 <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
                   <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -152,7 +255,12 @@ export default function Hero() {
             </p>
 
             <ul
-              className="mt-9 grid gap-2.5 border-t border-white/15 pt-8 text-[13px] text-cream/75 sm:grid-cols-3 sm:gap-x-5 sm:border-t-0 sm:pt-0"
+              className="
+                mt-8 grid gap-2.5 border-t pt-8 text-[13px]
+                border-line/60 text-stone/80
+                sm:grid-cols-3 sm:gap-x-5
+                lg:border-white/15 lg:text-cream/75
+              "
               aria-label="יתרונות מהירים"
             >
               {QUICK_BENEFITS.map((t) => (
@@ -179,14 +287,14 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll cue (desktop only) */}
+      {/* Scroll cue — desktop only */}
       <a
         href="#product-features-anatomy"
         aria-label="גלילה למידע נוסף"
         className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-cream/55 transition hover:text-cream lg:flex"
       >
         <span>scroll</span>
-        <span className="relative block h-8 w-px bg-cream/30 overflow-hidden">
+        <span className="relative block h-8 w-px overflow-hidden bg-cream/30">
           <span className="hero-scroll-cue absolute inset-x-0 top-0 h-3 bg-cream" />
         </span>
       </a>
