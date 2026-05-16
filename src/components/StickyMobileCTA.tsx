@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatILS, PRICE_BY_SIZE } from "@/lib/pricing";
-
-const priceRange =
-  formatILS(PRICE_BY_SIZE.small) + "–" + formatILS(PRICE_BY_SIZE.large);
+import { useLeadCapture } from "./LeadCapture";
 
 export default function StickyMobileCTA() {
+  const { open } = useLeadCapture();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      const shown = window.scrollY > window.innerHeight * 0.6;
-      setShow(shown);
+      setShow(window.scrollY > window.innerHeight * 0.4);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -22,26 +19,46 @@ export default function StickyMobileCTA() {
   return (
     <div
       aria-hidden={!show}
-      className={`md:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 transition-all duration-500 ${
-        show ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+      className={`fixed inset-x-0 bottom-0 z-40 md:hidden transition-all duration-300 ease-out ${
+        show
+          ? "translate-y-0 opacity-100"
+          : "translate-y-full opacity-0 pointer-events-none"
       }`}
     >
-      <div className="rounded-2xl bg-ink/95 backdrop-blur shadow-[0_20px_50px_-20px_rgba(0,0,0,0.6)] border border-cream/10 px-4 py-3 flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-display text-cream text-base leading-tight">
-            מסודר · עמדת האכלה
-          </p>
-          <p className="text-cream/60 text-xs">
-            {priceRange} · משלוח מהיר בישראל
-          </p>
+      <div
+        dir="rtl"
+        className="border-t border-cream/15 bg-ink/96 px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_48px_-16px_rgba(0,0,0,0.55)] backdrop-blur-md"
+      >
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-clay">
+              <span className="relative flex h-1.5 w-1.5" aria-hidden>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
+              </span>
+              מהדורת השקה · מקומות מוגבלים
+            </p>
+            <p className="font-display mt-0.5 text-[15px] leading-tight text-cream">
+              שרינו לי 10% הנחה להשקה
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => open()}
+            className="inline-flex min-h-[48px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-cream px-5 text-[13.5px] font-semibold text-ink shadow-sm transition hover:bg-white active:scale-[0.98]"
+          >
+            <span>אני בפנים</span>
+            <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" aria-hidden>
+              <path
+                d="M11.5 5 5.5 10l6 5M5.5 10h9"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </div>
-        <a
-          href="#buy"
-          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-cream text-ink px-5 py-3 text-sm font-medium min-h-[44px]"
-        >
-          להזמין עכשיו
-          <span aria-hidden>←</span>
-        </a>
       </div>
     </div>
   );
