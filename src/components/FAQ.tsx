@@ -31,59 +31,107 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="border-t border-line/60 bg-cream py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-3xl px-5 sm:px-8">
-        <Reveal>
-          <p className="text-center text-sm font-medium text-stone">
-            <span className="inline-flex items-center gap-2 rounded-full border border-line/70 bg-soft/70 px-3 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
-              שאלות נפוצות
-            </span>
-          </p>
-        </Reveal>
+    <section
+      id="faq"
+      className="
+        section-pad relative isolate overflow-hidden bg-cream
+        -mt-10 rounded-t-[2.5rem]
+        shadow-[0_-14px_44px_-14px_rgba(26,23,20,0.18),0_-2px_8px_-2px_rgba(26,23,20,0.06)]
+        sm:-mt-12 sm:rounded-t-[3rem]
+      "
+    >
+      {/* Tiny decorative pill at the joint — premium 'lifted panel' cue */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-5 z-10 -translate-x-1/2 sm:top-6"
+      >
+        <span className="block h-1 w-12 rounded-full bg-clay/40" />
+      </div>
+
+      {/* Soft ambient glow behind the headline — pulls the eye in */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[420px] max-w-3xl"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(181,137,111,0.16) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-3xl px-5 sm:px-8">
+
         <Reveal delay={80}>
-          <h2 className="font-display mt-5 text-center text-[1.85rem] font-medium leading-tight tracking-tight text-ink sm:text-[2.25rem]">
-            כל מה שרציתם לדעת לפני שמזמינים
+          <h2 className="section-h2 mt-5 text-center">
+            כל מה שרציתם לדעת{" "}
+            <span className="relative inline-block whitespace-nowrap">
+              <span className="faq-shine">לפני שמזמינים</span>
+              <svg
+                aria-hidden
+                viewBox="0 0 240 14"
+                preserveAspectRatio="none"
+                className="absolute inset-x-0 -bottom-3 h-3 w-full text-clay"
+              >
+                <path
+                  d="M3 9 Q 60 1 120 6 T 237 5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.7"
+                />
+              </svg>
+            </span>
           </h2>
         </Reveal>
+
         <Reveal delay={140}>
-          <p className="mx-auto mt-4 max-w-xl text-center text-[15px] leading-relaxed text-stone">
+          <p className="section-lead mx-auto mt-6 max-w-xl text-center">
             ריכזנו את השאלות הכי שכיחות. עדיין מתלבטים?{" "}
             <a
               href="https://wa.me/972500000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-ink underline decoration-clay/40 underline-offset-[5px] transition hover:decoration-clay"
+              className="font-semibold text-ink underline decoration-clay decoration-2 underline-offset-[6px] transition hover:decoration-clay/80"
             >
               שלחו לנו הודעה בוואטסאפ
-            </a>
+            </a>{" "}
             — עונים אישית תוך כמה שעות.
           </p>
         </Reveal>
 
-        <ul className="mt-10 overflow-hidden rounded-2xl border border-line/70 bg-cream shadow-[0_2px_0_rgba(26,23,20,0.02)]">
+        <ul className="mt-12 overflow-hidden rounded-3xl border border-line/70 bg-cream shadow-[0_10px_40px_-20px_rgba(26,23,20,0.18)]">
           {faqs.map((f, i) => {
             const isOpen = open === i;
             return (
               <Reveal as="li" key={f.q} delay={i * 40}>
-                <div className={`${i > 0 ? "border-t border-line/70" : ""}`}>
+                <div
+                  className={`${i > 0 ? "border-t border-line/70" : ""} transition-colors duration-300 ${
+                    isOpen ? "bg-soft/45" : ""
+                  }`}
+                >
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     onClick={() => setOpen(isOpen ? null : i)}
-                    className="flex w-full items-start justify-between gap-4 px-5 py-5 text-start transition hover:bg-soft/40 sm:px-6 sm:py-6"
+                    className="flex w-full items-start justify-between gap-5 px-5 py-6 text-start transition hover:bg-soft/40 sm:px-7 sm:py-7"
                   >
-                    <span className="font-display text-[16.5px] leading-snug tracking-tight text-ink sm:text-[17.5px]">
+                    <span
+                      className={`font-display text-[18.5px] font-semibold leading-snug tracking-tight transition-colors sm:text-[21px] ${
+                        isOpen ? "text-ink" : "text-ink/90"
+                      }`}
+                    >
                       {f.q}
                     </span>
                     <span
                       aria-hidden
-                      className={`relative mt-1.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-soft transition-all duration-300 ${
-                        isOpen ? "rotate-45 bg-clay/15 text-clay" : "text-ink"
+                      className={`relative mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full transition-all duration-300 sm:h-10 sm:w-10 ${
+                        isOpen
+                          ? "rotate-45 bg-clay text-cream shadow-[0_6px_16px_-6px_rgba(181,137,111,0.6)]"
+                          : "bg-soft text-ink ring-1 ring-line/70"
                       }`}
                     >
-                      <span className="absolute h-3 w-px bg-current" />
-                      <span className="absolute h-px w-3 bg-current" />
+                      <span className="absolute h-4 w-[2px] bg-current" />
+                      <span className="absolute h-[2px] w-4 bg-current" />
                     </span>
                   </button>
                   <div
@@ -94,7 +142,7 @@ export default function FAQ() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-5 text-[14.5px] leading-relaxed text-stone sm:px-6 sm:pb-6 sm:text-[15px]">
+                      <p className="px-5 pb-7 text-[16px] leading-[1.75] text-ink/80 sm:px-7 sm:pb-7 sm:text-[17px]">
                         {f.a}
                       </p>
                     </div>
@@ -111,7 +159,7 @@ export default function FAQ() {
               <p className="font-display text-[17px] font-medium text-ink">
                 מוכנים לשריין מקום באצווה הראשונה?
               </p>
-              <p className="mt-1 text-[13px] text-stone">
+              <p className="body-on-light mt-1 text-[13px]">
                 ההנחה האישית שלכם ממתינה — לוקח פחות מ-30 שניות.
               </p>
             </div>

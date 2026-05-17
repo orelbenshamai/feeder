@@ -9,6 +9,11 @@
   --color-ink: #1a1714;
   --color-clay: #b5896f;
 
+  /* Transition tone — sampled from the warm tile highlights in the
+     hero video, used by the section directly under the video so the
+     two surfaces read as a single continuous space. */
+  --color-warm: #ebe2d0;
+
   --color-background: var(--color-cream);
   --color-foreground: var(--color-ink);
 
@@ -51,6 +56,108 @@ body {
   letter-spacing: 0.02em;
   color: var(--color-stone);
   font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   DESIGN SYSTEM — section-level utilities.
+
+   Every landing-page <section> consumes these so vertical rhythm,
+   typography, and accent treatment stay identical across the page.
+
+   Accent color is --color-clay (warm tan, brand). Background language:
+     bg-cream (lightest)   → primary
+     bg-soft  (off-white)  → alternating
+     bg-ink   (charcoal)   → terminus / dark blocks
+   ───────────────────────────────────────────────────────────────────── */
+
+/* 1. Uniform vertical rhythm */
+.section-pad {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 640px) {
+  .section-pad {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-pad {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* 2. Eyebrow pill — clay accent + pulse dot lives in JSX */
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(181, 137, 111, 0.3);
+  background-color: rgba(181, 137, 111, 0.08);
+  padding: 0.375rem 0.875rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-clay);
+  box-shadow: 0 6px 18px -10px rgba(181, 137, 111, 0.45);
+}
+
+.section-eyebrow-on-dark {
+  border-color: rgba(250, 246, 239, 0.18);
+  background-color: rgba(250, 246, 239, 0.08);
+  color: rgba(250, 246, 239, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.45);
+}
+
+/* 3. Section headline (h2) — single type ramp across the page */
+.section-h2 {
+  font-family: var(--font-frank), "Frank Ruhl Libre", ui-serif, Georgia, serif;
+  font-weight: 500;
+  font-size: 2.1rem;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  font-feature-settings: "kern", "liga";
+}
+@media (min-width: 640px) {
+  .section-h2 {
+    font-size: 2.6rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-h2 {
+    font-size: 2.95rem;
+  }
+}
+
+.section-h2-on-dark {
+  color: var(--color-cream);
+}
+
+/* 4. Section subhead / body — readable on cream, never washed out */
+.section-lead {
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: rgba(26, 23, 20, 0.75);
+}
+@media (min-width: 640px) {
+  .section-lead {
+    font-size: 17.5px;
+  }
+}
+
+.section-lead-on-dark {
+  color: rgba(250, 246, 239, 0.72);
+}
+
+/* 5. Body copy in cards — replaces the old text-stone for stronger contrast */
+.body-on-light {
+  color: rgba(26, 23, 20, 0.78);
 }
 
 .reveal {
@@ -186,4 +293,39 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* FAQ headline: subtle clay shimmer sweeping across the highlight word */
+@keyframes faq-shine {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.faq-shine {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-clay) 0%,
+    var(--color-clay) 38%,
+    #f0d4bd 50%,
+    var(--color-clay) 62%,
+    var(--color-clay) 100%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: faq-shine 5.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-shine {
+    animation: none;
+    background-image: none;
+    color: var(--color-clay);
+  }
 }

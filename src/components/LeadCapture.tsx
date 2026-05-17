@@ -81,7 +81,7 @@ export function LeadCaptureTrigger({
 function LeadCaptureModal({ onClose }: { onClose: () => void }) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
-  const firstFieldRef = useRef<HTMLSelectElement>(null);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -126,9 +126,15 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
     setDone(true);
   }
 
+  const sizeOptions = [
+    { value: "small", label: "קטן", weight: 'עד 10 ק"ג' },
+    { value: "medium", label: "בינוני", weight: '10–25 ק"ג' },
+    { value: "large", label: "גדול", weight: 'מעל 25 ק"ג' },
+  ];
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-6"
       role="presentation"
     >
       <button
@@ -142,97 +148,98 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-[101] w-full max-h-[min(92dvh,760px)] overflow-y-auto rounded-t-[1.75rem] bg-cream shadow-[0_-20px_80px_-24px_rgba(26,23,20,0.35)] ring-1 ring-black/10 sm:max-w-md sm:rounded-[1.75rem] sm:shadow-2xl"
+        className="
+          relative z-[101] w-full bg-cream
+          rounded-t-3xl shadow-[0_-20px_80px_-24px_rgba(26,23,20,0.35)] ring-1 ring-black/10
+          sm:max-w-[26rem] sm:rounded-3xl sm:shadow-[0_40px_80px_-30px_rgba(26,23,20,0.45)]
+        "
       >
-        <div className="sticky top-0 z-[102] flex justify-center bg-cream pt-3 pb-2 sm:hidden">
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
           <span className="h-1 w-10 rounded-full bg-line" aria-hidden />
         </div>
 
-        <div dir="rtl" className="px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-2 sm:px-8 sm:pb-8 sm:pt-6">
+        <div
+          dir="rtl"
+          className="px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3 sm:px-7 sm:pb-7 sm:pt-7"
+        >
           {!done ? (
             <>
-              <div className="flex items-start justify-between gap-4 border-b border-line/70 pb-5">
-                <div className="min-w-0 flex-1">
-                  <p className="inline-flex items-center gap-1.5 rounded-full bg-soft px-2.5 py-1 text-[11px] font-medium text-ink/80">
-                    <span className="h-1.5 w-1.5 rounded-full bg-clay" aria-hidden />
-                    מהדורת השקה · מקומות מוגבלים
-                  </p>
-                  <h2
-                    id={titleId}
-                    className="font-display mt-3 text-[1.35rem] font-medium leading-tight text-ink sm:text-2xl"
-                  >
-                    שרינו לי 10% הנחה להשקה
-                  </h2>
-                  <p className="mt-2.5 text-[13.5px] leading-relaxed text-stone">
-                    האצווה הראשונה נוחתת בקרוב. השאירו פרטים — וברגע שהמלאי במחסן,
-                    אתם הראשונים שמקבלים גישה וקוד הנחה אישי ב-SMS או במייל.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-soft text-ink ring-1 ring-black/[0.06] transition hover:bg-sand/80"
-                  aria-label="סגור"
-                >
-                  <span aria-hidden className="relative block h-3 w-3">
-                    <span className="absolute inset-x-0 top-1/2 h-px rotate-45 bg-ink" />
-                    <span className="absolute inset-x-0 top-1/2 h-px -rotate-45 bg-ink" />
+              {/* Close (absolute) — keeps the header copy clean and centered */}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="סגור"
+                className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-full text-ink/60 transition hover:bg-soft hover:text-ink sm:left-4 sm:top-4"
+              >
+                <span aria-hidden className="relative block h-3 w-3">
+                  <span className="absolute inset-x-0 top-1/2 h-px rotate-45 bg-current" />
+                  <span className="absolute inset-x-0 top-1/2 h-px -rotate-45 bg-current" />
+                </span>
+              </button>
+
+              {/* ── Header — single-line value prop, no body paragraph ── */}
+              <div className="text-center">
+                <p>
+                  <span className="section-eyebrow !text-[11px]">
+                    <span className="relative flex h-1.5 w-1.5" aria-hidden>
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-70" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
+                    </span>
+                    10% הנחה להשקה
                   </span>
-                </button>
+                </p>
+                <h2
+                  id={titleId}
+                  className="font-display mt-3 text-[1.45rem] font-medium leading-[1.15] tracking-tight text-ink sm:text-[1.6rem]"
+                >
+                  שריינו את המקום שלכם
+                </h2>
               </div>
 
-              <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
-                <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-ink leading-snug">
-                    מה גודל הכלב שלך?
-                  </span>
-                  <select
-                    ref={firstFieldRef}
-                    name="dogSize"
-                    required
-                    defaultValue=""
-                    className="w-full appearance-none rounded-xl border border-line bg-cream bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22 fill=%22none%22><path d=%22M1 1.5 6 6.5 11 1.5%22 stroke=%22%238b847a%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>')] bg-[length:12px_8px] bg-[position:left_1rem_center] bg-no-repeat px-4 py-3.5 text-[15px] text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
-                  >
-                    <option value="" disabled>
-                      קטן / בינוני / גדול
-                    </option>
-                    <option value="small">קטן (עד 10 ק&quot;ג)</option>
-                    <option value="medium">בינוני (10–25 ק&quot;ג)</option>
-                    <option value="large">גדול (מעל 25 ק&quot;ג)</option>
-                  </select>
-                </label>
+              <form
+                className="mt-5 flex flex-col gap-4 sm:mt-6"
+                onSubmit={handleSubmit}
+              >
+                {/* Dog size — segmented pills (faster than a select) */}
+                <fieldset>
+                  <legend className="mb-2 block text-[12.5px] font-semibold text-ink/80">
+                    גודל הכלב
+                  </legend>
+                  <div className="grid grid-cols-3 gap-2" role="radiogroup">
+                    {sizeOptions.map((opt, i) => (
+                      <label key={opt.value} className="cursor-pointer">
+                        <input
+                          ref={i === 0 ? firstFieldRef : undefined}
+                          type="radio"
+                          name="dogSize"
+                          value={opt.value}
+                          required
+                          className="peer sr-only"
+                        />
+                        <span
+                          className="
+                            block rounded-xl border border-line bg-cream
+                            px-2 py-2.5 text-center transition
+                            hover:border-clay/50 hover:bg-clay/5
+                            peer-checked:border-clay peer-checked:bg-clay/10
+                            peer-focus-visible:ring-2 peer-focus-visible:ring-clay/30
+                          "
+                        >
+                          <span className="block text-[13.5px] font-semibold text-ink">
+                            {opt.label}
+                          </span>
+                          <span className="mt-0.5 block text-[10.5px] text-stone">
+                            {opt.weight}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
 
+                {/* Phone — single contact field; covers SMS + WhatsApp */}
                 <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-ink">
-                    שם מלא
-                  </span>
-                  <input
-                    name="fullName"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="לדוגמה: דנה כהן"
-                    required
-                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-[15px] text-ink placeholder:text-stone/55 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-ink">
-                    אימייל
-                  </span>
-                  <input
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="name@example.com"
-                    required
-                    dir="ltr"
-                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/55 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block text-sm font-medium text-ink">
+                  <span className="mb-1.5 block text-[12.5px] font-semibold text-ink/80">
                     טלפון / וואטסאפ
                   </span>
                   <input
@@ -244,36 +251,46 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                     pattern="[0-9\-\s+]{9,}"
                     required
                     dir="ltr"
-                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/55 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
+                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
                   />
                 </label>
 
                 <button
                   type="submit"
-                  className="mt-3 inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-full bg-ink px-6 text-[15px] font-semibold text-cream shadow-[0_18px_44px_-22px_rgba(26,23,20,0.55)] transition hover:bg-ink/92 active:scale-[0.99]"
+                  className="
+                    group mt-1 inline-flex min-h-[54px] w-full items-center
+                    justify-center gap-2 rounded-full bg-ink px-6 text-[15px]
+                    font-semibold text-cream
+                    shadow-[0_18px_44px_-22px_rgba(26,23,20,0.55)]
+                    transition hover:bg-ink/92 active:scale-[0.99]
+                  "
                 >
-                  <span>אני בפנים — תשמרו לי מקום</span>
-                  <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden>
-                    <path d="M11.5 5 5.5 10l6 5M5.5 10h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <span>שרינו לי 10% הנחה</span>
+                  <svg
+                    viewBox="0 0 20 20"
+                    className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+                    fill="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M11.5 5 5.5 10l6 5M5.5 10h9"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
 
-                <div className="mt-1 flex items-center justify-center gap-3 text-[11px] text-stone">
-                  <span className="inline-flex items-center gap-1.5">
-                    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
-                      <path d="M8 1.5 3 4v4.5C3 11 5.2 13.5 8 14.5 10.8 13.5 13 11 13 8.5V4L8 1.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-                    </svg>
-                    הפרטים שלכם מאובטחים
-                  </span>
-                  <span className="text-line" aria-hidden>·</span>
-                  <span>ללא ספאם, אפשר לבטל בכל רגע</span>
-                </div>
+                <p className="text-center text-[11px] leading-relaxed text-stone">
+                  הקוד נשלח כשהמלאי נוחת · ללא ספאם · אפשר לבטל בכל רגע
+                </p>
               </form>
             </>
           ) : (
-            <div className="py-8 text-center sm:py-12">
-              <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30">
-                <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" aria-hidden>
+            <div className="py-6 text-center sm:py-10">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30">
+                <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden>
                   <path
                     d="M6 12.5 10 16.5 18 8.5"
                     stroke="currentColor"
@@ -283,17 +300,16 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                   />
                 </svg>
               </div>
-              <p className="font-display mt-6 text-2xl font-medium text-ink">
-                שמרנו לכם מקום — תודה!
+              <p className="font-display mt-5 text-[1.6rem] font-medium text-ink">
+                שמרנו לכם מקום
               </p>
-              <p className="mx-auto mt-3 max-w-sm text-[14px] leading-relaxed text-stone">
-                ברגע שהאצווה הראשונה נוחתת אצלנו במחסן, תקבלו עדכון וקוד הנחה אישי
-                של 10% — ב-SMS או במייל. עד אז, נשמור על הקשר.
+              <p className="mx-auto mt-3 max-w-xs text-[13.5px] leading-relaxed text-ink/70">
+                כשהאצווה הראשונה נוחתת — נשלח לכם את קוד ההנחה האישי בוואטסאפ.
               </p>
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full bg-ink px-8 text-[14px] font-medium text-cream transition hover:bg-ink/90"
+                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-ink px-7 text-[14px] font-semibold text-cream transition hover:bg-ink/90"
               >
                 חזרה לאתר
               </button>

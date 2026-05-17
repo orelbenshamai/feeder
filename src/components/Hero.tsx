@@ -26,9 +26,16 @@ function VideoEl({
       muted
       loop
       playsInline
+      preload="auto"
       poster={poster}
+      width={1920}
+      height={1080}
+      disablePictureInPicture
+      disableRemotePlayback
       aria-hidden
     >
+      {/* H.264 baseline for broadest iOS/Android codec support */}
+      <source src={src} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
       <source src={src} type="video/mp4" />
     </video>
   );
@@ -55,59 +62,92 @@ export default function Hero() {
         סרטון לולאה: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      {/* ── LOGO ────────────────────────────────────────────────────── */}
-      <div className="absolute inset-x-0 top-0 z-20 flex justify-center px-5 pb-4 pt-5 sm:pt-7">
-        <a href="#" aria-label="מסודר — חזרה לראש הדף">
+      {/* ── HEADER ──────────────────────────────────────────────────────
+            Semantic, fully-transparent <header>. No top bar / block —
+            the video flows behind it edge-to-edge. A soft radial
+            vignette behind the logo (only) lifts contrast without
+            introducing a visible header surface. ───────────────────── */}
+      <header
+        role="banner"
+        dir="rtl"
+        className="
+          absolute inset-x-0 top-0 z-30
+          flex items-center justify-center
+          px-5 pb-3 pt-[max(env(safe-area-inset-top),0.5rem)]
+          sm:pb-4 sm:pt-[max(env(safe-area-inset-top),0.75rem)]
+          lg:pt-6
+        "
+      >
+        <a
+          href="#"
+          aria-label="מסודר — חזרה לראש הדף"
+          className="
+            relative inline-flex items-center justify-center
+            transition-opacity duration-200 hover:opacity-95
+          "
+        >
+          {/* Radial vignette — softly fades the video behind the mark
+              so it never reads as a hard 'header bar'. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -inset-x-12 -inset-y-6 -z-10"
+            style={{
+              background:
+                "radial-gradient(ellipse 65% 70% at 50% 50%, rgba(26,23,20,0.45) 0%, rgba(26,23,20,0.18) 45%, transparent 75%)",
+            }}
+          />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/media/logo.png"
             alt="מסודר"
-            className="h-16 w-auto brightness-0 invert drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)] sm:h-20 lg:h-24"
+            className="
+              block h-20 w-auto
+              brightness-0 invert
+              drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]
+              drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]
+              sm:h-24 lg:h-28 xl:h-32
+            "
             draggable={false}
           />
         </a>
-      </div>
+      </header>
 
-      {/* ── MOBILE VIDEO CARD ─────────────────────────────────────────── */}
+      {/* ── MOBILE VIDEO — full-bleed, natural aspect, no crop ──────────── */}
       {/*
-        On mobile the video is a card in normal document flow (aspect-[4/5]).
-        object-cover centre-crops the 16:9 source so the dog/station fill
-        the portrait frame naturally. Hidden on lg+.
+        Edge-to-edge hero. Slightly taller than 16:9 (3:2) so the clip reads
+        bigger on phones; landscape footage fills height and trims the sides.
       */}
-      <div className="relative w-full shrink-0 lg:hidden" aria-hidden>
-        <div
-          className="
-            relative aspect-[4/5] w-full overflow-hidden
-            rounded-b-[1.75rem]
-            ring-1 ring-black/[0.07]
-            shadow-[0_28px_64px_-28px_rgba(26,23,20,0.38)]
-          "
-        >
-          {videoSrc ? (
-            <VideoEl
-              src={videoSrc}
-              poster={posterSrc}
-              className="h-full w-full object-cover object-center"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
-              <ProductIllustration className="h-full w-full p-10 opacity-90" />
-            </div>
-          )}
+      <div className="shrink-0 lg:hidden">
+        <div className="relative w-full bg-ink" aria-hidden>
+          {/* Taller than 16:9: letterboxes sides on landscape footage, not top/bottom */}
+          <div className="relative aspect-[3/2] w-full overflow-hidden">
+            {videoSrc ? (
+              <VideoEl
+                src={videoSrc}
+                poster={posterSrc}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
+                <ProductIllustration className="h-full w-full p-10 opacity-90" />
+              </div>
+            )}
 
-          {/* Bottom fade — blends card into the section bg */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-soft via-soft/60 to-transparent" />
+            {/* Bottom fade — dissolves into the warm bg of the strip below */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-warm to-transparent" />
+          </div>
+        </div>
 
-          {/* Scarcity badge — centered at bottom of card on mobile */}
-          <div className="absolute bottom-5 inset-x-0 flex justify-center">
-          <div className="flex items-center gap-2 rounded-full border border-white/25 bg-ink/70 px-3 py-1.5 text-[11px] font-medium text-cream/95 backdrop-blur-md">
+        {/* Scarcity line — below video on mobile so footage stays unobstructed.
+            Uses the same warm tone as the breakdown section for one continuous surface. */}
+        <div className="flex justify-center bg-warm px-4 pb-1 pt-3" dir="rtl">
+          <p className="m-0 flex items-center gap-2 rounded-full border border-line/80 bg-cream/95 px-3 py-1.5 text-[11px] font-medium text-ink shadow-[0_4px_18px_-10px_rgba(26,23,20,0.2)] ring-1 ring-black/[0.04]">
             <span className="relative flex h-1.5 w-1.5" aria-hidden>
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
             </span>
             מהדורת השקה ראשונה · כמות מוגבלת
-          </div>
-          </div>
+          </p>
         </div>
       </div>
 
@@ -195,14 +235,13 @@ export default function Hero() {
                 sm:text-[2.25rem] sm:leading-[1.07]
                 md:text-[2.6rem]
                 lg:text-[3.15rem] lg:leading-[1.02] lg:text-cream
-                drop-shadow-[0_2px_24px_rgba(0,0,0,0.0)]
-                lg:drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]
+                lg:[text-shadow:0_2px_4px_rgba(0,0,0,0.45),0_8px_28px_rgba(0,0,0,0.35)]
               "
             >
               סוף לרצפות רטובות ולאוכל מפוזר בכל הבית.
             </h1>
 
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-stone sm:text-[17px] lg:text-cream/85 lg:text-lg">
+            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink/75 sm:text-[17px] lg:text-cream/85 lg:text-lg lg:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
               עמדת האכלה מעוצבת שעוצרת התזות, מנקזת מים ושומרת על הרצפה יבשה —
               גם כשהכלב אוכל בתאבון.
             </p>
@@ -246,7 +285,7 @@ export default function Hero() {
               </a>
             </div>
 
-            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-stone/90 lg:text-cream/65">
+            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink/65 lg:text-cream/65">
               <span className="inline-flex items-center gap-1.5">
                 <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
                   <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -272,7 +311,7 @@ export default function Hero() {
             <ul
               className="
                 mt-8 grid gap-2.5 border-t pt-8 text-[13px]
-                border-line/60 text-stone/80
+                border-line/60 text-ink/75
                 sm:grid-cols-3 sm:gap-x-5
                 lg:border-white/15 lg:text-cream/75
               "
