@@ -141,9 +141,9 @@ const LABELS: Label[] = [
     tag: "יציבות מלאה",
     title: "רגליות סיליקון נגד החלקה",
     description: "מונעות גלישה על ריצוף ומגנות מפני שריטות.",
-    top: 84,
-    tipX: 44,
-    tipY: 92,
+    top: 80,
+    tipX: 38,
+    tipY: 90,
     side: "left",
     icon: Icon.feet,
   },
@@ -207,7 +207,7 @@ function Card({ label, layout }: { label: Label; layout: "absolute" | "grid" }) 
       `}
     >
       <div
-        className={`relative flex flex-col items-center gap-1.5 ${
+        className={`relative flex flex-col items-center justify-center gap-1.5 ${
           isRight ? "order-2" : "order-1"
         }`}
       >
@@ -245,16 +245,18 @@ function Card({ label, layout }: { label: Label; layout: "absolute" | "grid" }) 
     return <motion.li variants={variant}>{inner}</motion.li>;
   }
 
+  // Outer wrapper owns positioning + the -50% centering translate;
+  // the inner motion.div owns the entrance animation. Splitting them
+  // prevents Framer Motion from overriding the centering transform.
   return (
-    <motion.div
-      variants={variant}
-      className={`absolute z-20 w-[20%] min-w-[210px] ${
+    <div
+      className={`absolute z-20 w-[20%] min-w-[210px] -translate-y-1/2 ${
         isRight ? "right-0" : "left-0"
       }`}
-      style={{ top: `${label.top}%`, transform: "translateY(-50%)" }}
+      style={{ top: `${label.top}%` }}
     >
-      {inner}
-    </motion.div>
+      <motion.div variants={variant}>{inner}</motion.div>
+    </div>
   );
 }
 

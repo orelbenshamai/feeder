@@ -25,6 +25,21 @@
   color-scheme: light;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Anchor targets land below the rounded lifted panel + sticky bar */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 html,
 body {
   background: var(--color-cream);
@@ -243,7 +258,8 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-video-scale {
-    transform: scale(1.035);
+    transform: scale(1.02);
+    transform-origin: center 58%;
   }
 
   .hero-scroll-cue {

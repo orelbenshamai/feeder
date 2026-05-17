@@ -19,15 +19,15 @@ export default function StickyMobileCTA() {
   return (
     <div
       aria-hidden={!show}
-      className={`fixed inset-x-0 bottom-0 z-40 md:hidden transition-all duration-300 ease-out ${
+      className={`fixed inset-x-0 top-0 z-40 md:hidden transition-all duration-300 ease-out ${
         show
           ? "translate-y-0 opacity-100"
-          : "translate-y-full opacity-0 pointer-events-none"
+          : "-translate-y-full opacity-0 pointer-events-none"
       }`}
     >
       <div
         dir="rtl"
-        className="border-t border-cream/15 bg-ink/96 px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-16px_48px_-16px_rgba(0,0,0,0.55)] backdrop-blur-md"
+        className="border-b border-cream/15 bg-ink/96 px-4 pb-3 pt-[calc(10px+env(safe-area-inset-top))] shadow-[0_16px_48px_-16px_rgba(0,0,0,0.55)] backdrop-blur-md"
       >
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -45,7 +45,7 @@ export default function StickyMobileCTA() {
           <button
             type="button"
             onClick={() => open()}
-            className="inline-flex min-h-[48px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-cream px-5 text-[13.5px] font-semibold text-ink shadow-sm transition hover:bg-white active:scale-[0.98]"
+            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-cream px-5 text-[13.5px] font-semibold text-ink shadow-sm transition hover:bg-white active:scale-[0.98]"
           >
             <span>אני בפנים</span>
             <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" aria-hidden>

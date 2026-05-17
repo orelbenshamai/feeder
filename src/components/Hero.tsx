@@ -4,12 +4,6 @@ import { LeadCaptureTrigger } from "./LeadCapture";
 /** Served from `public/media/ad1.mp4` (Turbopack cannot bundle `.mp4` imports). */
 const DEFAULT_HERO_VIDEO = "/media/ad1.mp4";
 
-const QUICK_BENEFITS = [
-  "רצפה יבשה אחרי כל ארוחה",
-  "קערות נירוסטה — מתאים למדיח",
-  "יציב על כל ריצוף · לא זז, לא שורט",
-];
-
 function VideoEl({
   src,
   poster,
@@ -78,13 +72,9 @@ export default function Hero() {
           lg:pt-6
         "
       >
-        <a
-          href="#"
-          aria-label="מסודר — חזרה לראש הדף"
-          className="
-            relative inline-flex items-center justify-center
-            transition-opacity duration-200 hover:opacity-95
-          "
+        <span
+          className="relative inline-flex select-none items-center justify-center"
+          aria-label="מסודר"
         >
           {/* Radial vignette — softly fades the video behind the mark
               so it never reads as a hard 'header bar'. */}
@@ -101,7 +91,7 @@ export default function Hero() {
             src="/media/logo.png"
             alt="מסודר"
             className="
-              block h-20 w-auto
+              pointer-events-none block h-20 w-auto
               brightness-0 invert
               drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]
               drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]
@@ -109,7 +99,7 @@ export default function Hero() {
             "
             draggable={false}
           />
-        </a>
+        </span>
       </header>
 
       {/* ── MOBILE VIDEO — full-bleed, natural aspect, no crop ──────────── */}
@@ -117,38 +107,48 @@ export default function Hero() {
         Edge-to-edge hero. Slightly taller than 16:9 (3:2) so the clip reads
         bigger on phones; landscape footage fills height and trims the sides.
       */}
-      <div className="shrink-0 lg:hidden">
-        <div className="relative w-full bg-ink" aria-hidden>
-          {/* Taller than 16:9: letterboxes sides on landscape footage, not top/bottom */}
-          <div className="relative aspect-[3/2] w-full overflow-hidden">
+      <div className="relative shrink-0 lg:hidden">
+        {/* Cinematic video as a rounded-bottom card with soft shadow —
+            replaces the previous hard horizontal edge. We deliberately
+            avoid a dark wrapper bg so sub-pixel anti-aliasing at the
+            rounded bottom edge can't read as a hairline black line. */}
+        <div
+          aria-hidden
+          className="
+            relative w-full overflow-hidden bg-soft
+            rounded-b-[2rem] sm:rounded-b-[2.5rem]
+          "
+          style={{
+            WebkitMaskImage:
+              "-webkit-radial-gradient(white, black)" /* iOS Safari rounded-corner anti-alias fix */,
+          }}
+        >
+          {/* Tall frame; vertical focal point biased slightly down so object-cover
+              keeps the feeding station / floor edge visible above the curve. */}
+          <div
+            className="relative w-full"
+            style={{ height: "min(100vw, 78svh)" }}
+          >
             {videoSrc ? (
               <VideoEl
                 src={videoSrc}
                 poster={posterSrc}
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-cover object-[center_56%]"
               />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
                 <ProductIllustration className="h-full w-full p-10 opacity-90" />
               </div>
             )}
-
-            {/* Bottom fade — dissolves into the warm bg of the strip below */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-warm to-transparent" />
           </div>
         </div>
-
-        {/* Scarcity line — below video on mobile so footage stays unobstructed.
-            Uses the same warm tone as the breakdown section for one continuous surface. */}
-        <div className="flex justify-center bg-warm px-4 pb-1 pt-3" dir="rtl">
-          <p className="m-0 flex items-center gap-2 rounded-full border border-line/80 bg-cream/95 px-3 py-1.5 text-[11px] font-medium text-ink shadow-[0_4px_18px_-10px_rgba(26,23,20,0.2)] ring-1 ring-black/[0.04]">
-            <span className="relative flex h-1.5 w-1.5" aria-hidden>
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-clay" />
-            </span>
-            מהדורת השקה ראשונה · כמות מוגבלת
-          </p>
-        </div>
+        {/* Soft ambient shadow rendered as a separate blur below the card.
+            Keeps the dark glow away from the video edge so it never reads
+            as a hard "black line". */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-6 -bottom-6 h-10 rounded-full bg-ink/15 blur-2xl sm:inset-x-10"
+        />
       </div>
 
       {/* ── DESKTOP FULL-BLEED BACKDROP ───────────────────────────────── */}
@@ -161,7 +161,7 @@ export default function Hero() {
           <VideoEl
             src={videoSrc}
             poster={posterSrc}
-            className="hero-video-scale absolute inset-0 z-0 h-full w-full object-cover"
+            className="hero-video-scale absolute inset-0 z-0 h-full w-full object-cover object-[center_54%]"
           />
         ) : (
           <div className="absolute inset-0 z-0 bg-gradient-to-br from-soft via-cream to-sand">
@@ -215,16 +215,6 @@ export default function Hero() {
             dir="rtl"
             className="hero-rise mx-auto flex w-full max-w-xl flex-col text-start lg:mx-0 lg:max-w-[28rem] xl:max-w-[30rem]"
           >
-            {/* Badge — desktop only (mobile badge is pinned to the video card above) */}
-            <p className="hidden lg:block text-sm font-medium text-cream/80">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md">
-                <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-clay opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-clay" />
-                </span>
-                מהדורת השקה ראשונה · כמות מוגבלת
-              </span>
-            </p>
 
             <h1
               id="hero-heading"
@@ -273,7 +263,7 @@ export default function Hero() {
               </LeadCaptureTrigger>
 
               <a
-                href="#product-features-anatomy"
+                href="#product-breakdown"
                 className="
                   inline-flex min-h-[48px] w-full items-center justify-center rounded-full px-6 text-[15px] font-medium transition
                   sm:min-h-[54px] sm:flex-1
@@ -284,59 +274,6 @@ export default function Hero() {
                 איך זה עובד
               </a>
             </div>
-
-            <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink/65 lg:text-cream/65">
-              <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
-                  <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                משלוחים לכל הארץ
-              </span>
-              <span className="text-stone/30 lg:text-white/25" aria-hidden>·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
-                  <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                אחריות מלאה
-              </span>
-              <span className="text-stone/30 lg:text-white/25" aria-hidden>·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-clay" fill="none" aria-hidden>
-                  <path d="m4 8 2.5 2.5L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                מענה בוואטסאפ
-              </span>
-            </p>
-
-            <ul
-              className="
-                mt-8 grid gap-2.5 border-t pt-8 text-[13px]
-                border-line/60 text-ink/75
-                sm:grid-cols-3 sm:gap-x-5
-                lg:border-white/15 lg:text-cream/75
-              "
-              aria-label="יתרונות מהירים"
-            >
-              {QUICK_BENEFITS.map((t) => (
-                <li key={t} className="flex items-start gap-2">
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-clay"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M6 10.5 8.8 13.3 14.5 6.6"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
           </article>
         </div>
       </div>
