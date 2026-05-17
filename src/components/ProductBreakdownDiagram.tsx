@@ -348,11 +348,22 @@ export default function ProductBreakdownDiagram() {
       dir="rtl"
       className="
         relative isolate overflow-hidden bg-warm
-        pt-28 pb-20 sm:pt-32 sm:pb-24
+        pt-24 pb-20 sm:pt-28 sm:pb-24
+        -mt-10 rounded-t-[2.5rem]
+        shadow-[0_-16px_50px_-16px_rgba(26,23,20,0.28),0_-2px_8px_-2px_rgba(26,23,20,0.08)]
+        sm:-mt-12 sm:rounded-t-[3rem]
         lg:flex lg:h-[100svh] lg:max-h-[960px] lg:min-h-[760px] lg:flex-col lg:!py-8 xl:lg:!py-10
       "
       aria-labelledby="breakdown-heading"
     >
+      {/* Tiny decorative pill at the joint — premium 'lifted panel' cue */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-5 z-10 -translate-x-1/2 sm:top-6"
+      >
+        <span className="block h-1 w-12 rounded-full bg-clay/40" />
+      </div>
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-70"

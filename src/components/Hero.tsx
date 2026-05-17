@@ -341,17 +341,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll cue — desktop only */}
-      <a
-        href="#product-features-anatomy"
-        aria-label="גלילה למידע נוסף"
-        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-cream/55 transition hover:text-cream lg:flex"
-      >
-        <span>scroll</span>
-        <span className="relative block h-8 w-px overflow-hidden bg-cream/30">
-          <span className="hero-scroll-cue absolute inset-x-0 top-0 h-3 bg-cream" />
-        </span>
-      </a>
     </section>
   );
 }
