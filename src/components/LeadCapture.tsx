@@ -83,6 +83,8 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const t = window.setTimeout(() => firstFieldRef.current?.focus(), 50);
@@ -116,14 +118,35 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
     return () => root.removeEventListener("keydown", onFocusTrap);
   }, [done]);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     const fd = new FormData(e.currentTarget);
-    const payload = Object.fromEntries(fd.entries());
-    if (process.env.NODE_ENV === "development") {
-      console.info("[lead]", payload);
+    const payload = {
+      dogSize: fd.get("dogSize") as string,
+      phone: fd.get("phone") as string,
+    };
+
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "שגיאה בשמירה, נסו שוב");
+      }
+
+      setDone(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "שגיאה, נסו שוב");
+    } finally {
+      setLoading(false);
     }
-    setDone(true);
   }
 
   const sizeOptions = [
@@ -257,30 +280,50 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
 
                 <button
                   type="submit"
+                  disabled={loading}
                   className="
                     group mt-1 inline-flex min-h-[54px] w-full items-center
                     justify-center gap-2 rounded-full bg-ink px-6 text-[15px]
                     font-semibold text-cream
                     shadow-[0_18px_44px_-22px_rgba(26,23,20,0.55)]
                     transition hover:bg-ink/92 active:scale-[0.99]
+                    disabled:opacity-60 disabled:cursor-not-allowed
                   "
                 >
-                  <span>שרינו לי 10% הנחה</span>
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M11.5 5 5.5 10l6 5M5.5 10h9"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  {loading ? (
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                      </svg>
+                      שומרים…
+                    </span>
+                  ) : (
+                    <>
+                      <span>שרינו לי 10% הנחה</span>
+                      <svg
+                        viewBox="0 0 20 20"
+                        className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+                        fill="none"
+                        aria-hidden
+                      >
+                        <path
+                          d="M11.5 5 5.5 10l6 5M5.5 10h9"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </>
+                  )}
                 </button>
+
+                {error && (
+                  <p role="alert" className="text-center text-[12px] font-medium text-red-600">
+                    {error}
+                  </p>
+                )}
 
                 <p className="text-center text-[11px] leading-relaxed text-stone">
                   הקוד נשלח כשהמלאי נוחת · ללא ספאם · אפשר לבטל בכל רגע
