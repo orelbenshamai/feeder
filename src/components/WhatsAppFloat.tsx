@@ -1,7 +1,9 @@
+import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
+
 export default function WhatsAppFloat() {
   return (
     <a
-      href="https://wa.me/972500000000?text=%D7%94%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%AA%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%A2%D7%9E%D7%93%D7%AA%20%D7%94%D7%94%D7%90%D7%9B%D7%9C%D7%94"
+      href={whatsAppHref(WHATSAPP_PREFILL_HE)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="שיחה בוואטסאפ עם נציג מסודר"

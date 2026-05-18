@@ -46,13 +46,14 @@ export default function Hero() {
           className="relative inline-flex select-none items-center justify-center"
           aria-label="מסודר"
         >
-          {/* Soft light bloom behind the mark — contrast without a dark halo */}
+          {/* Radial vignette — softly fades the video behind the mark
+              so it never reads as a hard 'header bar'. */}
           <span
             aria-hidden
-            className="pointer-events-none absolute -inset-x-10 -inset-y-5 -z-10 sm:-inset-x-12 sm:-inset-y-6"
+            className="pointer-events-none absolute -inset-x-12 -inset-y-6 -z-10"
             style={{
               background:
-                "radial-gradient(ellipse 72% 80% at 50% 50%, rgba(250,246,239,0.38) 0%, rgba(250,246,239,0.12) 48%, transparent 74%)",
+                "radial-gradient(ellipse 65% 70% at 50% 50%, rgba(26,23,20,0.45) 0%, rgba(26,23,20,0.18) 45%, transparent 75%)",
             }}
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -62,7 +63,8 @@ export default function Hero() {
             className="
               pointer-events-none block h-20 w-auto
               brightness-0 invert
-              drop-shadow-[0_1px_2px_rgba(0,0,0,0.08)]
+              drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]
+              drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]
               sm:h-24 lg:h-28 xl:h-32
             "
             draggable={false}
@@ -181,12 +183,11 @@ export default function Hero() {
                 lg:[text-shadow:0_2px_4px_rgba(0,0,0,0.45),0_8px_28px_rgba(0,0,0,0.35)]
               "
             >
-              סוף לרצפות רטובות ולאוכל מפוזר בכל הבית.
+              כי נמאס לנקות את הרצפה שלוש פעמים ביום, ובואו נודה באמת — הם לא הולכים ללמוד לאכול בנימוס.
             </h1>
 
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink/75 sm:text-[17px] lg:text-cream/85 lg:text-lg lg:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
-              עמדת האכלה מעוצבת שעוצרת התזות, מנקזת מים ושומרת על הרצפה יבשה —
-              גם כשהכלב אוכל בתאבון.
+            עמדת האכלה חכמה שקולטת את כל השאריות וההתזות עוד לפני שהן מגיעות לרצפה שלכם.
             </p>
 
             <div className="mt-8 flex w-full flex-col gap-3 sm:max-w-[28rem] sm:flex-row sm:items-stretch sm:gap-3">

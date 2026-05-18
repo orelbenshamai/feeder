@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { whatsAppHref } from "@/lib/whatsapp";
 import Reveal from "./Reveal";
 import { LeadCaptureTrigger } from "./LeadCapture";
 
@@ -88,7 +89,7 @@ export default function FAQ() {
           <p className="section-lead mx-auto mt-6 max-w-xl text-center">
             ריכזנו את השאלות הכי שכיחות. עדיין מתלבטים?{" "}
             <a
-              href="https://wa.me/972500000000"
+              href={whatsAppHref()}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-ink underline decoration-clay decoration-2 underline-offset-[6px] transition hover:decoration-clay/80"

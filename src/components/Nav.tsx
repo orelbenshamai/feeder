@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { whatsAppHref } from "@/lib/whatsapp";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -52,7 +53,7 @@ export default function Nav() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <a
-            href="https://wa.me/972500000000"
+            href={whatsAppHref()}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="תמיכה בוואטסאפ"
@@ -118,7 +119,7 @@ export default function Nav() {
             <span aria-hidden>←</span>
           </a>
           <a
-            href="https://wa.me/972500000000"
+            href={whatsAppHref()}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm text-ink"

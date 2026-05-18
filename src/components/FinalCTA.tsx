@@ -1,3 +1,4 @@
+import { whatsAppHref } from "@/lib/whatsapp";
 import Reveal from "./Reveal";
 import { LeadCaptureTrigger } from "./LeadCapture";
 
@@ -186,7 +187,7 @@ export default function FinalCTA() {
               </svg>
             </LeadCaptureTrigger>
             <a
-              href="https://wa.me/972500000000"
+              href={whatsAppHref()}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-cream/20 px-6 text-[14px] font-medium text-cream/85 transition hover:bg-cream/10"

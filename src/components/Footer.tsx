@@ -1,3 +1,5 @@
+import { whatsAppHref } from "@/lib/whatsapp";
+
 export default function Footer() {
   return (
     <footer className="bg-ink text-cream/70 border-t border-cream/10">
@@ -10,7 +12,7 @@ export default function Footer() {
               מתאים לבית הישראלי המודרני.
             </p>
             <a
-              href="https://wa.me/972500000000"
+              href={whatsAppHref()}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-2 text-cream hover:text-cream/80 transition-colors"

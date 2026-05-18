@@ -350,20 +350,21 @@ export default function ProductBreakdownDiagram() {
       dir="rtl"
       className="
         relative isolate overflow-hidden bg-warm
-        pt-20 pb-20 sm:pt-24 sm:pb-24
-        lg:flex lg:h-[100svh] lg:max-h-[960px] lg:min-h-[760px] lg:flex-col lg:!py-8 xl:lg:!py-10
+        pt-24 pb-20 sm:pt-28 sm:pb-24
+        -mt-14 rounded-t-[2.75rem]
+        shadow-[0_-20px_56px_-22px_rgba(26,23,20,0.12),0_-1px_0_0_rgba(250,246,239,0.35)_inset]
+        sm:-mt-16 sm:rounded-t-[3rem]
+        lg:-mt-12 lg:flex lg:h-[100svh] lg:max-h-[960px] lg:min-h-[760px] lg:flex-col lg:rounded-t-[3rem] lg:!py-8 xl:lg:!py-10
       "
       aria-labelledby="breakdown-heading"
     >
-      {/* Smooth incoming bleed — dissolves cream above into warm below */}
+      {/* Decorative pill at the joint — soft metallic divider */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-24 sm:h-28 lg:h-32"
-        style={{
-          background:
-            "linear-gradient(to bottom, #f4efe6 0%, rgba(244,239,230,0.55) 35%, rgba(235,226,208,0.15) 75%, rgba(235,226,208,0) 100%)",
-        }}
-      />
+        className="pointer-events-none absolute left-1/2 top-6 z-10 -translate-x-1/2 sm:top-7"
+      >
+        <span className="block h-[3px] w-14 rounded-full bg-gradient-to-r from-transparent via-clay/35 to-transparent" />
+      </div>
 
       <div
         aria-hidden
@@ -378,9 +379,9 @@ export default function ProductBreakdownDiagram() {
         {/* ── Header ─ */}
         <header className="mx-auto max-w-2xl text-center">
           <h2 id="breakdown-heading" className="section-h2 mt-5 text-center">
-            כל שכבה מתכננת{" "}
+            כל שכבה תוכננה עבור {" "}
             <span className="relative inline-block whitespace-nowrap">
-              <span className="faq-shine">רצפה יבשה</span>
+              <span className="faq-shine">רצפה יבשה ונקייה</span>
               <svg
                 aria-hidden
                 viewBox="0 0 220 12"

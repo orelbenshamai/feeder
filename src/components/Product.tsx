@@ -10,6 +10,7 @@ import {
   savingsPercent,
   type SizeId,
 } from "@/lib/pricing";
+import { whatsAppHref } from "@/lib/whatsapp";
 
 const sizes: { id: SizeId; label: string; note: string }[] = [
   { id: "small", label: "קטן", note: "לחתולים וכלבים קטנים · מ־" + formatILS(PRICE_BY_SIZE.small) },
@@ -296,7 +297,7 @@ export default function Product() {
                   החזרות קלות
                 </span>
                 <a
-                  href="https://wa.me/972500000000"
+                  href={whatsAppHref()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 hover:text-ink transition-colors"
