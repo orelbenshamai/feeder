@@ -46,14 +46,13 @@ export default function Hero() {
           className="relative inline-flex select-none items-center justify-center"
           aria-label="מסודר"
         >
-          {/* Radial vignette — softly fades the video behind the mark
-              so it never reads as a hard 'header bar'. */}
+          {/* Soft light bloom behind the mark — contrast without a dark halo */}
           <span
             aria-hidden
-            className="pointer-events-none absolute -inset-x-12 -inset-y-6 -z-10"
+            className="pointer-events-none absolute -inset-x-10 -inset-y-5 -z-10 sm:-inset-x-12 sm:-inset-y-6"
             style={{
               background:
-                "radial-gradient(ellipse 65% 70% at 50% 50%, rgba(26,23,20,0.45) 0%, rgba(26,23,20,0.18) 45%, transparent 75%)",
+                "radial-gradient(ellipse 72% 80% at 50% 50%, rgba(250,246,239,0.38) 0%, rgba(250,246,239,0.12) 48%, transparent 74%)",
             }}
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -63,8 +62,7 @@ export default function Hero() {
             className="
               pointer-events-none block h-20 w-auto
               brightness-0 invert
-              drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]
-              drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]
+              drop-shadow-[0_1px_2px_rgba(0,0,0,0.08)]
               sm:h-24 lg:h-28 xl:h-32
             "
             draggable={false}
