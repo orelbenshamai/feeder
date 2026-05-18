@@ -10,10 +10,7 @@ export default function Home() {
   return (
     <LeadCaptureProvider>
       <WhatsAppFloat />
-      <main
-        id="main"
-        className="flex min-h-[100svh] flex-col pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0"
-      >
+      <main id="main" className="flex min-h-[100svh] flex-col">
         <Hero />
         <ProductBreakdownDiagram />
         <FAQ />

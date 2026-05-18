@@ -76,22 +76,40 @@ export default function FinalCTA() {
     <section
       id="final-cta"
       className="
-        section-pad relative isolate overflow-hidden text-cream
+        section-pad relative isolate overflow-hidden text-cream bg-ink
         -mt-10 rounded-t-[2.5rem]
         shadow-[0_-14px_44px_-14px_rgba(26,23,20,0.35),0_-2px_8px_-2px_rgba(26,23,20,0.12)]
         sm:-mt-12 sm:rounded-t-[3rem]
       "
       aria-labelledby="final-cta-heading"
     >
-      {/* ── Product-in-kitchen photo as the section background ───────────── */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/media/final_cta_img.png"
-        alt=""
+      {/* ── Product photo backdrop ─────────────────────────────────────────
+          Mobile: image acts as a hero band at the top of the section (52svh)
+                  so the landscape photo isn't violently cropped/zoomed.
+                  Below it, the section is solid bg-ink — clean and readable.
+          Desktop: image covers the entire section as a full backdrop.
+          ────────────────────────────────────────────────────────────────── */}
+      <div
         aria-hidden
-        className="absolute inset-0 -z-10 h-full w-full select-none object-cover object-center"
-        draggable={false}
-      />
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[52svh] sm:inset-0 sm:h-full"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/media/final_cta_img.png"
+          alt=""
+          className="h-full w-full select-none object-cover object-[center_30%] sm:object-center"
+          draggable={false}
+        />
+        {/* Mobile-only fade so the image bleeds into the dark section below */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-32 sm:hidden"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(26,23,20,1) 0%, rgba(26,23,20,0.6) 55%, rgba(26,23,20,0) 100%)",
+          }}
+        />
+      </div>
 
       {/* Decorative pill at the joint — matches the FAQ lifted-panel cue */}
       <div
@@ -101,13 +119,15 @@ export default function FinalCTA() {
         <span className="block h-1 w-12 rounded-full bg-cream/40" />
       </div>
 
-      {/* ── Ink scrim ─ keeps the white type fully legible against the photo. */}
+      {/* ── Ink scrim — keeps the white type legible against the photo.
+          Heavier on desktop (covers everything) than on mobile (mostly behind
+          content area below the image band). */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(26,23,20,0.78) 0%, rgba(26,23,20,0.82) 45%, rgba(26,23,20,0.9) 100%)",
+            "linear-gradient(180deg, rgba(26,23,20,0.45) 0%, rgba(26,23,20,0.75) 38%, rgba(26,23,20,0.92) 70%, rgba(26,23,20,0.95) 100%)",
         }}
       />
 

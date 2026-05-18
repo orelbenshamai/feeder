@@ -1,39 +1,9 @@
 import ProductIllustration from "./ProductIllustration";
+import HeroAutoplayVideo from "./HeroAutoplayVideo";
 import { LeadCaptureTrigger } from "./LeadCapture";
 
 /** Served from `public/media/ad1.mp4` (Turbopack cannot bundle `.mp4` imports). */
 const DEFAULT_HERO_VIDEO = "/media/ad1.mp4";
-
-function VideoEl({
-  src,
-  poster,
-  className,
-}: {
-  src: string;
-  poster?: string;
-  className?: string;
-}) {
-  return (
-    <video
-      className={className}
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      poster={poster}
-      width={1920}
-      height={1080}
-      disablePictureInPicture
-      disableRemotePlayback
-      aria-hidden
-    >
-      {/* H.264 baseline for broadest iOS/Android codec support */}
-      <source src={src} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-      <source src={src} type="video/mp4" />
-    </video>
-  );
-}
 
 export default function Hero() {
   const envSrc = process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim();
@@ -45,7 +15,7 @@ export default function Hero() {
     <section
       id="hero"
       className="
-        isolate overflow-hidden
+        relative isolate overflow-hidden
         flex min-h-[100svh] flex-col bg-soft
         lg:block lg:bg-transparent lg:relative
       "
@@ -102,53 +72,38 @@ export default function Hero() {
         </span>
       </header>
 
-      {/* ── MOBILE VIDEO — full-bleed, natural aspect, no crop ──────────── */}
-      {/*
-        Edge-to-edge hero. Slightly taller than 16:9 (3:2) so the clip reads
-        bigger on phones; landscape footage fills height and trims the sides.
-      */}
-      <div className="relative shrink-0 lg:hidden">
-        {/* Cinematic video as a rounded-bottom card with soft shadow —
-            replaces the previous hard horizontal edge. We deliberately
-            avoid a dark wrapper bg so sub-pixel anti-aliasing at the
-            rounded bottom edge can't read as a hairline black line. */}
+      {/* ── MOBILE VIDEO ───────────────────────────────────────────────────
+          Edge-to-edge, flat-bottom. Footage dissolves into the cream copy
+          area beneath it with a tall fade — no border, no rounded card,
+          no separate shadow blob. One continuous wash. */}
+      <div className="relative shrink-0 bg-soft lg:hidden">
         <div
-          aria-hidden
-          className="
-            relative w-full overflow-hidden bg-soft
-            rounded-b-[2rem] sm:rounded-b-[2.5rem]
-          "
-          style={{
-            WebkitMaskImage:
-              "-webkit-radial-gradient(white, black)" /* iOS Safari rounded-corner anti-alias fix */,
-          }}
+          className="relative w-full overflow-hidden bg-soft"
+          style={{ height: "min(100vw, 78svh)" }}
         >
-          {/* Tall frame; vertical focal point biased slightly down so object-cover
-              keeps the feeding station / floor edge visible above the curve. */}
+          {videoSrc ? (
+            <HeroAutoplayVideo
+              src={videoSrc}
+              poster={posterSrc}
+              className="absolute inset-0 h-full w-full object-cover object-[center_56%]"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
+              <ProductIllustration className="h-full w-full p-10 opacity-90" />
+            </div>
+          )}
+          {/* Short, subtle dissolve at the very bottom edge — kills the
+              hard line where the video meets the copy area without
+              washing out the footage. */}
           <div
-            className="relative w-full"
-            style={{ height: "min(100vw, 78svh)" }}
-          >
-            {videoSrc ? (
-              <VideoEl
-                src={videoSrc}
-                poster={posterSrc}
-                className="absolute inset-0 h-full w-full object-cover object-[center_56%]"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-b from-soft to-sand/60">
-                <ProductIllustration className="h-full w-full p-10 opacity-90" />
-              </div>
-            )}
-          </div>
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-12"
+            style={{
+              background:
+                "linear-gradient(to top, #f4efe6 0%, rgba(244,239,230,0.55) 55%, rgba(244,239,230,0) 100%)",
+            }}
+          />
         </div>
-        {/* Soft ambient shadow rendered as a separate blur below the card.
-            Keeps the dark glow away from the video edge so it never reads
-            as a hard "black line". */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-6 -bottom-6 h-10 rounded-full bg-ink/15 blur-2xl sm:inset-x-10"
-        />
       </div>
 
       {/* ── DESKTOP FULL-BLEED BACKDROP ───────────────────────────────── */}
@@ -158,7 +113,7 @@ export default function Hero() {
         aria-hidden
       >
         {videoSrc ? (
-          <VideoEl
+          <HeroAutoplayVideo
             src={videoSrc}
             poster={posterSrc}
             className="hero-video-scale absolute inset-0 z-0 h-full w-full object-cover object-[center_54%]"

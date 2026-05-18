@@ -153,7 +153,7 @@ export default function FAQ() {
           })}
         </ul>
 
-        <Reveal delay={200}>
+        {/* <Reveal delay={200}>
           <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-line/55 bg-soft/40 px-6 py-7 text-center sm:flex-row sm:justify-between sm:text-start">
             <div>
               <p className="font-display text-[17px] font-medium text-ink">
@@ -167,7 +167,7 @@ export default function FAQ() {
               שרינו לי 10% הנחה
             </LeadCaptureTrigger>
           </div>
-        </Reveal>
+        </Reveal> */}
       </div>
     </section>
   );

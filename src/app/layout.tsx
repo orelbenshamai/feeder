@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   title: "מסודר — רצפה יבשה, האכלה נקייה",
   description:
     "עמדת האכלה שמונעת רטיבות ופיזור מזון. שרינו הנחת השקה של 10%, משלוחים לכל הארץ ואחריות מלאה.",
+  icons: {
+    icon: [{ url: "/media/logo.png", type: "image/png" }],
+    apple: [{ url: "/media/logo.png", type: "image/png" }],
+    shortcut: "/media/logo.png",
+  },
   openGraph: {
     title: "מסודר — רצפה יבשה, האכלה נקייה",
     description:
