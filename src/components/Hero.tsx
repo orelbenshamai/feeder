@@ -15,7 +15,7 @@ export default function Hero() {
     <section
       id="hero"
       className="
-        relative isolate overflow-hidden
+        relative isolate overflow-x-clip
         flex min-h-[100svh] flex-col bg-soft
         lg:block lg:bg-transparent lg:relative
       "
@@ -26,11 +26,7 @@ export default function Hero() {
         סרטון לולאה: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      {/* ── HEADER ──────────────────────────────────────────────────────
-            Semantic, fully-transparent <header>. No top bar / block —
-            the video flows behind it edge-to-edge. A soft radial
-            vignette behind the logo (only) lifts contrast without
-            introducing a visible header surface. ───────────────────── */}
+      {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <header
         role="banner"
         dir="rtl"
@@ -42,34 +38,13 @@ export default function Hero() {
           lg:pt-6
         "
       >
-        <span
-          className="relative inline-flex select-none items-center justify-center"
-          aria-label="מסודר"
-        >
-          {/* Radial vignette — softly fades the video behind the mark
-              so it never reads as a hard 'header bar'. */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute -inset-x-12 -inset-y-6 -z-10"
-            style={{
-              background:
-                "radial-gradient(ellipse 65% 70% at 50% 50%, rgba(26,23,20,0.45) 0%, rgba(26,23,20,0.18) 45%, transparent 75%)",
-            }}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/media/logo.png"
-            alt="מסודר"
-            className="
-              pointer-events-none block h-20 w-auto
-              brightness-0 invert
-              drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]
-              drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]
-              sm:h-24 lg:h-28 xl:h-32
-            "
-            draggable={false}
-          />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/media/logo.png"
+          alt="מסודר"
+          className="pointer-events-none block h-20 w-auto select-none brightness-0 invert sm:h-24 lg:h-28 xl:h-32"
+          draggable={false}
+        />
       </header>
 
       {/* ── MOBILE VIDEO ───────────────────────────────────────────────────
@@ -168,29 +143,30 @@ export default function Hero() {
 
           <article
             dir="rtl"
-            className="hero-rise mx-auto flex w-full max-w-xl flex-col text-start lg:mx-0 lg:max-w-[28rem] xl:max-w-[30rem]"
+            className="hero-rise mx-auto flex w-full max-w-xl flex-col overflow-visible text-start lg:mx-0 lg:max-w-[34rem]"
           >
 
             <h1
               id="hero-heading"
               className="
-                font-display font-medium tracking-tight leading-[1.08]
-                text-[2rem] text-ink
-                mt-0 lg:mt-7
-                sm:text-[2.25rem] sm:leading-[1.07]
-                md:text-[2.6rem]
-                lg:text-[3.15rem] lg:leading-[1.02] lg:text-cream
-                lg:[text-shadow:0_2px_4px_rgba(0,0,0,0.45),0_8px_28px_rgba(0,0,0,0.35)]
+                font-display font-black tracking-tight
+                text-4xl leading-[1.2] text-ink
+                sm:text-5xl sm:leading-[1.18]
+                lg:text-6xl lg:leading-[1.15] lg:text-cream
+                lg:[text-shadow:0_2px_6px_rgba(0,0,0,0.5),0_10px_32px_rgba(0,0,0,0.38)]
               "
             >
-              כי נמאס לנקות את הרצפה שלוש פעמים ביום, ובואו נודה באמת — הם לא הולכים ללמוד לאכול בנימוס.
+              כי נמאס לנקות את הרצפה שלוש פעמים ביום, ובואו נודה באמת —
+              <br />
+              הם לא הולכים ללמוד לאכול בנימוס
             </h1>
 
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink/75 sm:text-[17px] lg:text-cream/85 lg:text-lg lg:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
-            עמדת האכלה חכמה שקולטת את כל השאריות וההתזות עוד לפני שהן מגיעות לרצפה שלכם.
+            {/* Hidden on mobile to keep the screen clean — visible from md up */}
+            <p className="hidden md:block mt-5 max-w-md text-base leading-relaxed text-stone/80 sm:text-lg lg:text-cream/80 lg:[text-shadow:0_1px_3px_rgba(0,0,0,0.4)]">
+              עמדת האכלה חכמה שקולטת את כל השאריות וההתזות עוד לפני שהן מגיעות לרצפה שלכם
             </p>
 
-            <div className="mt-8 flex w-full flex-col gap-3 sm:max-w-[28rem] sm:flex-row sm:items-stretch sm:gap-3">
+            <div className="mt-8 flex w-full flex-col gap-3 sm:max-w-[30rem] sm:flex-row sm:items-stretch sm:gap-3">
               <LeadCaptureTrigger
                 className="
                   group inline-flex min-h-[54px] w-full shrink-0 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold
@@ -199,7 +175,7 @@ export default function Hero() {
                   lg:bg-cream lg:text-ink lg:shadow-[0_24px_48px_-18px_rgba(0,0,0,0.55)] lg:hover:bg-white lg:hover:shadow-[0_28px_56px_-16px_rgba(0,0,0,0.5)]
                 "
               >
-                <span>שרינו לי 10% הנחה להשקה</span>
+                <span>שריינו לי 10 אחוז הנחה</span>
                 <svg
                   viewBox="0 0 20 20"
                   className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:-translate-x-1"
@@ -217,7 +193,7 @@ export default function Hero() {
               </LeadCaptureTrigger>
 
               <a
-                href="#product-breakdown"
+                href="#product-introduction"
                 className="
                   inline-flex min-h-[48px] w-full items-center justify-center rounded-full px-6 text-[15px] font-medium transition
                   sm:min-h-[54px] sm:flex-1
@@ -225,7 +201,7 @@ export default function Hero() {
                   lg:border-white/35 lg:bg-white/10 lg:text-cream lg:backdrop-blur-md lg:hover:bg-white/15
                 "
               >
-                איך זה עובד
+                הכירו את מסודר ↓
               </a>
             </div>
           </article>

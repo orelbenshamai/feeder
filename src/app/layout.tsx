@@ -21,9 +21,9 @@ export const metadata: Metadata = {
   description:
     "עמדת האכלה שמונעת רטיבות ופיזור מזון. שרינו הנחת השקה של 10%, משלוחים לכל הארץ ואחריות מלאה.",
   icons: {
-    icon: [{ url: "/media/logo.png", type: "image/png" }],
-    apple: [{ url: "/media/logo.png", type: "image/png" }],
-    shortcut: "/media/logo.png",
+    icon: [{ url: "/media/logo_sym.png", type: "image/png" }],
+    apple: [{ url: "/media/logo_sym.png", type: "image/png" }],
+    shortcut: "/media/logo_sym.png",
   },
   openGraph: {
     title: "מסודר — רצפה יבשה, האכלה נקייה",

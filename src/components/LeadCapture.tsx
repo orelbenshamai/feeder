@@ -347,7 +347,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                 שמרנו לכם מקום
               </p>
               <p className="mx-auto mt-3 max-w-xs text-[13.5px] leading-relaxed text-ink/70">
-                כשהאצווה הראשונה נוחתת — נשלח לכם את קוד ההנחה האישי בוואטסאפ.
+                כשהאצווה הראשונה נוחתת — נשלח לכם את קוד ההנחה האישי בוואטסאפ
               </p>
               <button
                 type="button"

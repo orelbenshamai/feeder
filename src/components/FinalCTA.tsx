@@ -155,15 +155,15 @@ export default function FinalCTA() {
           >
             המקום שלכם ברשימת ההשקה
             <br />
-            <span className="font-light text-cream/82">ממתין רק לפרטים.</span>
+            <span className="font-light text-cream/82">ממתין רק לפרטים</span>
           </h2>
         </Reveal>
 
         <Reveal delay={160}>
           <p className="section-lead section-lead-on-dark mx-auto mt-6 max-w-md">
-            30 שניות מילוי · עדכון אחד כשהמלאי מגיע · 10% הנחה אישית.
+            30 שניות מילוי · עדכון אחד כשהמלאי מגיע · 10% הנחה אישית
             <br className="hidden sm:block" />
-            <span className="text-cream/55">בלי ספאם, בלי חיוב מראש.</span>
+            <span className="text-cream/55">בלי ספאם, בלי חיוב מראש</span>
           </p>
         </Reveal>
 

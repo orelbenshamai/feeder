@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import ProductIntroduction from "@/components/ProductIntroduction";
 import ProductBreakdownDiagram from "@/components/ProductBreakdownDiagram";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
@@ -12,6 +13,7 @@ export default function Home() {
       <WhatsAppFloat />
       <main id="main" className="flex min-h-[100svh] flex-col">
         <Hero />
+        <ProductIntroduction />
         <ProductBreakdownDiagram />
         <FAQ />
         <FinalCTA />
