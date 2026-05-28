@@ -17,11 +17,21 @@ function HeroCopy({ headingId }: { headingId?: string }) {
             {...(headingId ? { id: headingId } : {})}
             className="
               font-display text-[clamp(1.45rem,5vw,3.5rem)] font-medium leading-[1.1] tracking-tight text-cream
+              max-lg:leading-[1.14]
               [text-shadow:0_2px_16px_rgba(0,0,0,0.35)]
             "
           >
-            כי נמאס לנקות את הרצפה —{" "}
-            <span className="text-cream/95">שלוש פעמים ביום</span>
+            <span className="lg:hidden">
+              כי נמאס לנקות
+              <br />
+              את הרצפה
+              <br />
+              <span className="text-cream/95">שלוש פעמים ביום</span>
+            </span>
+            <span className="hidden lg:inline">
+              כי נמאס לנקות את הרצפה{" "}
+              <span className="text-cream/95">שלוש פעמים ביום</span>
+            </span>
           </h1>
           <p className="mt-2 max-w-xl text-[11px] font-medium uppercase leading-relaxed tracking-[0.1em] text-cream/75 sm:mt-3 sm:text-[13px] sm:tracking-[0.12em]">
             עמדת האכלה חכמה שקולטת את כל השאריות וההתזות — רצפה יבשה, בלי
