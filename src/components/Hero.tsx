@@ -140,7 +140,7 @@ export default function Hero() {
 
       {/* ── MOBILE — video band + copy below (no full-screen crop) ─────── */}
       <div className="flex h-full flex-col overflow-hidden bg-ink lg:hidden">
-        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
+        <div className="relative h-[62svh] w-full shrink-0 overflow-hidden">
           <HeroMedia
             videoSrc={mobileVideoSrc}
             posterSrc={mobilePosterSrc}
@@ -155,7 +155,7 @@ export default function Hero() {
           />
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col justify-end px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:px-8">
+        <div className="flex min-h-0 flex-1 flex-col justify-end px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3 sm:px-8">
           <HeroCopy headingId="hero-heading" />
         </div>
       </div>

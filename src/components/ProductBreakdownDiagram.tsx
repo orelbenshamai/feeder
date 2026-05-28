@@ -173,6 +173,7 @@ const SWEEP_EXIT = "38vw";
 const sweepEase = cubicBezier(0.25, 0.46, 0.45, 0.94);
 const sweep = { duration: 1.45, ease: sweepEase };
 const sweepSoft = { duration: 1.2, ease: sweepEase };
+const fadeEase = "easeOut" as const;
 const slideIn = {
   hidden: { opacity: 0, x: SWEEP_FROM, scale: 0.985 },
   visible: {
@@ -328,7 +329,7 @@ function ArrowForLabel({
   };
   const arrowTransition = {
     pathLength: { duration: 1.35, ease: sweepEase, delay: 0.35 + orderIndex * 0.08 },
-    opacity: { duration: 0.55, ease: "easeOut", delay: 0.35 + orderIndex * 0.08 },
+    opacity: { duration: 0.55, ease: fadeEase, delay: 0.35 + orderIndex * 0.08 },
   };
 
   if (!visible) return null;
@@ -366,7 +367,7 @@ function ArrowForLabel({
         animate={{ pathLength: 1, opacity: 1 }}
         transition={{
           pathLength: { duration: 0.9, ease: sweepEase, delay: 0.55 + orderIndex * 0.08 },
-          opacity: { duration: 0.45, ease: "easeOut", delay: 0.55 + orderIndex * 0.08 },
+          opacity: { duration: 0.45, ease: fadeEase, delay: 0.55 + orderIndex * 0.08 },
         }}
         x1={`${x2}%`}
         y1={`${y1}%`}
@@ -660,7 +661,7 @@ const DesktopBreakdownPanel = memo(function DesktopBreakdownPanel({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.35 }}
+              transition={{ duration: 0.8, ease: fadeEase, delay: 0.35 }}
               className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse"
             >
               גללו ↓
