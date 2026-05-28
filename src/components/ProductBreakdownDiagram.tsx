@@ -5,8 +5,6 @@ import {
   AnimatePresence,
   cubicBezier,
   motion,
-  useMotionValueEvent,
-  useScroll,
 } from "framer-motion";
 import { useShineOnEnter } from "@/hooks/useShineOnEnter";
 
@@ -186,7 +184,6 @@ const slideIn = {
 /** Equal scroll segments — one complete step per segment, no partial reveals */
 const MOBILE_PHASE_BOUNDARIES = [0, 0.17, 0.34, 0.51, 0.68, 1] as const;
 const DESKTOP_PHASE_BOUNDARIES = [0, 0.1, 0.18, 0.34, 0.5, 0.66, 0.82, 1] as const;
-const MOBILE_SNAP_STEPS = MOBILE_PHASE_BOUNDARIES.length;
 
 function phaseFromBoundaries(
   p: number,
@@ -208,6 +205,40 @@ function desktopPhaseFromProgress(p: number): number {
 
 const MOBILE_MAX_PHASE = MOBILE_PHASE_BOUNDARIES.length - 1;
 const DESKTOP_MAX_PHASE = DESKTOP_PHASE_BOUNDARIES.length - 1;
+const STEP_COOLDOWN_MS = 480;
+const TOUCH_STEP_THRESHOLD_PX = 8;
+const SCROLL_DRIFT_PX = 24;
+
+function progressForPhase(
+  phase: number,
+  boundaries: readonly number[],
+): number {
+  const idx = Math.max(0, Math.min(phase, boundaries.length - 1));
+  return boundaries[idx] ?? 0;
+}
+
+function getBreakdownScrollRange(sectionEl: HTMLElement): {
+  sectionTop: number;
+  scrollRange: number;
+} {
+  const sectionTop = window.scrollY + sectionEl.getBoundingClientRect().top;
+  const scrollRange = Math.max(1, sectionEl.offsetHeight - window.innerHeight);
+  return { sectionTop, scrollRange };
+}
+
+function scrollYForProgress(sectionEl: HTMLElement, progress: number): number {
+  const { sectionTop, scrollRange } = getBreakdownScrollRange(sectionEl);
+  return sectionTop + progress * scrollRange;
+}
+
+function isBreakdownPinned(sectionEl: HTMLElement): boolean {
+  const rect = sectionEl.getBoundingClientRect();
+  return rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+}
+
+function isMobileBreakdownView(): boolean {
+  return window.matchMedia("(max-width: 1023px)").matches;
+}
 
 const stepTransition =
   "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
@@ -734,35 +765,14 @@ export default function ProductBreakdownDiagram() {
   const sectionRef = useRef<HTMLElement>(null);
   const mobilePhaseRef = useRef(0);
   const desktopPhaseRef = useRef(0);
+  const stepLockedUntilRef = useRef(0);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchSteppedRef = useRef(false);
+  const pinnedSyncedRef = useRef(false);
   const [mobilePhase, setMobilePhase] = useState(0);
   const [desktopPhase, setDesktopPhase] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-
-    if (isMobile) {
-      const next = mobilePhaseFromProgress(latest);
-      if (next === mobilePhaseRef.current) return;
-      mobilePhaseRef.current = next;
-      setMobilePhase(next);
-      return;
-    }
-
-    const next = desktopPhaseFromProgress(latest);
-    if (next === desktopPhaseRef.current) return;
-    desktopPhaseRef.current = next;
-    setDesktopPhase(next);
-  });
-
   useEffect(() => {
-    const latest = scrollYProgress.get();
-    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       mobilePhaseRef.current = MOBILE_MAX_PHASE;
       desktopPhaseRef.current = DESKTOP_MAX_PHASE;
@@ -771,16 +781,240 @@ export default function ProductBreakdownDiagram() {
       return;
     }
 
-    if (isMobile) {
-      const next = mobilePhaseFromProgress(latest);
-      mobilePhaseRef.current = next;
-      setMobilePhase(next);
-    } else {
-      const next = desktopPhaseFromProgress(latest);
-      desktopPhaseRef.current = next;
-      setDesktopPhase(next);
-    }
-  }, [scrollYProgress]);
+    const getContext = () => {
+      const isMobile = isMobileBreakdownView();
+      return {
+        isMobile,
+        boundaries: isMobile
+          ? MOBILE_PHASE_BOUNDARIES
+          : DESKTOP_PHASE_BOUNDARIES,
+        maxPhase: isMobile ? MOBILE_MAX_PHASE : DESKTOP_MAX_PHASE,
+        phaseRef: isMobile ? mobilePhaseRef : desktopPhaseRef,
+        setPhase: isMobile ? setMobilePhase : setDesktopPhase,
+        phaseFromProgress: isMobile
+          ? mobilePhaseFromProgress
+          : desktopPhaseFromProgress,
+      };
+    };
+
+    const goToPhase = (targetPhase: number, smooth: boolean) => {
+      const sectionEl = sectionRef.current;
+      if (!sectionEl) return;
+
+      const ctx = getContext();
+      const clamped = Math.max(0, Math.min(ctx.maxPhase, targetPhase));
+      const targetY = scrollYForProgress(
+        sectionEl,
+        progressForPhase(clamped, ctx.boundaries),
+      );
+      const drift = Math.abs(window.scrollY - targetY);
+      const phaseChanged = clamped !== ctx.phaseRef.current;
+
+      if (!phaseChanged && drift < 2) return;
+
+      ctx.phaseRef.current = clamped;
+      ctx.setPhase(clamped);
+
+      window.scrollTo({ top: targetY, behavior: smooth ? "smooth" : "auto" });
+      stepLockedUntilRef.current = Date.now() + STEP_COOLDOWN_MS;
+    };
+
+    const canStepInDirection = (goingDown: boolean) => {
+      const ctx = getContext();
+      const current = ctx.phaseRef.current;
+      if (goingDown && current >= ctx.maxPhase) return false;
+      if (!goingDown && current <= 0) return false;
+      return true;
+    };
+
+    const shouldCaptureScroll = (
+      sectionEl: HTMLElement,
+      goingDown: boolean,
+    ) => isBreakdownPinned(sectionEl) && canStepInDirection(goingDown);
+
+    const tryStep = (direction: 1 | -1): boolean => {
+      if (Date.now() < stepLockedUntilRef.current) return false;
+
+      const sectionEl = sectionRef.current;
+      if (!sectionEl || !isBreakdownPinned(sectionEl)) return false;
+
+      const ctx = getContext();
+      const next = ctx.phaseRef.current + direction;
+      if (next < 0 || next > ctx.maxPhase) return false;
+
+      goToPhase(next, true);
+      return true;
+    };
+
+    const syncOnPinEnter = () => {
+      const sectionEl = sectionRef.current;
+      if (!sectionEl) return;
+
+      if (!isBreakdownPinned(sectionEl)) {
+        pinnedSyncedRef.current = false;
+        return;
+      }
+
+      if (pinnedSyncedRef.current) return;
+      pinnedSyncedRef.current = true;
+
+      const ctx = getContext();
+      const { sectionTop, scrollRange } = getBreakdownScrollRange(sectionEl);
+      const progress = Math.max(
+        0,
+        Math.min(1, (window.scrollY - sectionTop) / scrollRange),
+      );
+      const phase = ctx.phaseFromProgress(progress);
+      goToPhase(phase, false);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      const sectionEl = sectionRef.current;
+      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
+
+      const goingDown = event.deltaY > 0;
+      if (event.deltaY === 0) return;
+
+      if (shouldCaptureScroll(sectionEl, goingDown)) {
+        event.preventDefault();
+      }
+
+      if (Date.now() < stepLockedUntilRef.current) {
+        const ctx = getContext();
+        if (
+          ctx.phaseRef.current > 0 &&
+          ctx.phaseRef.current < ctx.maxPhase
+        ) {
+          event.preventDefault();
+        }
+        return;
+      }
+      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
+
+      tryStep(goingDown ? 1 : -1);
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      touchStartYRef.current = event.touches[0]?.clientY ?? null;
+      touchSteppedRef.current = false;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const sectionEl = sectionRef.current;
+      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
+
+      const startY = touchStartYRef.current;
+      const currentY = event.touches[0]?.clientY;
+      if (startY == null || currentY == null) return;
+
+      const delta = startY - currentY;
+      const goingDown = delta > 0;
+
+      if (shouldCaptureScroll(sectionEl, goingDown)) {
+        event.preventDefault();
+      } else if (touchSteppedRef.current) {
+        event.preventDefault();
+      }
+
+      if (Date.now() < stepLockedUntilRef.current) {
+        const ctx = getContext();
+        if (
+          ctx.phaseRef.current > 0 &&
+          ctx.phaseRef.current < ctx.maxPhase
+        ) {
+          event.preventDefault();
+        }
+        return;
+      }
+      if (touchSteppedRef.current) return;
+      if (Math.abs(delta) < TOUCH_STEP_THRESHOLD_PX) return;
+      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
+
+      if (tryStep(goingDown ? 1 : -1)) {
+        touchSteppedRef.current = true;
+      }
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      const startY = touchStartYRef.current;
+      touchStartYRef.current = null;
+      if (startY == null || touchSteppedRef.current) {
+        touchSteppedRef.current = false;
+        return;
+      }
+
+      const sectionEl = sectionRef.current;
+      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
+
+      const endY = event.changedTouches[0]?.clientY ?? startY;
+      const delta = startY - endY;
+      if (Math.abs(delta) < TOUCH_STEP_THRESHOLD_PX) return;
+
+      const goingDown = delta > 0;
+      if (Date.now() < stepLockedUntilRef.current) return;
+      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
+
+      event.preventDefault();
+      tryStep(goingDown ? 1 : -1);
+      touchSteppedRef.current = false;
+    };
+
+    const onScroll = () => {
+      const sectionEl = sectionRef.current;
+      if (!sectionEl) return;
+
+      if (!isBreakdownPinned(sectionEl)) {
+        pinnedSyncedRef.current = false;
+        return;
+      }
+
+      if (!pinnedSyncedRef.current) {
+        pinnedSyncedRef.current = true;
+        syncOnPinEnter();
+        return;
+      }
+
+      if (Date.now() < stepLockedUntilRef.current) return;
+
+      const ctx = getContext();
+      const expectedY = scrollYForProgress(
+        sectionEl,
+        progressForPhase(ctx.phaseRef.current, ctx.boundaries),
+      );
+      const drift = window.scrollY - expectedY;
+
+      if (Math.abs(drift) <= SCROLL_DRIFT_PX) return;
+
+      if (drift > 0 && ctx.phaseRef.current < ctx.maxPhase) {
+        goToPhase(ctx.phaseRef.current + 1, true);
+        return;
+      }
+
+      if (drift < 0 && ctx.phaseRef.current > 0) {
+        goToPhase(ctx.phaseRef.current - 1, true);
+        return;
+      }
+
+      window.scrollTo({ top: expectedY, behavior: "smooth" });
+      stepLockedUntilRef.current = Date.now() + STEP_COOLDOWN_MS;
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: false });
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    syncOnPinEnter();
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   return (
     <section
@@ -794,17 +1028,6 @@ export default function ProductBreakdownDiagram() {
       "
       aria-labelledby="breakdown-heading"
     >
-      {Array.from({ length: MOBILE_SNAP_STEPS }, (_, i) => (
-        <div
-          key={`m-snap-${i}`}
-          data-breakdown-snap
-          aria-hidden
-          className="pointer-events-none absolute start-0 z-0 h-px w-full snap-start snap-always lg:hidden"
-          style={{
-            top: `${(i / (MOBILE_SNAP_STEPS - 1)) * 100}%`,
-          }}
-        />
-      ))}
 
       <div
         aria-hidden

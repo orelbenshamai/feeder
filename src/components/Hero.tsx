@@ -11,8 +11,8 @@ const HERO_SCRIM =
 function HeroCopy({ headingId }: { headingId?: string }) {
   return (
     <div className="mx-auto w-full max-w-7xl" dir="rtl">
-      <article className="hero-rise flex min-h-0 flex-col gap-3 max-lg:gap-3.5 lg:flex-row lg:items-end lg:justify-between lg:gap-8 xl:gap-16">
-        <div className="min-w-0 max-w-2xl">
+      <article className="hero-rise flex min-h-0 flex-col gap-3 max-lg:items-center max-lg:gap-3.5 lg:flex-row lg:items-end lg:justify-between lg:gap-8 xl:gap-16">
+        <div className="min-w-0 max-w-2xl max-lg:mx-auto max-lg:text-center lg:text-start">
           <h1
             {...(headingId ? { id: headingId } : {})}
             className="
@@ -35,7 +35,7 @@ function HeroCopy({ headingId }: { headingId?: string }) {
               <span className="text-cream/95">שלוש פעמים ביום</span>
             </span>
           </h1>
-          <p className="mt-3 max-w-xl text-[14px] font-medium leading-[1.55] tracking-[0.02em] text-cream/80 sm:mt-3.5 sm:text-[15px] lg:mt-4 lg:text-[16px] lg:leading-[1.65] lg:tracking-[0.03em]">
+          <p className="mt-3 max-w-xl max-lg:mx-auto text-center text-[14px] font-medium leading-[1.55] tracking-[0.02em] text-cream/80 sm:mt-3.5 sm:text-[15px] lg:mx-0 lg:mt-4 lg:text-start lg:text-[16px] lg:leading-[1.65] lg:tracking-[0.03em]">
             <span className="lg:hidden">
               עמדת האכלה חכמה שקולטת
               <br />

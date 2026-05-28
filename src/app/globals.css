@@ -42,18 +42,6 @@ html {
   }
 }
 
-/* Product breakdown — gentle step hints on mobile only */
-@media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
-  html {
-    scroll-snap-type: y proximity;
-  }
-
-  #product-breakdown [data-breakdown-snap] {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-}
-
 /* Anchor targets land below the rounded lifted panel + sticky bar.
    The first two sections opt out — snap handles their positioning. */
 section[id]:not(#hero):not(#product-introduction):not(#final-cta) {
