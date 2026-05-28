@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Heebo, Frank_Ruhl_Libre } from "next/font/google";
+import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
 
 const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["latin", "hebrew"],
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-const frankRuhl = Frank_Ruhl_Libre({
-  variable: "--font-frank",
-  subsets: ["latin", "hebrew"],
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "500", "700", "900"],
+  weight: ["800"],
 });
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export default function RootLayout({
     <html
       lang="he"
       dir="rtl"
-      className={`${heebo.variable} ${frankRuhl.variable} h-full antialiased`}
+      className={`${heebo.variable} ${nunito.variable} h-full antialiased font-sans`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink selection:bg-ink selection:text-cream">
         {children}

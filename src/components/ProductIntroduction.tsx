@@ -172,31 +172,22 @@ export default function ProductIntroduction() {
       dir="rtl"
       aria-labelledby="intro-heading"
       className="
-        relative isolate scroll-mt-0 bg-white
-        min-h-screen flex items-center
-        py-16 sm:py-20 lg:py-24
-        rounded-t-[2.5rem] sm:rounded-t-[3rem]
-        shadow-[0_-18px_50px_-20px_rgba(26,23,20,0.10)]
+        relative isolate scroll-mt-0 bg-cream
+        max-lg:pb-14 max-lg:pt-[calc(2.75rem+env(safe-area-inset-top,0px))]
+        py-12 sm:py-16
+        lg:min-h-screen lg:flex lg:items-center lg:py-24
+        shadow-[0_-18px_50px_-20px_rgba(31,58,82,0.10)]
       "
     >
-      {/* Decorative joint pill */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-6 z-10 -translate-x-1/2 sm:top-7"
-      >
-        <span className="block h-[3px] w-14 rounded-full bg-gradient-to-r from-transparent via-line to-transparent" />
-      </div>
 
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
         <motion.div
           variants={containerV}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          /* Image col first in DOM → mobile renders it at top of section.
-             On desktop (lg) the grid places it in the second visual column
-             via `order-last` so the copy reads first left-to-right (RTL). */
           className="
             grid grid-cols-1 items-center gap-10
+            max-lg:gap-11
             lg:grid-cols-2 lg:gap-16 xl:gap-24
           "
         >
@@ -204,16 +195,20 @@ export default function ProductIntroduction() {
           <motion.div
             variants={imgV}
             className="
-              relative mx-auto w-full max-w-[28rem]
-              lg:order-last lg:max-w-none
+              relative mx-auto w-full max-w-[min(100%,21rem)]
+              max-lg:max-w-none max-lg:rounded-[1.75rem] max-lg:bg-gradient-to-b
+              max-lg:from-[rgba(255,159,10,0.07)] max-lg:via-soft/70 max-lg:to-cream/40
+              max-lg:px-4 max-lg:py-7
+              sm:max-w-[22rem]
+              lg:order-last lg:max-w-none lg:rounded-none lg:bg-none lg:p-0
             "
           >
-            {/* Ambient glow behind image */}
             <span
               aria-hidden
               className="
                 pointer-events-none absolute inset-8 -z-10 rounded-3xl
-                bg-[radial-gradient(ellipse_80%_70%_at_50%_55%,rgba(181,137,111,0.12)_0%,transparent_70%)]
+                bg-[radial-gradient(ellipse_80%_70%_at_50%_55%,rgba(255,159,10,0.12)_0%,transparent_70%)]
+                max-lg:inset-4 max-lg:opacity-80
               "
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -221,35 +216,33 @@ export default function ProductIntroduction() {
               src="/media/product_image.png"
               alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
               className="
-                relative block w-full select-none rounded-2xl
-                shadow-[0_24px_64px_-24px_rgba(26,23,20,0.18)]
-                ring-1 ring-line/40
+                relative block w-full select-none rounded-3xl
+                shadow-[0_24px_60px_-28px_rgba(31,58,82,0.2)]
+                max-lg:ring-0
+                lg:rounded-2xl lg:shadow-[0_20px_50px_-22px_rgba(31,58,82,0.18)] lg:ring-1 lg:ring-line/40
               "
               draggable={false}
             />
           </motion.div>
 
           {/* ── Copy column ───────────────────────────────────────────── */}
-          <div className="flex flex-col gap-6">
-            {/* Eyebrow */}
-            <motion.div variants={headV}>
+          <div className="flex flex-col gap-5 max-lg:items-center max-lg:text-center sm:gap-6 lg:items-stretch lg:text-start">
+            <motion.div variants={headV} className="max-lg:flex max-lg:justify-center">
               <span className="section-eyebrow">הכירו את MESUDAR</span>
             </motion.div>
 
-            {/* Headline */}
             <motion.h2
               id="intro-heading"
               variants={headV}
-              className="section-h2 max-w-lg"
+              className="section-h2 max-w-lg text-[clamp(1.65rem,6.2vw,2.1rem)] leading-[1.1] max-lg:mx-auto max-lg:max-w-[15ch] lg:mx-0 lg:text-[2.95rem] lg:leading-[1.05]"
             >
               הפתרון המעוצב לסביבת האכלה{" "}
               <span className="text-clay">נקייה ויבשה</span>
             </motion.h2>
 
-            {/* Intro paragraph */}
             <motion.p
               variants={headV}
-              className="section-lead max-w-md"
+              className="section-lead max-w-md text-[15px] leading-[1.72] max-lg:mx-auto sm:text-[17px] sm:leading-[1.7] lg:mx-0"
             >
               אם אתם מכירים את התמונה — קערה שמתהפכת, מים שמתפשטים, מזון
               שמגיע לפינות. מסודר תוכננה כדי לפתור בדיוק את זה: פלטפורמה
@@ -257,41 +250,42 @@ export default function ProductIntroduction() {
               בעיצוב שמתאים לבית הישראלי המודרני.
             </motion.p>
 
-            {/* Feature cards */}
             <motion.ul
               variants={containerV}
-              className="mt-2 flex flex-col gap-3"
+              className="mt-1 flex w-full flex-col gap-3 max-lg:mt-2 sm:mt-2 sm:gap-3"
             >
               {features.map((f) => (
                 <motion.li
                   key={f.title}
                   variants={cardV}
                   className="
-                    group flex items-start gap-4
-                    rounded-2xl border border-line/60 bg-soft/60 px-5 py-4
+                    group flex items-start gap-4 rounded-2xl border px-4 py-4
                     transition-all duration-300
-                    hover:border-clay/30 hover:bg-soft hover:shadow-[0_8px_24px_-10px_rgba(181,137,111,0.18)]
+                    max-lg:w-full max-lg:border-r-[3px] max-lg:border-r-clay/45 max-lg:text-start
+                    border-line/60 bg-white/85 shadow-[0_4px_20px_-12px_rgba(31,58,82,0.1)]
+                    lg:border-ink/[0.08] lg:bg-ink lg:px-5 lg:py-4 lg:shadow-none
+                    hover:border-clay/35 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.2)]
+                    lg:hover:border-clay/40 lg:hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.25)]
                   "
                 >
-                  {/* Icon badge */}
                   <span
                     className="
-                      mt-0.5 grid h-10 w-10 shrink-0 place-items-center
-                      rounded-xl bg-white text-clay ring-1 ring-line/50
-                      shadow-[0_4px_12px_-4px_rgba(181,137,111,0.22)]
+                      mt-0.5 grid h-11 w-11 shrink-0 place-items-center
+                      rounded-xl bg-clay/15 text-clay ring-1 ring-clay/25
+                      shadow-[0_4px_12px_-4px_rgba(255,159,10,0.30)]
                       transition-transform duration-300 group-hover:scale-105
+                      lg:h-10 lg:w-10
                     "
                     aria-hidden
                   >
                     {f.icon}
                   </span>
 
-                  {/* Text */}
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-[16px] font-semibold leading-snug text-ink sm:text-[17px]">
+                    <p className="font-display text-[16px] font-semibold leading-snug text-ink max-lg:leading-[1.35] lg:text-[17px] lg:text-cream">
                       {f.title}
                     </p>
-                    <p className="mt-1 text-[13.5px] leading-relaxed text-ink/65 sm:text-[14px]">
+                    <p className="mt-1.5 text-[14px] leading-[1.65] text-ink/72 lg:mt-1 lg:text-[14px] lg:text-cream/60">
                       {f.desc}
                     </p>
                   </div>

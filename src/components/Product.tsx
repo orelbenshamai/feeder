@@ -37,9 +37,9 @@ export default function Product() {
 
   const variantTone =
     color === "ink"
-      ? "from-[#2A2520] to-[#0F0D0B] text-cream"
+      ? "from-[#1F3A52] to-[#0D2438] text-cream"
       : color === "stone"
-        ? "from-[#A8A29A] to-[#7C766E] text-cream"
+        ? "from-[#52728C] to-[#3D5A70] text-cream"
         : "from-soft to-sand text-ink";
 
   return (
@@ -48,7 +48,7 @@ export default function Product() {
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           <Reveal className="lg:col-span-7 lg:sticky lg:top-24">
             <div
-              className={`relative rounded-[36px] overflow-hidden aspect-[4/5] sm:aspect-[5/5] bg-gradient-to-b ${variantTone} transition-colors duration-500 shadow-[0_30px_80px_-30px_rgba(26,23,20,0.25)]`}
+              className={`relative rounded-[36px] overflow-hidden aspect-[4/5] sm:aspect-[5/5] bg-gradient-to-b ${variantTone} transition-colors duration-500 shadow-[0_30px_80px_-30px_rgba(31,58,82,0.25)]`}
             >
               <div className="absolute inset-0 noise opacity-25" />
               <ProductIllustration
@@ -71,9 +71,9 @@ export default function Product() {
                   aria-label={`לצפות בצבע ${c.label}`}
                   className={`relative aspect-square rounded-2xl bg-gradient-to-br ${
                     c.id === "ink"
-                      ? "from-[#2A2520] to-[#0F0D0B]"
+                      ? "from-[#1F3A52] to-[#0D2438]"
                       : c.id === "stone"
-                        ? "from-[#A8A29A] to-[#7C766E]"
+                        ? "from-[#52728C] to-[#3D5A70]"
                         : "from-soft to-sand"
                   } border ${
                     color === c.id ? "border-ink" : "border-line/70"

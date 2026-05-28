@@ -1,24 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-cream: #faf6ef;
-  --color-soft: #f4efe6;
-  --color-sand: #ece3d4;
-  --color-line: #e5ddd0;
-  --color-stone: #8b847a;
-  --color-ink: #1a1714;
-  --color-clay: #b5896f;
+  --color-cream: #F7F5F0;
+  --color-soft: #EEF2F7;
+  --color-sand: #D5E2EE;
+  --color-line: #C4D4E2;
+  --color-stone: #52728C;
+  --color-ink: #1F3A52;
+  --color-clay: #FF9F0A;
 
-  /* Transition tone — sampled from the warm tile highlights in the
-     hero video, used by the section directly under the video so the
-     two surfaces read as a single continuous space. */
-  --color-warm: #ebe2d0;
+  /* Transition tone — used for subtle section alternation */
+  --color-warm: #E4EEF7;
 
   --color-background: var(--color-cream);
   --color-foreground: var(--color-ink);
 
   --font-sans: var(--font-heebo);
-  --font-display: var(--font-frank);
+  --font-display: var(--font-heebo);
 }
 
 :root {
@@ -29,14 +27,49 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Anchor targets land below the rounded lifted panel + sticky bar */
-section[id] {
+/* Snap the first two sections so the viewport is never caught halfway
+   between Hero and ProductIntroduction. proximity = snaps when near a
+   snap point, not forced on every tiny scroll gesture. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  #hero,
+  #product-introduction {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+/* Anchor targets land below the rounded lifted panel + sticky bar.
+   The first two sections opt out — snap handles their positioning. */
+section[id]:not(#hero):not(#product-introduction) {
   scroll-margin-top: 5rem;
+}
+
+@keyframes breakdown-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.breakdown-step-in {
+  animation: breakdown-step-in 0.28s ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .breakdown-step-in {
+    animation: none;
   }
 }
 
@@ -60,7 +93,7 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-frank), "Frank Ruhl Libre", ui-serif, Georgia, serif;
+  font-family: var(--font-heebo), ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.01em;
   font-feature-settings: "kern", "liga";
 }
@@ -109,21 +142,21 @@ body {
   align-items: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgba(181, 137, 111, 0.3);
-  background-color: rgba(181, 137, 111, 0.08);
+  border: 1px solid rgba(255, 159, 10, 0.3);
+  background-color: rgba(255, 159, 10, 0.08);
   padding: 0.375rem 0.875rem;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-clay);
-  box-shadow: 0 6px 18px -10px rgba(181, 137, 111, 0.45);
+  box-shadow: 0 6px 18px -10px rgba(255, 159, 10, 0.45);
 }
 
 .section-eyebrow-on-dark {
-  border-color: rgba(250, 246, 239, 0.18);
-  background-color: rgba(250, 246, 239, 0.08);
-  color: rgba(250, 246, 239, 0.85);
+  border-color: rgba(247, 245, 240, 0.18);
+  background-color: rgba(247, 245, 240, 0.08);
+  color: rgba(247, 245, 240, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.45);
@@ -131,8 +164,8 @@ body {
 
 /* 3. Section headline (h2) — single type ramp across the page */
 .section-h2 {
-  font-family: var(--font-frank), "Frank Ruhl Libre", ui-serif, Georgia, serif;
-  font-weight: 500;
+  font-family: var(--font-heebo), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
   font-size: 2.1rem;
   line-height: 1.05;
   letter-spacing: -0.015em;
@@ -158,7 +191,7 @@ body {
 .section-lead {
   font-size: 16.5px;
   line-height: 1.7;
-  color: rgba(26, 23, 20, 0.75);
+  color: rgba(31, 58, 82, 0.75);
 }
 @media (min-width: 640px) {
   .section-lead {
@@ -167,12 +200,12 @@ body {
 }
 
 .section-lead-on-dark {
-  color: rgba(250, 246, 239, 0.72);
+  color: rgba(247, 245, 240, 0.72);
 }
 
 /* 5. Body copy in cards — replaces the old text-stone for stronger contrast */
 .body-on-light {
-  color: rgba(26, 23, 20, 0.78);
+  color: rgba(31, 58, 82, 0.78);
 }
 
 .reveal {
@@ -257,9 +290,11 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-video-scale {
-    transform: scale(1.02);
-    transform-origin: center 58%;
+  @media (min-width: 1024px) {
+    .hero-video-scale {
+      transform: scale(1.02);
+      transform-origin: center 58%;
+    }
   }
 
   .hero-scroll-cue {
@@ -295,10 +330,10 @@ body {
 
 .noise {
   background-image: radial-gradient(
-      rgba(26, 23, 20, 0.05) 1px,
+      rgba(31, 58, 82, 0.05) 1px,
       transparent 1px
     ),
-    radial-gradient(rgba(26, 23, 20, 0.03) 1px, transparent 1px);
+    radial-gradient(rgba(31, 58, 82, 0.03) 1px, transparent 1px);
   background-size: 3px 3px, 7px 7px;
   background-position: 0 0, 1px 2px;
 }
@@ -314,19 +349,25 @@ body {
 /* FAQ headline: subtle clay shimmer sweeping across the highlight word */
 @keyframes faq-shine {
   0% {
-    background-position: 200% 0;
+    background-position: 0% 0;
   }
   100% {
-    background-position: -100% 0;
+    background-position: 100% 0;
   }
 }
 
+/* Base state: solid clay, no animation yet */
 .faq-shine {
+  color: var(--color-clay);
+}
+
+/* Animation fires once, only after JS adds .shine-active */
+.faq-shine.shine-active {
   background-image: linear-gradient(
     100deg,
     var(--color-clay) 0%,
     var(--color-clay) 38%,
-    #f0d4bd 50%,
+    #FFD97A 50%,
     var(--color-clay) 62%,
     var(--color-clay) 100%
   );
@@ -335,11 +376,11 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: faq-shine 5.5s linear infinite;
+  animation: faq-shine 1.4s cubic-bezier(0.4, 0, 0.2, 1) 1 forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .faq-shine {
+  .faq-shine.shine-active {
     animation: none;
     background-image: none;
     color: var(--color-clay);

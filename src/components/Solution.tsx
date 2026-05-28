@@ -3,7 +3,7 @@ import ProductIllustration from "./ProductIllustration";
 
 export default function Solution() {
   return (
-    <section className="py-20 sm:py-28 lg:py-36 bg-ink text-cream rounded-t-[40px] sm:rounded-t-[60px] -mt-8 sm:-mt-12 relative overflow-hidden">
+    <section className="py-20 sm:py-28 lg:py-36 bg-ink text-cream relative overflow-hidden">
       <div
         aria-hidden
         className="absolute inset-0 noise opacity-[0.08] pointer-events-none"
@@ -60,14 +60,14 @@ export default function Solution() {
           <div className="lg:col-span-7 order-1 lg:order-2">
             <div className="grid grid-cols-2 gap-3 sm:gap-5">
               <Reveal>
-                <figure className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden aspect-[3/4] bg-gradient-to-br from-[#3A322A] to-[#1F1A16] border border-cream/10">
+                <figure className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden aspect-[3/4] bg-gradient-to-br from-[#1F3A52] to-[#0D2438] border border-cream/10">
                   <div className="absolute inset-0 noise opacity-20" />
                   <svg
                     viewBox="0 0 200 260"
                     className="absolute inset-0 h-full w-full"
                     aria-hidden
                   >
-                    <ellipse cx="60" cy="200" rx="38" ry="6" fill="#0B0907" />
+                    <ellipse cx="60" cy="200" rx="38" ry="6" fill="#050D14" />
                     <path
                       d="M30 200 Q40 150 60 150 Q80 150 90 200 Z"
                       fill="#5A4434"

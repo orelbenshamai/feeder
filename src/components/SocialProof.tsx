@@ -17,7 +17,7 @@ const reviews: Review[] = [
     pet: "מיקה · בורדר קולי",
     rating: 5,
     initials: "ד״מ",
-    tone: "from-[#E5DDD0] to-[#CFC2AE]",
+    tone: "from-[#D5E2EE] to-[#C0D0DC]",
     body: "הרצפה סוף סוף נשארת יבשה ולא צריך לנגב כל פעם. וגם פשוט נראה יפה במטבח, בלי להתפשר.",
   },
   {
@@ -26,7 +26,7 @@ const reviews: Review[] = [
     pet: "שני חתולים",
     rating: 5,
     initials: "י״א",
-    tone: "from-[#F2EDE5] to-[#E0D5C2]",
+    tone: "from-[#E0EBF4] to-[#CDDBE8]",
     body: "התלבטתי לגבי המחיר, אבל אחרי שלושה שבועות אני מבין למה זה שווה. אין יותר שלוליות מסביב.",
   },
   {
@@ -35,7 +35,7 @@ const reviews: Review[] = [
     pet: "לונה · בולדוג צרפתי",
     rating: 5,
     initials: "נ״כ",
-    tone: "from-[#EFE7DA] to-[#D9CCB3]",
+    tone: "from-[#DDEAF4] to-[#C8D9E8]",
     body: "לונה אוכלת לאט יותר והתנוחה שלה השתפרה. נראה כמו פריט עיצוב, לא כמו אביזר לכלב.",
   },
   {
@@ -44,7 +44,7 @@ const reviews: Review[] = [
     pet: "לברדור מבוגר",
     rating: 5,
     initials: "ד״ר",
-    tone: "from-[#E8DFD0] to-[#C8B79A]",
+    tone: "from-[#D8E8F3] to-[#B8CCDA]",
     body: "הוטרינר המליץ על האכלה מוגבהת בגלל המפרקים. זה היחיד שלא הפריע לי להשאיר במטבח.",
   },
   {
@@ -53,7 +53,7 @@ const reviews: Review[] = [
     pet: "שני פאגים",
     rating: 5,
     initials: "מ״ל",
-    tone: "from-[#F0E8D9] to-[#D4C3A6]",
+    tone: "from-[#E4EEF8] to-[#CBDCE8]",
     body: "יציב, שקט, והרגליות הסיליקון לא משאירות סימנים על הפרקט. שווה כל שקל.",
   },
   {
@@ -62,7 +62,7 @@ const reviews: Review[] = [
     pet: "קוקו · גולדן",
     rating: 5,
     initials: "א״ב",
-    tone: "from-[#EFE6D5] to-[#D2BFA0]",
+    tone: "from-[#E0EBF5] to-[#C5D6E5]",
     body: "סוף סוף עמדת האכלה שלא נראית כמו צעצוע. אשתי אישרה כבר ביום הראשון.",
   },
 ];

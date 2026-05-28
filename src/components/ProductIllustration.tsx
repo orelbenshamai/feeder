@@ -7,9 +7,9 @@ export default function ProductIllustration({
   className = "",
   variant = "light",
 }: Props) {
-  const stand = variant === "dark" ? "#1A1714" : "#2A2520";
-  const bowl = variant === "dark" ? "#E5DDD0" : "#FAF6EF";
-  const bowlEdge = variant === "dark" ? "#B5896F" : "#B5896F";
+  const stand = "#1F3A52";
+  const bowl = variant === "dark" ? "#D5E2EE" : "#F7F5F0";
+  const bowlEdge = variant === "dark" ? "#FF9F0A" : "#FF9F0A";
   const tray = variant === "dark" ? "#3A3530" : "#3A3530";
   const food = "#C99668";
 
@@ -23,8 +23,8 @@ export default function ProductIllustration({
     >
       <defs>
         <radialGradient id="floor-shadow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(26,23,20,0.18)" />
-          <stop offset="100%" stopColor="rgba(26,23,20,0)" />
+          <stop offset="0%" stopColor="rgba(31,58,82,0.18)" />
+          <stop offset="100%" stopColor="rgba(31,58,82,0)" />
         </radialGradient>
         <linearGradient id="bowl-gradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={bowl} stopOpacity="1" />
@@ -36,7 +36,7 @@ export default function ProductIllustration({
         </linearGradient>
         <linearGradient id="tray-gradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={tray} />
-          <stop offset="100%" stopColor="#1A1714" />
+          <stop offset="100%" stopColor="#1F3A52" />
         </linearGradient>
       </defs>
 
@@ -84,7 +84,7 @@ export default function ProductIllustration({
           strokeWidth="1"
         />
         {/* Top surface */}
-        <ellipse cx="300" cy="240" rx="170" ry="18" fill="#2A2520" />
+        <ellipse cx="300" cy="240" rx="170" ry="18" fill="#0D2438" />
         <ellipse cx="300" cy="237" rx="170" ry="18" fill={stand} />
       </g>
 

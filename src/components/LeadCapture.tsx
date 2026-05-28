@@ -173,8 +173,8 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
         aria-labelledby={titleId}
         className="
           relative z-[101] w-full bg-cream
-          rounded-t-3xl shadow-[0_-20px_80px_-24px_rgba(26,23,20,0.35)] ring-1 ring-black/10
-          sm:max-w-[26rem] sm:rounded-3xl sm:shadow-[0_40px_80px_-30px_rgba(26,23,20,0.45)]
+          rounded-t-3xl shadow-[0_-20px_80px_-24px_rgba(31,58,82,0.35)] ring-1 ring-black/10
+          sm:max-w-[26rem] sm:rounded-3xl sm:shadow-[0_40px_80px_-30px_rgba(31,58,82,0.45)]
         "
       >
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
@@ -283,10 +283,10 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                   disabled={loading}
                   className="
                     group mt-1 inline-flex min-h-[54px] w-full items-center
-                    justify-center gap-2 rounded-full bg-ink px-6 text-[15px]
-                    font-semibold text-cream
-                    shadow-[0_18px_44px_-22px_rgba(26,23,20,0.55)]
-                    transition hover:bg-ink/92 active:scale-[0.99]
+                    justify-center gap-2 rounded-full bg-clay px-6 text-[15px]
+                    font-semibold text-ink
+                    shadow-[0_18px_44px_-22px_rgba(255,159,10,0.55)]
+                    transition hover:bg-clay/90 active:scale-[0.99]
                     disabled:opacity-60 disabled:cursor-not-allowed
                   "
                 >

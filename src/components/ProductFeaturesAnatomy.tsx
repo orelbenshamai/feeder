@@ -126,7 +126,7 @@ export default function ProductFeaturesAnatomy() {
         >
           <div dir="rtl" className="order-2 lg:order-1">
             <div
-              className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-soft via-cream to-sand/80 shadow-[0_24px_70px_-36px_rgba(26,23,20,0.28)] ring-1 ring-black/[0.06] lg:mx-0 lg:max-w-none lg:aspect-[10/11] lg:sticky lg:top-28"
+              className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-soft via-cream to-sand/80 shadow-[0_24px_70px_-36px_rgba(31,58,82,0.28)] ring-1 ring-black/[0.06] lg:mx-0 lg:max-w-none lg:aspect-[10/11] lg:sticky lg:top-28"
               role="img"
               aria-label="תצוגת עמדת ההאכלה — תמונת מוצר תיכנס בקרוב"
             >
@@ -187,7 +187,7 @@ export default function ProductFeaturesAnatomy() {
             <ul className="mt-9 flex flex-col gap-3.5 sm:gap-4">
               {features.map((f, i) => (
                 <li key={f.title}>
-                  <div className="group relative flex gap-4 rounded-2xl border border-line/55 bg-cream/95 p-5 shadow-[0_1px_0_rgba(26,23,20,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-clay/30 hover:bg-cream hover:shadow-[0_18px_40px_-24px_rgba(26,23,20,0.18)] sm:p-6">
+                  <div className="group relative flex gap-4 rounded-2xl border border-line/55 bg-cream/95 p-5 shadow-[0_1px_0_rgba(31,58,82,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-clay/30 hover:bg-cream hover:shadow-[0_18px_40px_-24px_rgba(31,58,82,0.18)] sm:p-6">
                     <span
                       className="absolute top-5 start-5 text-[10px] font-semibold tracking-[0.16em] text-stone/55 sm:start-6"
                       aria-hidden

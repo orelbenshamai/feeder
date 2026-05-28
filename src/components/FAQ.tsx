@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { whatsAppHref } from "@/lib/whatsapp";
+import { useShineOnEnter } from "@/hooks/useShineOnEnter";
 import Reveal from "./Reveal";
 import { LeadCaptureTrigger } from "./LeadCapture";
 
@@ -30,42 +31,37 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
+  const shineRef = useShineOnEnter();
 
   return (
     <section
       id="faq"
       className="
         section-pad relative isolate overflow-hidden bg-cream
-        -mt-10 rounded-t-[2.5rem]
-        shadow-[0_-14px_44px_-14px_rgba(26,23,20,0.18),0_-2px_8px_-2px_rgba(26,23,20,0.06)]
-        sm:-mt-12 sm:rounded-t-[3rem]
+        max-sm:py-12
+        mt-0
       "
     >
-      {/* Tiny decorative pill at the joint — premium 'lifted panel' cue */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-5 z-10 -translate-x-1/2 sm:top-6"
-      >
-        <span className="block h-1 w-12 rounded-full bg-clay/40" />
-      </div>
 
       {/* Soft ambient glow behind the headline — pulls the eye in */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[420px] max-w-3xl"
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[280px] max-w-3xl sm:h-[420px]"
         style={{
           background:
-            "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(181,137,111,0.16) 0%, transparent 70%)",
+            "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,159,10,0.16) 0%, transparent 70%)",
         }}
       />
 
-      <div className="relative mx-auto max-w-3xl px-5 sm:px-8">
+      <div className="relative mx-auto max-w-3xl px-4 sm:px-8">
 
         <Reveal delay={80}>
-          <h2 className="section-h2 mt-5 text-center">
+          <h2 className="section-h2 mt-2 max-w-[16ch] text-center max-sm:mx-auto max-sm:text-[clamp(1.65rem,5.8vw,2.1rem)] max-sm:leading-[1.1] sm:mt-5 sm:max-w-none">
             כל מה שרציתם לדעת{" "}
             <span className="relative inline-block whitespace-nowrap">
-              <span className="faq-shine">לפני שמזמינים</span>
+              <span ref={shineRef} className="faq-shine">
+                לפני שמזמינים
+              </span>
               <svg
                 aria-hidden
                 viewBox="0 0 240 14"
@@ -86,7 +82,7 @@ export default function FAQ() {
         </Reveal>
 
         <Reveal delay={140}>
-          <p className="section-lead mx-auto mt-6 max-w-xl text-center">
+          <p className="section-lead mx-auto mt-4 max-w-xl text-center max-sm:text-[15px] max-sm:leading-[1.65] sm:mt-6">
             ריכזנו את השאלות הכי שכיחות. עדיין מתלבטים?{" "}
             <a
               href={whatsAppHref()}
@@ -100,24 +96,24 @@ export default function FAQ() {
           </p>
         </Reveal>
 
-        <ul className="mt-12 overflow-hidden rounded-3xl border border-line/70 bg-cream shadow-[0_10px_40px_-20px_rgba(26,23,20,0.18)]">
+        <ul className="mt-8 flex flex-col gap-2.5 sm:mt-12 sm:gap-0 sm:overflow-hidden sm:rounded-3xl sm:border sm:border-line/70 sm:bg-cream sm:shadow-[0_10px_40px_-20px_rgba(31,58,82,0.18)]">
           {faqs.map((f, i) => {
             const isOpen = open === i;
             return (
               <Reveal as="li" key={f.q} delay={i * 40}>
                 <div
-                  className={`${i > 0 ? "border-t border-line/70" : ""} transition-colors duration-300 ${
-                    isOpen ? "bg-soft/45" : ""
-                  }`}
+                  className={`overflow-hidden rounded-2xl border border-line/60 bg-white/90 shadow-[0_4px_18px_-12px_rgba(31,58,82,0.08)] transition-colors duration-300 sm:rounded-none sm:border-0 sm:border-line/70 sm:bg-transparent sm:shadow-none ${
+                    i > 0 ? "sm:border-t" : ""
+                  } ${isOpen ? "border-clay/25 bg-soft/55 sm:border-line/70 sm:bg-soft/45" : ""}`}
                 >
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     onClick={() => setOpen(isOpen ? null : i)}
-                    className="flex w-full items-start justify-between gap-5 px-5 py-6 text-start transition hover:bg-soft/40 sm:px-7 sm:py-7"
+                    className="flex w-full items-start justify-between gap-3 px-4 py-4 text-start transition hover:bg-soft/40 sm:gap-5 sm:px-7 sm:py-7"
                   >
                     <span
-                      className={`font-display text-[18.5px] font-semibold leading-snug tracking-tight transition-colors sm:text-[21px] ${
+                      className={`font-display text-[16px] font-semibold leading-snug tracking-tight transition-colors sm:text-[21px] ${
                         isOpen ? "text-ink" : "text-ink/90"
                       }`}
                     >
@@ -125,14 +121,14 @@ export default function FAQ() {
                     </span>
                     <span
                       aria-hidden
-                      className={`relative mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-full transition-all duration-300 sm:h-10 sm:w-10 ${
+                      className={`relative mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all duration-300 sm:mt-1 sm:h-10 sm:w-10 ${
                         isOpen
-                          ? "rotate-45 bg-clay text-cream shadow-[0_6px_16px_-6px_rgba(181,137,111,0.6)]"
+                          ? "rotate-45 bg-clay text-cream shadow-[0_6px_16px_-6px_rgba(255,159,10,0.6)]"
                           : "bg-soft text-ink ring-1 ring-line/70"
                       }`}
                     >
-                      <span className="absolute h-4 w-[2px] bg-current" />
-                      <span className="absolute h-[2px] w-4 bg-current" />
+                      <span className="absolute h-3.5 w-[2px] bg-current sm:h-4" />
+                      <span className="absolute h-[2px] w-3.5 bg-current sm:w-4" />
                     </span>
                   </button>
                   <div
@@ -143,7 +139,7 @@ export default function FAQ() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-7 text-[16px] leading-[1.75] text-ink/80 sm:px-7 sm:pb-7 sm:text-[17px]">
+                      <p className="px-4 pb-5 text-[15px] leading-[1.7] text-ink/80 sm:px-7 sm:pb-7 sm:text-[17px] sm:leading-[1.75]">
                         {f.a}
                       </p>
                     </div>
