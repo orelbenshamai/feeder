@@ -167,7 +167,6 @@ const ORDERED_LABELS = [...LABELS].sort((a, b) => a.index - b.index);
 const TAIL_RIGHT = 80;
 const TAIL_LEFT = 20;
 
-/** Gentle horizontal sweep — visible travel without feeling harsh */
 const SWEEP_FROM = "-58vw";
 const SWEEP_EXIT = "38vw";
 const sweepEase = cubicBezier(0.25, 0.46, 0.45, 0.94);
@@ -184,16 +183,38 @@ const slideIn = {
   },
 };
 
-/** 0 = intro, 1 = diagram, 2–5 = arrows 1–4 visible */
-function phaseFromProgress(p: number): number {
-  if (p < 0.14) return 0;
-  if (p < 0.26) return 1;
-  if (p < 0.38) return 2;
-  if (p < 0.5) return 3;
-  if (p < 0.62) return 4;
-  if (p < 0.74) return 5;
-  return 6;
+/** Equal scroll segments — one complete step per segment, no partial reveals */
+const MOBILE_PHASE_BOUNDARIES = [0, 0.17, 0.34, 0.51, 0.68, 1] as const;
+const DESKTOP_PHASE_BOUNDARIES = [0, 0.1, 0.18, 0.34, 0.5, 0.66, 0.82, 1] as const;
+const MOBILE_SNAP_STEPS = MOBILE_PHASE_BOUNDARIES.length;
+
+function phaseFromBoundaries(
+  p: number,
+  boundaries: readonly number[],
+): number {
+  for (let i = boundaries.length - 2; i >= 0; i--) {
+    if (p >= boundaries[i]) return i;
+  }
+  return 0;
 }
+
+function mobilePhaseFromProgress(p: number): number {
+  return phaseFromBoundaries(p, MOBILE_PHASE_BOUNDARIES);
+}
+
+function desktopPhaseFromProgress(p: number): number {
+  return phaseFromBoundaries(p, DESKTOP_PHASE_BOUNDARIES);
+}
+
+const MOBILE_MAX_PHASE = MOBILE_PHASE_BOUNDARIES.length - 1;
+const DESKTOP_MAX_PHASE = DESKTOP_PHASE_BOUNDARIES.length - 1;
+
+const stepTransition =
+  "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
+const stepOn =
+  "pointer-events-auto translate-y-0 scale-100 opacity-100";
+const stepOff =
+  "pointer-events-none translate-y-5 scale-[0.97] opacity-0";
 
 /* ─── Card ────────────────────────────────────────────────────────────────── */
 
@@ -328,8 +349,16 @@ function ArrowForLabel({
     strokeLinecap: "round" as const,
   };
   const arrowTransition = {
-    pathLength: { duration: 1.35, ease: sweepEase, delay: 0.35 + orderIndex * 0.08 },
-    opacity: { duration: 0.55, ease: fadeEase, delay: 0.35 + orderIndex * 0.08 },
+    pathLength: {
+      duration: 1.35,
+      ease: sweepEase,
+      delay: 0.35 + orderIndex * 0.08,
+    },
+    opacity: {
+      duration: 0.55,
+      ease: fadeEase,
+      delay: 0.35 + orderIndex * 0.08,
+    },
   };
 
   if (!visible) return null;
@@ -366,8 +395,16 @@ function ArrowForLabel({
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
         transition={{
-          pathLength: { duration: 0.9, ease: sweepEase, delay: 0.55 + orderIndex * 0.08 },
-          opacity: { duration: 0.45, ease: fadeEase, delay: 0.55 + orderIndex * 0.08 },
+          pathLength: {
+            duration: 0.9,
+            ease: sweepEase,
+            delay: 0.55 + orderIndex * 0.08,
+          },
+          opacity: {
+            duration: 0.45,
+            ease: fadeEase,
+            delay: 0.55 + orderIndex * 0.08,
+          },
         }}
         x1={`${x2}%`}
         y1={`${y1}%`}
@@ -412,43 +449,7 @@ function Arrows({ visibleCount }: { visibleCount: number }) {
   );
 }
 
-/** 0 = intro, 1–4 = single feature steps (mobile) */
-const MOBILE_STEP_EDGES = [0, 0.16, 0.32, 0.48, 0.64, 1] as const;
-
-function smoothstep(edge0: number, edge1: number, x: number): number {
-  if (edge1 <= edge0) return x >= edge0 ? 1 : 0;
-  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
-
-function mobilePhaseFromProgress(p: number): number {
-  if (p < 0.16) return 0;
-  if (p < 0.32) return 1;
-  if (p < 0.48) return 2;
-  if (p < 0.64) return 3;
-  return 4;
-}
-
-/** Scroll-linked opacity for intro + each feature step */
-function mobileStepOpacity(stepIndex: number, p: number): number {
-  const start = MOBILE_STEP_EDGES[stepIndex];
-  const end = MOBILE_STEP_EDGES[stepIndex + 1];
-  const range = end - start;
-  const inEnd = start + range * 0.35;
-  const outStart = end - range * 0.35;
-  const outEnd = end;
-
-  if (p >= outEnd) return 0;
-  if (p <= start && stepIndex > 0) return 0;
-
-  if (p < inEnd) {
-    if (stepIndex === 0 && p <= start) return 1;
-    return smoothstep(start, inEnd, p);
-  }
-  if (p > outStart) return 1 - smoothstep(outStart, outEnd, p);
-  return 1;
-}
-
+/** 0 = intro, 1–4 = one feature step each (mobile) */
 /* ─── Mobile hotspot overlay ─────────────────────────────────────────────── */
 
 function resolveMobileHotspots(label: Label): { x: number; y: number }[] {
@@ -526,23 +527,19 @@ function BreakdownHeading({
 
 const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
   phase,
-  progress,
 }: {
   phase: number;
-  progress: number;
 }) {
-  const introOpacity = mobileStepOpacity(0, progress);
-  const contentOpacity = smoothstep(0.12, 0.22, progress);
+  const showIntro = phase === 0;
+  const showContent = phase >= 1;
 
   return (
     <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
       <div
-        aria-hidden={introOpacity < 0.05}
-        className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-0 px-6 motion-safe:transition-none"
-        style={{
-          opacity: introOpacity,
-          pointerEvents: introOpacity > 0.05 ? "auto" : "none",
-        }}
+        aria-hidden={!showIntro}
+        className={`absolute inset-0 z-30 flex flex-col items-center justify-center gap-0 px-6 ${stepTransition} ${
+          showIntro ? stepOn : stepOff
+        }`}
       >
         <p className="text-center font-display text-3xl font-bold leading-tight tracking-tight text-cream">
           איך המוצר שלנו עובד
@@ -553,8 +550,9 @@ const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
       </div>
 
       <div
-        className="relative flex h-full min-h-0 flex-1 flex-col pt-[calc(3rem+env(safe-area-inset-top,0px))] motion-safe:transition-none"
-        style={{ opacity: contentOpacity }}
+        className={`relative flex h-full min-h-0 flex-1 flex-col pt-[calc(3rem+env(safe-area-inset-top,0px))] ${stepTransition} ${
+          showContent ? stepOn : stepOff
+        }`}
       >
         <header className="shrink-0 px-1 pb-1 pt-3 text-center">
           <BreakdownHeading
@@ -574,17 +572,14 @@ const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
                 draggable={false}
               />
               {ORDERED_LABELS.map((l, i) => {
-                const opacity = mobileStepOpacity(i + 1, progress);
+                const active = phase === i + 1;
                 return (
                   <div
                     key={l.index}
-                    aria-hidden={opacity < 0.05}
-                    className="absolute inset-0 motion-safe:transition-none"
-                    style={{
-                      opacity,
-                      transform: `translateY(${(1 - opacity) * 10}px)`,
-                      pointerEvents: "none",
-                    }}
+                    aria-hidden={!active}
+                    className={`absolute inset-0 ${stepTransition} ${
+                      active ? stepOn : stepOff
+                    }`}
                   >
                     <MobileHotspotOverlay label={l} />
                   </div>
@@ -602,7 +597,7 @@ const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
                 <span
                   key={l.index}
                   className={`h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out ${
-                    phase === i + 1 ? "w-5 bg-clay" : "w-1.5 bg-cream/25"
+                    phase === i + 1 ? "w-7 bg-clay" : "w-1.5 bg-cream/25"
                   }`}
                 />
               ))}
@@ -610,17 +605,14 @@ const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
 
             <div className="relative h-[10rem]">
               {ORDERED_LABELS.map((l, i) => {
-                const opacity = mobileStepOpacity(i + 1, progress);
+                const active = phase === i + 1;
                 return (
                   <div
                     key={l.index}
-                    aria-hidden={opacity < 0.05}
-                    className="absolute inset-x-0 top-0 will-change-[opacity,transform] motion-safe:transition-none"
-                    style={{
-                      opacity,
-                      transform: `translateY(${(1 - opacity) * 12}px)`,
-                      pointerEvents: opacity > 0.05 ? "auto" : "none",
-                    }}
+                    aria-hidden={!active}
+                    className={`absolute inset-x-0 top-0 ${stepTransition} ${
+                      active ? stepOn : stepOff
+                    }`}
                   >
                     <CardInner label={l} mobile />
                   </div>
@@ -671,8 +663,8 @@ const DesktopBreakdownPanel = memo(function DesktopBreakdownPanel({
       </AnimatePresence>
 
       <div
-        className={`relative hidden flex-1 flex-col transition-opacity duration-700 ease-out lg:flex ${
-          showDiagram ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`relative hidden min-h-0 flex-1 flex-col transition-opacity duration-700 ease-out lg:flex ${
+          showDiagram ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
         <motion.header
@@ -713,7 +705,7 @@ const DesktopBreakdownPanel = memo(function DesktopBreakdownPanel({
 
             {LABELS.map((l) => {
               const orderIdx = ORDERED_LABELS.findIndex(
-                (o) => o.index === l.index
+                (o) => o.index === l.index,
               );
               return (
                 <DesktopCard
@@ -743,7 +735,6 @@ export default function ProductBreakdownDiagram() {
   const mobilePhaseRef = useRef(0);
   const desktopPhaseRef = useRef(0);
   const [mobilePhase, setMobilePhase] = useState(0);
-  const [mobileProgress, setMobileProgress] = useState(0);
   const [desktopPhase, setDesktopPhase] = useState(0);
 
   const { scrollYProgress } = useScroll({
@@ -755,7 +746,6 @@ export default function ProductBreakdownDiagram() {
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
 
     if (isMobile) {
-      setMobileProgress(latest);
       const next = mobilePhaseFromProgress(latest);
       if (next === mobilePhaseRef.current) return;
       mobilePhaseRef.current = next;
@@ -763,7 +753,7 @@ export default function ProductBreakdownDiagram() {
       return;
     }
 
-    const next = phaseFromProgress(latest);
+    const next = desktopPhaseFromProgress(latest);
     if (next === desktopPhaseRef.current) return;
     desktopPhaseRef.current = next;
     setDesktopPhase(next);
@@ -774,11 +764,10 @@ export default function ProductBreakdownDiagram() {
     const isMobile = window.matchMedia("(max-width: 1023px)").matches;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      mobilePhaseRef.current = 4;
-      desktopPhaseRef.current = 6;
-      setMobilePhase(4);
-      setMobileProgress(1);
-      setDesktopPhase(6);
+      mobilePhaseRef.current = MOBILE_MAX_PHASE;
+      desktopPhaseRef.current = DESKTOP_MAX_PHASE;
+      setMobilePhase(MOBILE_MAX_PHASE);
+      setDesktopPhase(DESKTOP_MAX_PHASE);
       return;
     }
 
@@ -786,9 +775,8 @@ export default function ProductBreakdownDiagram() {
       const next = mobilePhaseFromProgress(latest);
       mobilePhaseRef.current = next;
       setMobilePhase(next);
-      setMobileProgress(latest);
     } else {
-      const next = phaseFromProgress(latest);
+      const next = desktopPhaseFromProgress(latest);
       desktopPhaseRef.current = next;
       setDesktopPhase(next);
     }
@@ -806,6 +794,18 @@ export default function ProductBreakdownDiagram() {
       "
       aria-labelledby="breakdown-heading"
     >
+      {Array.from({ length: MOBILE_SNAP_STEPS }, (_, i) => (
+        <div
+          key={`m-snap-${i}`}
+          data-breakdown-snap
+          aria-hidden
+          className="pointer-events-none absolute start-0 z-0 h-px w-full snap-start snap-always lg:hidden"
+          style={{
+            top: `${(i / (MOBILE_SNAP_STEPS - 1)) * 100}%`,
+          }}
+        />
+      ))}
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-70"
@@ -818,7 +818,7 @@ export default function ProductBreakdownDiagram() {
       <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
         <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 pb-1 sm:px-8 lg:px-8 lg:py-6 lg:pb-6">
           <DesktopBreakdownPanel phase={desktopPhase} />
-          <MobileBreakdownPanel phase={mobilePhase} progress={mobileProgress} />
+          <MobileBreakdownPanel phase={mobilePhase} />
         </div>
       </div>
     </section>
