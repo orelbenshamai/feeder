@@ -35,7 +35,7 @@ function HeroCopy({ headingId }: { headingId?: string }) {
               <span className="text-cream/95">שלוש פעמים ביום</span>
             </span>
           </h1>
-          <p className="mt-3 max-w-xl max-lg:mx-auto text-center text-[14px] font-medium leading-[1.55] tracking-[0.02em] text-cream/80 sm:mt-3.5 sm:text-[15px] lg:mx-0 lg:mt-4 lg:text-start lg:text-[16px] lg:leading-[1.65] lg:tracking-[0.03em]">
+          <p className="mt-3 max-w-xl max-lg:mx-auto text-center text-[15px] font-medium leading-[1.65] text-cream/85 sm:mt-3.5 sm:text-[16px] lg:mx-0 lg:mt-4 lg:text-start lg:text-[17px] lg:leading-[1.7]">
             <span className="lg:hidden">
               עמדת האכלה חכמה שקולטת
               <br />
@@ -50,16 +50,7 @@ function HeroCopy({ headingId }: { headingId?: string }) {
           </p>
         </div>
 
-        <LeadCaptureTrigger
-          className="
-            group inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full px-7
-            min-h-[48px] text-[12px] font-semibold uppercase tracking-[0.08em]
-            transition duration-300 active:scale-[0.99]
-            max-lg:mt-0.5
-            sm:w-auto sm:min-h-[52px] sm:px-8 sm:text-[13px]
-            bg-clay text-ink shadow-[0_12px_32px_-12px_rgba(255,159,10,0.55)] hover:bg-clay/90
-          "
-        >
+        <LeadCaptureTrigger className="btn-clay group w-full max-lg:mt-0.5 sm:w-auto px-7 sm:px-8">
           <span>שריינו לי 10% הנחה</span>
           <svg
             viewBox="0 0 20 20"
@@ -77,21 +68,6 @@ function HeroCopy({ headingId }: { headingId?: string }) {
           </svg>
         </LeadCaptureTrigger>
       </article>
-    </div>
-  );
-}
-
-function HeroBrandMark({ className }: { className?: string }) {
-  return (
-    <div
-      className={`pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center ${className ?? ""}`}
-    >
-      <span
-        className="font-[family-name:var(--font-nunito)] text-lg font-extrabold tracking-[0.06em] text-cream/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.4)] sm:text-xl"
-        aria-label="מסודר"
-      >
-        MESUDAR
-      </span>
     </div>
   );
 }
@@ -142,7 +118,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="isolate h-[100svh] max-h-[100svh] overflow-hidden max-lg:h-[var(--app-vh,100svh)] max-lg:max-h-[var(--app-vh,100svh)]"
+      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden max-lg:h-[calc(var(--app-vh,100svh)-var(--site-header-h))] max-lg:max-h-[calc(var(--app-vh,100svh)-var(--site-header-h))]"
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >
@@ -160,7 +136,6 @@ export default function Hero() {
             objectPosition="object-[center_38%]"
             className="absolute inset-0"
           />
-          <HeroBrandMark className="pt-[max(env(safe-area-inset-top),0.875rem)]" />
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-ink via-ink/80 to-transparent"
@@ -188,8 +163,6 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{ background: HERO_SCRIM }}
         />
-
-        <HeroBrandMark className="pt-8" />
 
         <div className="absolute inset-x-0 bottom-0 z-10 px-10 pb-12 xl:px-16 xl:pb-14">
           <HeroCopy />

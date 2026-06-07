@@ -172,61 +172,59 @@ export default function ProductIntroduction() {
       dir="rtl"
       aria-labelledby="intro-heading"
       className="
-        relative isolate scroll-mt-0 bg-cream
-        max-lg:pb-14 max-lg:pt-[calc(2.75rem+env(safe-area-inset-top,0px))]
+        relative isolate overflow-x-clip bg-cream
+        max-lg:pb-14 max-lg:pt-[calc(var(--site-header-h)+1rem+env(safe-area-inset-top,0px))]
         py-12 sm:py-16
-        lg:min-h-screen lg:flex lg:items-center lg:py-24
+        lg:min-h-[calc(100svh-var(--site-header-h))] lg:flex lg:items-center lg:overflow-visible lg:py-20
         shadow-[0_-18px_50px_-20px_rgba(31,58,82,0.10)]
       "
     >
-
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-8">
+      {/* Desktop image lives in the grid column below — not absolute */}
+      <div className="relative z-10 w-full px-4 sm:px-8 lg:px-[5vw]">
         <motion.div
+          dir="ltr"
           variants={containerV}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="
-            grid grid-cols-1 items-center gap-10
-            max-lg:gap-11
-            lg:grid-cols-2 lg:gap-16 xl:gap-24
+            mx-auto flex max-w-7xl flex-col gap-10 max-lg:gap-11
+            lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1fr_minmax(17rem,36%)]
+            lg:items-center lg:gap-8 xl:gap-10
           "
         >
-          {/* ── Product image ─────────────────────────────────────────── */}
+          {/* Mobile: image first — scaled up inside a fixed layout slot */}
+          <motion.div variants={imgV} className="w-full lg:hidden">
+            <div className="mx-auto aspect-[1920/1088] w-full max-w-[min(100%,28rem)] overflow-hidden sm:max-w-[32rem]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/media/product_image.png"
+                alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
+                className="mx-auto block h-full w-full origin-center scale-[1.24] select-none object-contain"
+                draggable={false}
+              />
+            </div>
+          </motion.div>
+
+          {/* Product — LEFT on desktop */}
           <motion.div
             variants={imgV}
-            className="
-              relative mx-auto w-full max-w-[min(100%,21rem)]
-              max-lg:max-w-none max-lg:rounded-[1.75rem] max-lg:bg-gradient-to-b
-              max-lg:from-[rgba(255,159,10,0.07)] max-lg:via-soft/70 max-lg:to-cream/40
-              max-lg:px-4 max-lg:py-7
-              sm:max-w-[22rem]
-              lg:order-last lg:max-w-none lg:rounded-none lg:bg-none lg:p-0
-            "
+            className="hidden min-w-0 overflow-visible lg:col-start-1 lg:row-start-1 lg:flex lg:items-center lg:justify-start"
           >
-            <span
-              aria-hidden
-              className="
-                pointer-events-none absolute inset-8 -z-10 rounded-3xl
-                bg-[radial-gradient(ellipse_80%_70%_at_50%_55%,rgba(255,159,10,0.12)_0%,transparent_70%)]
-                max-lg:inset-4 max-lg:opacity-80
-              "
-            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/media/product_image.png"
               alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
               className="
-                relative block w-full select-none rounded-3xl
-                shadow-[0_24px_60px_-28px_rgba(31,58,82,0.2)]
-                max-lg:ring-0
-                lg:rounded-2xl lg:shadow-[0_20px_50px_-22px_rgba(31,58,82,0.18)] lg:ring-1 lg:ring-line/40
+                block h-auto w-auto max-h-[min(98vh,calc(100svh-var(--site-header-h)-0.5rem))]
+                max-w-full origin-left scale-[1.14]
+                select-none object-contain object-left
               "
               draggable={false}
             />
           </motion.div>
 
-          {/* ── Copy column ───────────────────────────────────────────── */}
-          <div className="flex flex-col gap-5 max-lg:items-center max-lg:text-center sm:gap-6 lg:items-stretch lg:text-start">
+          {/* Copy — RIGHT on desktop */}
+          <div dir="rtl" className="flex min-w-0 flex-col gap-5 max-lg:items-center max-lg:text-center sm:gap-6 lg:col-start-2 lg:row-start-1 lg:items-stretch lg:text-start">
             <motion.div variants={headV} className="max-lg:flex max-lg:justify-center">
               <span className="section-eyebrow">הכירו את MESUDAR</span>
             </motion.div>

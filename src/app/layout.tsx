@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
+import { FacebookPixel } from "@/components/FacebookPixel";
+import SiteHeader from "@/components/SiteHeader";
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -45,7 +47,11 @@ export default function RootLayout({
       dir="rtl"
       className={`${heebo.variable} ${nunito.variable} h-full antialiased font-sans`}
     >
+      <head>
+        <FacebookPixel />
+      </head>
       <body className="min-h-full flex flex-col bg-cream text-ink selection:bg-ink selection:text-cream">
+        <SiteHeader />
         {children}
       </body>
     </html>

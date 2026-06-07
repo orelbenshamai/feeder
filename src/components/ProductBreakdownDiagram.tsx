@@ -1,12 +1,7 @@
 "use client";
 
-import { memo, useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  AnimatePresence,
-  cubicBezier,
-  motion,
-} from "framer-motion";
-import { useShineOnEnter } from "@/hooks/useShineOnEnter";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import BreakdownScrollSync from "./BreakdownScrollSync";
 
 /* ─── Data ────────────────────────────────────────────────────────────────── */
 
@@ -20,7 +15,7 @@ interface Label {
   top: number;
   tipX: number;
   tipY?: number;
-  /** Mobile hotspot(s) — tuned for square product_breakdown.png */
+  /** Mobile hotspot(s) — tuned for product_breakdown.png */
   mobileHotspot?: { x: number; y: number };
   mobileHotspots?: { x: number; y: number }[];
   side: Side;
@@ -113,7 +108,7 @@ const LABELS: Label[] = [
     top: 14,
     tipX: 56,
     mobileHotspots: [
-      { x: 38, y: 23 },
+      { x: 40, y: 23 },
       { x: 62, y: 23 },
     ],
     side: "right",
@@ -127,7 +122,8 @@ const LABELS: Label[] = [
       "אגן רחב הלוכד את כל הנוזלים שנשפכו — הרצפה נשארת יבשה לחלוטין",
     top: 68,
     tipX: 56,
-    mobileHotspot: { x: 50, y: 70 },
+    tipY: 70,
+    mobileHotspot: { x: 51, y: 70 },
     side: "right",
     icon: Icon.basin,
   },
@@ -137,9 +133,10 @@ const LABELS: Label[] = [
     title: "שיפוע + חורי ניקוז בחזית",
     description:
       "המשטח העליון משופע ולוכד שאריות מזון, וחורי הניקוז בקדמת המוצר מוציאים את המים מיד",
-    top: 40,
-    tipX: 44,
-    mobileHotspot: { x: 50, y: 41 },
+    top: 26,
+    tipX: 51,
+    tipY: 48,
+    mobileHotspot: { x: 51, y: 45 },
     side: "left",
     icon: Icon.drainage,
   },
@@ -148,12 +145,12 @@ const LABELS: Label[] = [
     tag: "יציבות מלאה",
     title: "רגליות סיליקון נגד החלקה",
     description: "מונעות גלישה על ריצוף ומגנות מפני שריטות",
-    top: 80,
-    tipX: 38,
-    tipY: 90,
+    top: 74,
+    tipX: 32,
+    tipY: 78,
     mobileHotspots: [
       { x: 33, y: 91 },
-      { x: 77, y: 83 },
+      { x: 70, y: 91 },
     ],
     side: "left",
     icon: Icon.feet,
@@ -162,90 +159,17 @@ const LABELS: Label[] = [
 
 const ORDERED_LABELS = [...LABELS].sort((a, b) => a.index - b.index);
 
-const TAIL_RIGHT = 80;
-const TAIL_LEFT = 20;
+/** Desktop card column anchors (stage %) — inner edge toward the product image. */
+const LEFT_CARD_TAIL = 22;
+const RIGHT_CARD_TAIL = 78;
 
-const SWEEP_FROM = "-58vw";
-const SWEEP_EXIT = "38vw";
-const sweepEase = cubicBezier(0.25, 0.46, 0.45, 0.94);
-const sweep = { duration: 1.45, ease: sweepEase };
-const sweepSoft = { duration: 1.2, ease: sweepEase };
-const fadeEase = "easeOut" as const;
-const slideIn = {
-  hidden: { opacity: 0, x: SWEEP_FROM, scale: 0.985 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    transition: sweep,
-  },
-};
+const IMG_MASK =
+  "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)";
 
-/** Equal scroll segments — one complete step per segment, no partial reveals */
-const MOBILE_PHASE_BOUNDARIES = [0, 0.17, 0.34, 0.51, 0.68, 1] as const;
-const DESKTOP_PHASE_BOUNDARIES = [0, 0.1, 0.18, 0.34, 0.5, 0.66, 0.82, 1] as const;
-
-function phaseFromBoundaries(
-  p: number,
-  boundaries: readonly number[],
-): number {
-  for (let i = boundaries.length - 2; i >= 0; i--) {
-    if (p >= boundaries[i]) return i;
-  }
-  return 0;
+interface ArrowOrigin {
+  x: number;
+  y: number;
 }
-
-function mobilePhaseFromProgress(p: number): number {
-  return phaseFromBoundaries(p, MOBILE_PHASE_BOUNDARIES);
-}
-
-function desktopPhaseFromProgress(p: number): number {
-  return phaseFromBoundaries(p, DESKTOP_PHASE_BOUNDARIES);
-}
-
-const MOBILE_MAX_PHASE = MOBILE_PHASE_BOUNDARIES.length - 1;
-const DESKTOP_MAX_PHASE = DESKTOP_PHASE_BOUNDARIES.length - 1;
-const STEP_COOLDOWN_MS = 480;
-const TOUCH_STEP_THRESHOLD_PX = 8;
-const SCROLL_DRIFT_PX = 24;
-
-function progressForPhase(
-  phase: number,
-  boundaries: readonly number[],
-): number {
-  const idx = Math.max(0, Math.min(phase, boundaries.length - 1));
-  return boundaries[idx] ?? 0;
-}
-
-function getBreakdownScrollRange(sectionEl: HTMLElement): {
-  sectionTop: number;
-  scrollRange: number;
-} {
-  const sectionTop = window.scrollY + sectionEl.getBoundingClientRect().top;
-  const scrollRange = Math.max(1, sectionEl.offsetHeight - window.innerHeight);
-  return { sectionTop, scrollRange };
-}
-
-function scrollYForProgress(sectionEl: HTMLElement, progress: number): number {
-  const { sectionTop, scrollRange } = getBreakdownScrollRange(sectionEl);
-  return sectionTop + progress * scrollRange;
-}
-
-function isBreakdownPinned(sectionEl: HTMLElement): boolean {
-  const rect = sectionEl.getBoundingClientRect();
-  return rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
-}
-
-function isMobileBreakdownView(): boolean {
-  return window.matchMedia("(max-width: 1023px)").matches;
-}
-
-const stepTransition =
-  "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
-const stepOn =
-  "pointer-events-auto translate-y-0 scale-100 opacity-100";
-const stepOff =
-  "pointer-events-none translate-y-5 scale-[0.97] opacity-0";
 
 /* ─── Card ────────────────────────────────────────────────────────────────── */
 
@@ -256,63 +180,62 @@ function CardInner({
   label: Label;
   mobile?: boolean;
 }) {
-  const isRight = label.side === "right";
-  const alignRight = mobile || isRight;
-
   return (
     <div
+      dir="rtl"
       className={`
-        group relative flex rounded-2xl
+        group relative flex rounded-2xl text-right
         ring-1 ring-black/[0.06]
         shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]
-        ${mobile ? "h-full gap-3 rounded-xl p-4 bg-cream" : "gap-3 p-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
-        ${alignRight ? "text-right" : "text-left"}
+        ${mobile ? "h-full min-h-0 gap-3 rounded-xl p-4 bg-cream items-center" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
       `}
     >
       <div
         className={`relative flex shrink-0 flex-col items-center justify-center ${
           mobile ? "gap-1" : "gap-1.5"
-        } ${alignRight ? "order-2" : "order-1"}`}
+        }`}
       >
         <span
           aria-hidden
           className={`
             grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20
-            ${mobile ? "h-10 w-10 rounded-lg [&_svg]:h-7 [&_svg]:w-7" : "h-11 w-11 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"}
+            ${mobile ? "h-14 w-14 rounded-lg [&_svg]:h-8 [&_svg]:w-8" : "breakdown-card-icon transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"}
           `}
         >
           {label.icon}
         </span>
         <span
-          className={`font-display font-semibold tracking-[0.18em] text-clay${
-            mobile ? " text-[11px]" : " text-[11px]"
-          }`}
+          className={`font-display text-xs font-semibold tracking-[0.16em] text-clay`}
         >
           0{label.index}
         </span>
       </div>
 
-      <div className={`min-w-0 flex-1 ${alignRight ? "order-1" : "order-2"}`}>
+      <div className="flex min-w-0 flex-1 flex-col justify-center">
         <p
-          className={`font-semibold uppercase tracking-[0.18em] text-stone${
-            mobile ? " text-[11px]" : " text-[10.5px]"
-          }`}
+          className={
+            mobile
+              ? "text-[13px] font-semibold uppercase tracking-[0.1em] text-stone/85"
+              : "breakdown-card-tag font-semibold uppercase tracking-[0.12em] text-stone/85"
+          }
         >
           {label.tag}
         </p>
         <p
-          className={`font-display font-semibold leading-snug text-ink${
-            mobile ? "mt-1 text-[16px]" : "mt-1 text-[15px]"
-          }`}
+          className={
+            mobile
+              ? "mt-1 font-display text-[clamp(1.22rem,5.4vw,1.5rem)] font-semibold leading-[1.18] text-ink"
+              : "breakdown-card-title mt-1 font-display font-semibold leading-snug text-ink"
+          }
         >
           {label.title}
         </p>
         <p
-          className={`leading-relaxed text-ink/65${
+          className={
             mobile
-              ? "mt-1.5 line-clamp-3 min-h-[3.85rem] text-[13.5px]"
-              : "mt-1.5 text-[12.5px]"
-          }`}
+              ? "mt-2 text-[clamp(1rem,4.4vw,1.125rem)] leading-[1.5] text-ink/85"
+              : "breakdown-card-desc mt-1.5 leading-[1.65] text-ink/82"
+          }
         >
           {label.description}
         </p>
@@ -321,38 +244,111 @@ function CardInner({
   );
 }
 
+function resolveMobileHotspots(label: Label): { x: number; y: number }[] {
+  if (label.mobileHotspots?.length) return label.mobileHotspots;
+  if (label.mobileHotspot) return [label.mobileHotspot];
+  return [{ x: label.tipX, y: label.tipY ?? label.top }];
+}
+
+function resolveArrowTips(label: Label): { x: number; y: number }[] {
+  if (label.tipY !== undefined) {
+    return [{ x: label.tipX, y: label.tipY }];
+  }
+
+  const spots = resolveMobileHotspots(label);
+  if (label.index === 1 && spots.length >= 2) {
+    return spots;
+  }
+
+  if (spots.length === 1) return spots;
+
+  return [
+    {
+      x: spots.reduce((sum, spot) => sum + spot.x, 0) / spots.length,
+      y: spots.reduce((sum, spot) => sum + spot.y, 0) / spots.length,
+    },
+  ];
+}
+
+function resolveCardTailX(label: Label): number {
+  return label.side === "right" ? RIGHT_CARD_TAIL : LEFT_CARD_TAIL;
+}
+
+function isDesktopCardShown(card: HTMLElement): boolean {
+  const style = getComputedStyle(card);
+  return style.opacity !== "0" && style.visibility !== "hidden";
+}
+
+function measureArrowOrigin(
+  stage: HTMLDivElement,
+  label: Label,
+): ArrowOrigin | null {
+  const stageRect = stage.getBoundingClientRect();
+  if (stageRect.width <= 0 || stageRect.height <= 0) return null;
+
+  const card = stage.querySelector<HTMLElement>(
+    `[data-label-index="${label.index}"]`,
+  );
+  if (!card || !isDesktopCardShown(card)) return null;
+
+  const cardRect = card.getBoundingClientRect();
+  if (cardRect.width <= 0 || cardRect.height <= 0) return null;
+
+  const x =
+    label.side === "right"
+      ? ((cardRect.left - stageRect.left) / stageRect.width) * 100
+      : ((cardRect.right - stageRect.left) / stageRect.width) * 100;
+  const y =
+    ((cardRect.top + cardRect.height / 2 - stageRect.top) / stageRect.height) *
+    100;
+
+  return { x, y };
+}
+
+/** Map hotspot coords (image %) to the desktop stage SVG (stage %). */
+function mapImageTipToStage(
+  stage: HTMLDivElement,
+  tip: { x: number; y: number },
+): { x: number; y: number } {
+  const stageRect = stage.getBoundingClientRect();
+  if (stageRect.width <= 0 || stageRect.height <= 0) return tip;
+
+  const img = stage.querySelector("img");
+  if (!img) return tip;
+
+  const imgRect = img.getBoundingClientRect();
+  const px = imgRect.left - stageRect.left + (tip.x / 100) * imgRect.width;
+  const py = imgRect.top - stageRect.top + (tip.y / 100) * imgRect.height;
+
+  return {
+    x: (px / stageRect.width) * 100,
+    y: (py / stageRect.height) * 100,
+  };
+}
+
 function DesktopCard({
   label,
-  visible,
   orderIndex,
 }: {
   label: Label;
-  visible: boolean;
   orderIndex: number;
 }) {
   const isRight = label.side === "right";
+  const tailX = resolveCardTailX(label);
 
   return (
     <div
-      className={`absolute z-20 w-[20%] min-w-[210px] -translate-y-1/2 ${
-        isRight ? "right-0" : "left-0"
-      }`}
-      style={{ top: `${label.top}%` }}
+      dir="ltr"
+      data-side={label.side}
+      data-label-index={label.index}
+      className={`desktop-card desktop-card-${orderIndex} breakdown-layer absolute z-20 -translate-y-1/2`}
+      style={
+        isRight
+          ? { top: `${label.top}%`, left: `${tailX}%`, right: "auto" }
+          : { top: `${label.top}%`, right: `${100 - tailX}%`, left: "auto" }
+      }
     >
-      <AnimatePresence>
-        {visible && (
-          <motion.div
-            key={`card-${label.index}`}
-            variants={slideIn}
-            initial="hidden"
-            animate="visible"
-            exit={{ opacity: 0, x: SWEEP_EXIT, transition: sweepSoft }}
-            transition={{ ...sweep, delay: orderIndex * 0.08 }}
-          >
-            <CardInner label={label} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <CardInner label={label} />
     </div>
   );
 }
@@ -361,94 +357,71 @@ function DesktopCard({
 
 function ArrowForLabel({
   label,
-  visible,
   orderIndex,
+  origin,
+  stage,
 }: {
   label: Label;
-  visible: boolean;
   orderIndex: number;
+  origin?: ArrowOrigin;
+  stage: HTMLDivElement | null;
 }) {
-  const x1 = label.side === "right" ? TAIL_RIGHT : TAIL_LEFT;
-  const y1 = label.top;
-  const x2 = label.tipX;
-  const y2 = label.tipY ?? label.top;
-  const sameY = y1 === y2;
+  if (!origin || !stage) {
+    return (
+      <g
+        className={`desktop-arrow desktop-arrow-${orderIndex}`}
+        data-origin-ready="false"
+        opacity={0}
+      />
+    );
+  }
+
+  const { x: x1, y: y1 } = origin;
+  const tips = resolveArrowTips(label).map((tip) =>
+    mapImageTipToStage(stage, tip),
+  );
   const strokeProps = {
     stroke: "#FF9F0A",
     strokeOpacity: 0.9,
     strokeWidth: 1.6,
     strokeLinecap: "round" as const,
   };
-  const arrowTransition = {
-    pathLength: {
-      duration: 1.35,
-      ease: sweepEase,
-      delay: 0.35 + orderIndex * 0.08,
-    },
-    opacity: {
-      duration: 0.55,
-      ease: fadeEase,
-      delay: 0.35 + orderIndex * 0.08,
-    },
-  };
 
-  if (!visible) return null;
-
-  if (sameY) {
-    return (
-      <motion.line
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={arrowTransition}
-        x1={`${x1}%`}
-        y1={`${y1}%`}
-        x2={`${x2}%`}
-        y2={`${y2}%`}
-        markerEnd="url(#pb-arrow)"
-        {...strokeProps}
-      />
-    );
-  }
+  const content = tips.map((tip, i) => (
+    <line
+      key={i}
+      x1={`${x1}%`}
+      y1={`${y1}%`}
+      x2={`${tip.x}%`}
+      y2={`${tip.y}%`}
+      markerEnd="url(#pb-arrow)"
+      {...strokeProps}
+    />
+  ));
 
   return (
-    <g>
-      <motion.line
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={arrowTransition}
-        x1={`${x1}%`}
-        y1={`${y1}%`}
-        x2={`${x2}%`}
-        y2={`${y1}%`}
-        {...strokeProps}
-      />
-      <motion.line
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{
-          pathLength: {
-            duration: 0.9,
-            ease: sweepEase,
-            delay: 0.55 + orderIndex * 0.08,
-          },
-          opacity: {
-            duration: 0.45,
-            ease: fadeEase,
-            delay: 0.55 + orderIndex * 0.08,
-          },
-        }}
-        x1={`${x2}%`}
-        y1={`${y1}%`}
-        x2={`${x2}%`}
-        y2={`${y2}%`}
-        markerEnd="url(#pb-arrow)"
-        {...strokeProps}
-      />
+    <g
+      className={`desktop-arrow desktop-arrow-${orderIndex}`}
+      data-origin-ready="true"
+      opacity={0}
+    >
+      {content}
     </g>
   );
 }
 
-function Arrows({ visibleCount }: { visibleCount: number }) {
+function Arrows({
+  origins,
+  stageRef,
+  layoutTick,
+}: {
+  origins: Record<number, ArrowOrigin>;
+  stageRef: React.RefObject<HTMLDivElement | null>;
+  layoutTick: number;
+}) {
+  const stage = stageRef.current;
+  void layoutTick;
+
   return (
     <svg
       aria-hidden
@@ -472,43 +445,252 @@ function Arrows({ visibleCount }: { visibleCount: number }) {
         <ArrowForLabel
           key={l.index}
           label={l}
-          visible={i < visibleCount}
           orderIndex={i}
+          origin={origins[l.index]}
+          stage={stage}
         />
       ))}
     </svg>
   );
 }
 
-/** 0 = intro, 1–4 = one feature step each (mobile) */
-/* ─── Mobile hotspot overlay ─────────────────────────────────────────────── */
+const CARD_ENTRANCE_MS = 400;
 
-function resolveMobileHotspots(label: Label): { x: number; y: number }[] {
-  if (label.mobileHotspots?.length) return label.mobileHotspots;
-  if (label.mobileHotspot) return [label.mobileHotspot];
-  return [{ x: label.tipX, y: label.tipY ?? label.top }];
+function visibleOrderIndicesForPhase(phase: number): number[] {
+  if (phase >= 5) return [0, 1, 2, 3];
+  if (phase >= 4) return [0, 1, 2];
+  if (phase >= 3) return [0, 1];
+  if (phase >= 2) return [0];
+  return [];
 }
 
-function MobileHotspotOverlay({ label }: { label: Label }) {
+function DesktopBreakdownStage() {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const frozenOriginsRef = useRef<Record<number, ArrowOrigin>>({});
+  const pendingLabelTimersRef = useRef<
+    Map<number, ReturnType<typeof setTimeout>>
+  >(new Map());
+  const [origins, setOrigins] = useState<Record<number, ArrowOrigin>>({});
+  const [layoutTick, setLayoutTick] = useState(0);
+
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const setOrigin = (labelIndex: number, origin: ArrowOrigin) => {
+      frozenOriginsRef.current[labelIndex] = origin;
+      setOrigins((prev) => ({ ...prev, [labelIndex]: origin }));
+    };
+
+    const lockOrigin = (labelIndex: number, origin: ArrowOrigin) => {
+      if (frozenOriginsRef.current[labelIndex] !== undefined) return;
+      setOrigin(labelIndex, origin);
+    };
+
+    const remeasureVisibleOrigins = () => {
+      const section = stage.closest("#product-breakdown");
+      const phase = Number(section?.getAttribute("data-desktop-phase") ?? 0);
+      let changed = false;
+      const next = { ...frozenOriginsRef.current };
+
+      for (const orderIndex of visibleOrderIndicesForPhase(phase)) {
+        const label = ORDERED_LABELS[orderIndex];
+        const measured = measureArrowOrigin(stage, label);
+        if (!measured) continue;
+        next[label.index] = measured;
+        changed = true;
+      }
+
+      if (changed) {
+        frozenOriginsRef.current = next;
+        setOrigins(next);
+        setLayoutTick((tick) => tick + 1);
+      }
+    };
+
+    const scheduleLabelMeasure = (labelIndex: number) => {
+      if (frozenOriginsRef.current[labelIndex] !== undefined) return;
+      if (pendingLabelTimersRef.current.has(labelIndex)) return;
+
+      const label = LABELS.find((entry) => entry.index === labelIndex);
+      if (!label) return;
+
+      const timer = setTimeout(() => {
+        pendingLabelTimersRef.current.delete(labelIndex);
+        if (frozenOriginsRef.current[labelIndex] !== undefined) return;
+
+        const measured = measureArrowOrigin(stage, label);
+        if (measured) lockOrigin(labelIndex, measured);
+      }, CARD_ENTRANCE_MS);
+
+      pendingLabelTimersRef.current.set(labelIndex, timer);
+    };
+
+    const scheduleVisibleLabels = () => {
+      const section = stage.closest("#product-breakdown");
+      const phase = Number(section?.getAttribute("data-desktop-phase") ?? 0);
+
+      for (const orderIndex of visibleOrderIndicesForPhase(phase)) {
+        scheduleLabelMeasure(ORDERED_LABELS[orderIndex].index);
+      }
+    };
+
+    scheduleVisibleLabels();
+
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(remeasureVisibleOrigins);
+    });
+    resizeObserver.observe(stage);
+
+    const section = stage.closest("#product-breakdown");
+    const phaseObserver = new MutationObserver(scheduleVisibleLabels);
+    if (section) {
+      phaseObserver.observe(section, {
+        attributes: true,
+        attributeFilter: ["data-desktop-phase"],
+      });
+    }
+
+    return () => {
+      for (const timer of pendingLabelTimersRef.current.values()) {
+        clearTimeout(timer);
+      }
+      pendingLabelTimersRef.current.clear();
+      phaseObserver.disconnect();
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  return (
+    <div className="desktop-breakdown-stage-wrap relative mt-3 min-h-0 flex-1">
+      <div ref={stageRef} className="desktop-breakdown-stage mx-auto">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/media/product_breakdown.png"
+          alt="פירוק המוצר: עמדת האכלה עם סימון 4 הרכיבים העיקריים"
+          className="absolute inset-0 m-auto block h-full w-full max-w-[94%] select-none object-contain"
+          style={{
+            maskImage: IMG_MASK,
+            WebkitMaskImage: IMG_MASK,
+          }}
+          draggable={false}
+        />
+
+        {LABELS.map((l) => {
+          const orderIdx = ORDERED_LABELS.findIndex((o) => o.index === l.index);
+          return (
+            <DesktopCard key={l.index} label={l} orderIndex={orderIdx} />
+          );
+        })}
+
+        <Arrows origins={origins} stageRef={stageRef} layoutTick={layoutTick} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Mobile hotspot overlay ─────────────────────────────────────────────── */
+
+function MobileHotspotOverlay({
+  label,
+  featureIndex,
+  onSelect,
+  interactive,
+}: {
+  label: Label;
+  featureIndex: number;
+  onSelect?: (index: number) => void;
+  interactive?: boolean;
+}) {
   const spots = resolveMobileHotspots(label);
 
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 z-10"
-    >
+    <div className="pointer-events-none absolute inset-0 z-10">
       {spots.map((spot, i) => (
-        <div
+        <button
           key={`${label.index}-${i}`}
-          className="absolute -translate-x-1/2 -translate-y-1/2"
+          type="button"
+          tabIndex={interactive ? 0 : -1}
+          aria-hidden={!interactive}
+          aria-label={`${label.title} — הצג פרטים`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.(featureIndex);
+          }}
+          className="breakdown-hotspot-btn absolute -translate-x-1/2 -translate-y-1/2 rounded-full p-3"
           style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
         >
-          <span className="relative flex h-6 w-6 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full motion-safe:animate-ping rounded-full bg-clay/50" />
-            <span className="relative h-3.5 w-3.5 rounded-full bg-clay shadow-[0_0_0_2px_#0D2438]" />
+          <span className="breakdown-hotspot relative flex h-5 w-5 items-center justify-center">
+            <span className="breakdown-hotspot__halo absolute inset-0 rounded-full" />
+            <span className="breakdown-hotspot__dot relative rounded-full" />
           </span>
-        </div>
+        </button>
       ))}
+    </div>
+  );
+}
+
+/* ─── Scroll hint (phases 1–4) ─────────────────────────────────────────────── */
+
+function ScrollHintPill() {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/55 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-4 sm:py-2 sm:text-[13px]">
+      <span>גללו לגלוי השכבות</span>
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        className="breakdown-scroll-hint__chevron h-3.5 w-3.5 shrink-0 text-clay/80"
+        fill="none"
+      >
+        <path
+          d="M8 3v8M5 9l3 3 3-3"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
+function MobileTapHint() {
+  return (
+    <p className="mobile-tap-hint pointer-events-none mb-1.5 text-center">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-cream/10 bg-[#0D2438]/55 px-2.5 py-1 text-[11px] font-medium tracking-wide text-cream/50">
+        <svg
+          aria-hidden
+          viewBox="0 0 16 16"
+          className="h-3 w-3 shrink-0 text-clay/70"
+          fill="none"
+        >
+          <circle cx="8" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.4" />
+          <circle cx="8" cy="8" r="1.1" fill="currentColor" />
+        </svg>
+        לחצו על עיגול לפרטים
+      </span>
+    </p>
+  );
+}
+
+function MobileScrollHint() {
+  return (
+    <div
+      aria-hidden
+      className="mobile-scroll-hint pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center"
+    >
+      <ScrollHintPill />
+    </div>
+  );
+}
+
+function DesktopScrollHint() {
+  return (
+    <div
+      aria-hidden
+      className="desktop-scroll-hint pointer-events-none absolute inset-x-0 bottom-3 z-40 flex justify-center sm:bottom-4"
+    >
+      <ScrollHintPill />
     </div>
   );
 }
@@ -518,24 +700,16 @@ function MobileHotspotOverlay({ label }: { label: Label }) {
 function BreakdownHeading({
   id,
   className = "section-h2 section-h2-on-dark mt-2 text-center sm:mt-4",
-  withShine = true,
 }: {
   id?: string;
   className?: string;
   withShine?: boolean;
 }) {
-  const shineRef = useShineOnEnter();
-
   return (
     <h2 id={id} className={className}>
       כל שכבה תוכננה עבור{" "}
       <span className="relative inline-block whitespace-nowrap">
-        <span
-          ref={withShine ? shineRef : undefined}
-          className={withShine ? "faq-shine" : undefined}
-        >
-          רצפה יבשה ונקייה
-        </span>
+        <span className="faq-shine shine-active">רצפה יבשה ונקייה</span>
         <svg
           aria-hidden
           viewBox="0 0 220 12"
@@ -556,478 +730,61 @@ function BreakdownHeading({
   );
 }
 
-const MobileBreakdownPanel = memo(function MobileBreakdownPanel({
-  phase,
-}: {
-  phase: number;
-}) {
-  const showIntro = phase === 0;
-  const showContent = phase >= 1;
-
-  return (
-    <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
-      <div
-        aria-hidden={!showIntro}
-        className={`absolute inset-0 z-30 flex flex-col items-center justify-center gap-0 px-6 ${stepTransition} ${
-          showIntro ? stepOn : stepOff
-        }`}
-      >
-        <p className="text-center font-display text-3xl font-bold leading-tight tracking-tight text-cream">
-          איך המוצר שלנו עובד
-        </p>
-        <p className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse">
-          גללו ↓
-        </p>
-      </div>
-
-      <div
-        className={`relative flex h-full min-h-0 flex-1 flex-col pt-[calc(3rem+env(safe-area-inset-top,0px))] ${stepTransition} ${
-          showContent ? stepOn : stepOff
-        }`}
-      >
-        <header className="shrink-0 px-1 pb-1 pt-3 text-center">
-          <BreakdownHeading
-            withShine={false}
-            className="section-h2 section-h2-on-dark text-[clamp(1.05rem,4.2vw,1.28rem)] leading-[1.15]"
-          />
-        </header>
-
-        <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-1 pb-1">
-          <div className="relative mx-auto flex min-h-0 w-full max-w-[13.5rem] items-center justify-center sm:max-w-[15rem]">
-            <div className="relative aspect-square max-h-full w-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/media/product_breakdown.png"
-                alt="פירוק המוצר"
-                className="absolute inset-0 h-full w-full select-none object-contain"
-                draggable={false}
-              />
-              {ORDERED_LABELS.map((l, i) => {
-                const active = phase === i + 1;
-                return (
-                  <div
-                    key={l.index}
-                    aria-hidden={!active}
-                    className={`absolute inset-0 ${stepTransition} ${
-                      active ? stepOn : stepOff
-                    }`}
-                  >
-                    <MobileHotspotOverlay label={l} />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <div
-              className="mb-1.5 flex items-center justify-center gap-1.5"
-              aria-hidden
-            >
-              {ORDERED_LABELS.map((l, i) => (
-                <span
-                  key={l.index}
-                  className={`h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out ${
-                    phase === i + 1 ? "w-7 bg-clay" : "w-1.5 bg-cream/25"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <div className="relative h-[10rem]">
-              {ORDERED_LABELS.map((l, i) => {
-                const active = phase === i + 1;
-                return (
-                  <div
-                    key={l.index}
-                    aria-hidden={!active}
-                    className={`absolute inset-x-0 top-0 ${stepTransition} ${
-                      active ? stepOn : stepOff
-                    }`}
-                  >
-                    <CardInner label={l} mobile />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-const DesktopBreakdownPanel = memo(function DesktopBreakdownPanel({
-  phase,
-}: {
-  phase: number;
-}) {
-  const showIntro = phase < 1;
-  const showDiagram = phase >= 1;
-  const visibleArrows = Math.max(0, Math.min(4, phase - 1));
-
-  return (
-    <>
-      <AnimatePresence mode="wait">
-        {showIntro && (
-          <motion.div
-            key="desktop-intro"
-            initial={{ opacity: 0, x: SWEEP_FROM }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: SWEEP_EXIT }}
-            transition={sweep}
-            className="absolute inset-0 z-30 hidden flex-col items-center justify-center gap-0 px-6 lg:flex"
-          >
-            <p className="text-center font-display text-3xl font-bold leading-tight tracking-tight text-cream sm:text-4xl lg:text-5xl">
-              איך המוצר שלנו עובד
-            </p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: fadeEase, delay: 0.35 }}
-              className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse"
-            >
-              גללו ↓
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div
-        className={`relative hidden min-h-0 flex-1 flex-col transition-opacity duration-700 ease-out lg:flex ${
-          showDiagram ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      >
-        <motion.header
-          initial={{ opacity: 0, x: SWEEP_FROM }}
-          animate={
-            showDiagram
-              ? { opacity: 1, x: 0 }
-              : { opacity: 0, x: SWEEP_FROM }
-          }
-          transition={{ ...sweep, delay: 0.06 }}
-          className="mx-auto max-w-2xl shrink-0 text-center"
-        >
-          <BreakdownHeading id="breakdown-heading" />
-        </motion.header>
-
-        <div className="relative mt-4 min-h-0 flex-1 sm:mt-6">
-          <div className="relative h-full">
-            <motion.img
-              initial={{ opacity: 0, x: SWEEP_FROM, scale: 0.985 }}
-              animate={
-                showDiagram
-                  ? { opacity: 1, x: 0, scale: 1 }
-                  : { opacity: 0, x: SWEEP_FROM, scale: 0.985 }
-              }
-              transition={{ ...sweep, delay: 0.1 }}
-              src="/media/product_breakdown.png"
-              alt="פירוק המוצר: עמדת האכלה עם סימון 4 הרכיבים העיקריים"
-              className="
-                absolute inset-0 m-auto block h-full w-auto
-                max-h-full max-w-[62%] select-none object-contain
-              "
-              style={{
-                maskImage: IMG_MASK,
-                WebkitMaskImage: IMG_MASK,
-              }}
-              draggable={false}
-            />
-
-            {LABELS.map((l) => {
-              const orderIdx = ORDERED_LABELS.findIndex(
-                (o) => o.index === l.index,
-              );
-              return (
-                <DesktopCard
-                  key={l.index}
-                  label={l}
-                  visible={orderIdx < visibleArrows}
-                  orderIndex={orderIdx}
-                />
-              );
-            })}
-
-            <Arrows visibleCount={visibleArrows} />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-});
-
-/* ─── Main ────────────────────────────────────────────────────────────────── */
-
-const IMG_MASK =
-  "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)";
-
 export default function ProductBreakdownDiagram() {
   const sectionRef = useRef<HTMLElement>(null);
-  const mobilePhaseRef = useRef(0);
-  const desktopPhaseRef = useRef(0);
-  const stepLockedUntilRef = useRef(0);
-  const touchStartYRef = useRef<number | null>(null);
-  const touchSteppedRef = useRef(false);
-  const pinnedSyncedRef = useRef(false);
   const [mobilePhase, setMobilePhase] = useState(0);
-  const [desktopPhase, setDesktopPhase] = useState(0);
+  const [mobileSelected, setMobileSelected] = useState(4);
+  const [showTapHint, setShowTapHint] = useState(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      mobilePhaseRef.current = MOBILE_MAX_PHASE;
-      desktopPhaseRef.current = DESKTOP_MAX_PHASE;
-      setMobilePhase(MOBILE_MAX_PHASE);
-      setDesktopPhase(DESKTOP_MAX_PHASE);
-      return;
-    }
+    const section = sectionRef.current;
+    if (!section) return;
 
-    const getContext = () => {
-      const isMobile = isMobileBreakdownView();
-      return {
-        isMobile,
-        boundaries: isMobile
-          ? MOBILE_PHASE_BOUNDARIES
-          : DESKTOP_PHASE_BOUNDARIES,
-        maxPhase: isMobile ? MOBILE_MAX_PHASE : DESKTOP_MAX_PHASE,
-        phaseRef: isMobile ? mobilePhaseRef : desktopPhaseRef,
-        setPhase: isMobile ? setMobilePhase : setDesktopPhase,
-        phaseFromProgress: isMobile
-          ? mobilePhaseFromProgress
-          : desktopPhaseFromProgress,
-      };
-    };
+    const sync = () => {
+      const phase = Number(section.dataset.mobilePhase ?? 0);
+      setMobilePhase(phase);
+      if (phase !== 5) setShowTapHint(true);
 
-    const goToPhase = (targetPhase: number, smooth: boolean) => {
-      const sectionEl = sectionRef.current;
-      if (!sectionEl) return;
-
-      const ctx = getContext();
-      const clamped = Math.max(0, Math.min(ctx.maxPhase, targetPhase));
-      const targetY = scrollYForProgress(
-        sectionEl,
-        progressForPhase(clamped, ctx.boundaries),
-      );
-      const drift = Math.abs(window.scrollY - targetY);
-      const phaseChanged = clamped !== ctx.phaseRef.current;
-
-      if (!phaseChanged && drift < 2) return;
-
-      ctx.phaseRef.current = clamped;
-      ctx.setPhase(clamped);
-
-      window.scrollTo({ top: targetY, behavior: smooth ? "smooth" : "auto" });
-      stepLockedUntilRef.current = Date.now() + STEP_COOLDOWN_MS;
-    };
-
-    const canStepInDirection = (goingDown: boolean) => {
-      const ctx = getContext();
-      const current = ctx.phaseRef.current;
-      if (goingDown && current >= ctx.maxPhase) return false;
-      if (!goingDown && current <= 0) return false;
-      return true;
-    };
-
-    const shouldCaptureScroll = (
-      sectionEl: HTMLElement,
-      goingDown: boolean,
-    ) => isBreakdownPinned(sectionEl) && canStepInDirection(goingDown);
-
-    const tryStep = (direction: 1 | -1): boolean => {
-      if (Date.now() < stepLockedUntilRef.current) return false;
-
-      const sectionEl = sectionRef.current;
-      if (!sectionEl || !isBreakdownPinned(sectionEl)) return false;
-
-      const ctx = getContext();
-      const next = ctx.phaseRef.current + direction;
-      if (next < 0 || next > ctx.maxPhase) return false;
-
-      goToPhase(next, true);
-      return true;
-    };
-
-    const syncOnPinEnter = () => {
-      const sectionEl = sectionRef.current;
-      if (!sectionEl) return;
-
-      if (!isBreakdownPinned(sectionEl)) {
-        pinnedSyncedRef.current = false;
-        return;
-      }
-
-      if (pinnedSyncedRef.current) return;
-      pinnedSyncedRef.current = true;
-
-      const ctx = getContext();
-      const { sectionTop, scrollRange } = getBreakdownScrollRange(sectionEl);
-      const progress = Math.max(
-        0,
-        Math.min(1, (window.scrollY - sectionTop) / scrollRange),
-      );
-      const phase = ctx.phaseFromProgress(progress);
-      goToPhase(phase, false);
-    };
-
-    const onWheel = (event: WheelEvent) => {
-      const sectionEl = sectionRef.current;
-      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
-
-      const goingDown = event.deltaY > 0;
-      if (event.deltaY === 0) return;
-
-      if (shouldCaptureScroll(sectionEl, goingDown)) {
-        event.preventDefault();
-      }
-
-      if (Date.now() < stepLockedUntilRef.current) {
-        const ctx = getContext();
-        if (
-          ctx.phaseRef.current > 0 &&
-          ctx.phaseRef.current < ctx.maxPhase
-        ) {
-          event.preventDefault();
-        }
-        return;
-      }
-      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
-
-      tryStep(goingDown ? 1 : -1);
-    };
-
-    const onTouchStart = (event: TouchEvent) => {
-      touchStartYRef.current = event.touches[0]?.clientY ?? null;
-      touchSteppedRef.current = false;
-    };
-
-    const onTouchMove = (event: TouchEvent) => {
-      const sectionEl = sectionRef.current;
-      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
-
-      const startY = touchStartYRef.current;
-      const currentY = event.touches[0]?.clientY;
-      if (startY == null || currentY == null) return;
-
-      const delta = startY - currentY;
-      const goingDown = delta > 0;
-
-      if (shouldCaptureScroll(sectionEl, goingDown)) {
-        event.preventDefault();
-      } else if (touchSteppedRef.current) {
-        event.preventDefault();
-      }
-
-      if (Date.now() < stepLockedUntilRef.current) {
-        const ctx = getContext();
-        if (
-          ctx.phaseRef.current > 0 &&
-          ctx.phaseRef.current < ctx.maxPhase
-        ) {
-          event.preventDefault();
-        }
-        return;
-      }
-      if (touchSteppedRef.current) return;
-      if (Math.abs(delta) < TOUCH_STEP_THRESHOLD_PX) return;
-      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
-
-      if (tryStep(goingDown ? 1 : -1)) {
-        touchSteppedRef.current = true;
+      const selected = section.dataset.mobileSelected;
+      if (selected) {
+        setMobileSelected(Number(selected));
+      } else if (phase >= 1 && phase <= 4) {
+        setMobileSelected(phase);
       }
     };
 
-    const onTouchEnd = (event: TouchEvent) => {
-      const startY = touchStartYRef.current;
-      touchStartYRef.current = null;
-      if (startY == null || touchSteppedRef.current) {
-        touchSteppedRef.current = false;
-        return;
-      }
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(section, {
+      attributes: true,
+      attributeFilter: ["data-mobile-phase", "data-mobile-selected"],
+    });
 
-      const sectionEl = sectionRef.current;
-      if (!sectionEl || !isBreakdownPinned(sectionEl)) return;
-
-      const endY = event.changedTouches[0]?.clientY ?? startY;
-      const delta = startY - endY;
-      if (Math.abs(delta) < TOUCH_STEP_THRESHOLD_PX) return;
-
-      const goingDown = delta > 0;
-      if (Date.now() < stepLockedUntilRef.current) return;
-      if (!shouldCaptureScroll(sectionEl, goingDown)) return;
-
-      event.preventDefault();
-      tryStep(goingDown ? 1 : -1);
-      touchSteppedRef.current = false;
-    };
-
-    const onScroll = () => {
-      const sectionEl = sectionRef.current;
-      if (!sectionEl) return;
-
-      if (!isBreakdownPinned(sectionEl)) {
-        pinnedSyncedRef.current = false;
-        return;
-      }
-
-      if (!pinnedSyncedRef.current) {
-        pinnedSyncedRef.current = true;
-        syncOnPinEnter();
-        return;
-      }
-
-      if (Date.now() < stepLockedUntilRef.current) return;
-
-      const ctx = getContext();
-      const expectedY = scrollYForProgress(
-        sectionEl,
-        progressForPhase(ctx.phaseRef.current, ctx.boundaries),
-      );
-      const drift = window.scrollY - expectedY;
-
-      if (Math.abs(drift) <= SCROLL_DRIFT_PX) return;
-
-      if (drift > 0 && ctx.phaseRef.current < ctx.maxPhase) {
-        goToPhase(ctx.phaseRef.current + 1, true);
-        return;
-      }
-
-      if (drift < 0 && ctx.phaseRef.current > 0) {
-        goToPhase(ctx.phaseRef.current - 1, true);
-        return;
-      }
-
-      window.scrollTo({ top: expectedY, behavior: "smooth" });
-      stepLockedUntilRef.current = Date.now() + STEP_COOLDOWN_MS;
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onTouchEnd, { passive: false });
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    syncOnPinEnter();
-
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => observer.disconnect();
   }, []);
+
+  const selectMobileFeature = (index: number) => {
+    const section = sectionRef.current;
+    if (!section || Number(section.dataset.mobilePhase) !== 5) return;
+    section.dataset.mobileSelected = String(index);
+    setMobileSelected(index);
+    setShowTapHint(false);
+  };
+
+  const mobileInteractive = mobilePhase >= 5;
 
   return (
     <section
       ref={sectionRef}
       id="product-breakdown"
       dir="rtl"
-      className="
-        relative isolate mt-0
-        h-[500svh] lg:h-[420vh]
-        bg-[#0D2438]
-      "
+      data-mobile-phase="0"
+      data-desktop-phase="0"
+      data-breakdown-step="0"
+      className="relative isolate mt-0 h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--app-vh,100svh)-var(--site-header-h))] bg-[#0D2438]"
       aria-labelledby="breakdown-heading"
     >
+      <BreakdownScrollSync sectionRef={sectionRef} />
 
       <div
         aria-hidden
@@ -1038,10 +795,112 @@ export default function ProductBreakdownDiagram() {
         }}
       />
 
-      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
-        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 pb-1 sm:px-8 lg:px-8 lg:py-6 lg:pb-6">
-          <DesktopBreakdownPanel phase={desktopPhase} />
-          <MobileBreakdownPanel phase={mobilePhase} />
+      <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--app-vh,100svh)-var(--site-header-h))] flex-col overflow-hidden">
+        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-4 sm:px-8">
+          <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
+            <div className="mobile-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
+              <p className="text-center font-display text-[clamp(1.75rem,7vw,2.25rem)] font-bold leading-tight tracking-tight text-cream">
+                איך המוצר שלנו עובד
+              </p>
+              <p className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse">
+                גללו ↓
+              </p>
+            </div>
+
+            <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col pt-2">
+              <header className="shrink-0 px-1 pb-1 pt-3 text-center">
+                <BreakdownHeading className="section-h2 section-h2-on-dark text-[clamp(1.05rem,4.2vw,1.28rem)] leading-[1.15]" />
+              </header>
+
+              <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-1 pb-1">
+                <div className="relative mx-auto flex min-h-0 w-full max-w-[min(100%,28rem)] items-center justify-center overflow-hidden">
+                  <div className="relative aspect-[1920/1088] max-h-full w-full origin-center scale-[1.6]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/media/product_breakdown.png"
+                      alt="פירוק המוצר"
+                      className="absolute inset-0 h-full w-full select-none object-contain"
+                      draggable={false}
+                    />
+                    {ORDERED_LABELS.map((l, i) => (
+                      <div
+                        key={l.index}
+                        className={`mobile-hotspot-${i + 1} breakdown-layer absolute inset-0`}
+                      >
+                        <MobileHotspotOverlay
+                          label={l}
+                          featureIndex={i + 1}
+                          interactive={mobileInteractive}
+                          onSelect={selectMobileFeature}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <MobileScrollHint />
+                </div>
+
+                <div className="shrink-0">
+                  {mobileInteractive && showTapHint ? <MobileTapHint /> : null}
+                  <div
+                    className="mb-1.5 flex items-center justify-center gap-1.5"
+                    role={mobileInteractive ? "tablist" : undefined}
+                    aria-label={mobileInteractive ? "בחירת שכבה" : undefined}
+                  >
+                    {ORDERED_LABELS.map((l, i) =>
+                      mobileInteractive ? (
+                        <button
+                          key={l.index}
+                          type="button"
+                          role="tab"
+                          aria-selected={mobileSelected === i + 1}
+                          aria-label={l.title}
+                          onClick={() => selectMobileFeature(i + 1)}
+                          className={`mobile-dot-${i + 1} h-1.5 w-1.5 rounded-full bg-cream/25 transition-[width,background-color,opacity] duration-300`}
+                        />
+                      ) : (
+                        <span
+                          key={l.index}
+                          aria-hidden
+                          className={`mobile-dot-${i + 1} h-1.5 w-1.5 rounded-full bg-cream/25 transition-[width,background-color] duration-300`}
+                        />
+                      ),
+                    )}
+                  </div>
+                  <div className="mobile-card-stack relative min-h-[clamp(11.5rem,28svh,14.5rem)]">
+                    {ORDERED_LABELS.map((l, i) => (
+                      <div
+                        key={l.index}
+                        className={`mobile-card-${i + 1} breakdown-layer absolute inset-x-0 top-0 h-full`}
+                      >
+                        <CardInner label={l} mobile />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative hidden h-full min-h-0 flex-1 lg:block">
+            <div className="desktop-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
+              <p className="text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-tight tracking-tight text-cream">
+                איך המוצר שלנו עובד
+              </p>
+              <p className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse">
+                גללו ↓
+              </p>
+            </div>
+
+            <div className="desktop-body breakdown-layer relative flex h-full min-h-0 flex-col">
+              <header className="mx-auto max-w-2xl shrink-0 text-center">
+                <BreakdownHeading id="breakdown-heading" />
+              </header>
+
+              <DesktopBreakdownStage />
+            </div>
+
+            <DesktopScrollHint />
+          </div>
         </div>
       </div>
     </section>

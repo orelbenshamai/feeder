@@ -2,21 +2,22 @@
 
 import { useEffect } from "react";
 
-/** Lock mobile hero height to the first paint — avoids iOS toolbar resize jumps. */
+/** Lock mobile viewport height to avoid iOS 100vh jump when the URL bar shows/hides. */
 export default function StableViewportHeight() {
   useEffect(() => {
-    const setAppVh = () => {
+    const sync = () => {
       document.documentElement.style.setProperty(
         "--app-vh",
         `${window.innerHeight}px`,
       );
     };
 
-    setAppVh();
-    window.addEventListener("orientationchange", setAppVh);
-
+    sync();
+    window.addEventListener("orientationchange", sync);
+    window.addEventListener("resize", sync, { passive: true });
     return () => {
-      window.removeEventListener("orientationchange", setAppVh);
+      window.removeEventListener("orientationchange", sync);
+      window.removeEventListener("resize", sync);
     };
   }, []);
 

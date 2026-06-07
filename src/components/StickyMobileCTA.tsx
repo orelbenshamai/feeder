@@ -4,46 +4,85 @@ import { useEffect, useState } from "react";
 import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
 import { useLeadCapture } from "./LeadCapture";
 
+function getSiteHeaderHeight() {
+  if (typeof window === "undefined") return 64;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(
+    "--site-header-h",
+  );
+  const parsed = Number.parseFloat(raw);
+  if (Number.isFinite(parsed) && parsed > 0) return parsed;
+  return document.querySelector("header")?.getBoundingClientRect().height ?? 64;
+}
+
+function isInBreakdownReveal() {
+  const breakdown = document.getElementById("product-breakdown");
+  if (!breakdown) return false;
+  return (
+    breakdown.dataset.breakdownLocked === "true" &&
+    breakdown.dataset.breakdownComplete !== "true"
+  );
+}
+
 export default function StickyMobileCTA() {
   const { open } = useLeadCapture();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     const update = () => {
-      const scrollPastHero = window.scrollY > window.innerHeight * 0.4;
+      const headerH = getSiteHeaderHeight();
+      const hero = document.getElementById("hero");
+      const heroBottom = hero
+        ? hero.getBoundingClientRect().bottom
+        : window.innerHeight * 0.6;
+      const scrollPastHero = heroBottom <= headerH + 8;
+
       const finalCta = document.getElementById("final-cta");
       const inFinalCta = finalCta
-        ? finalCta.getBoundingClientRect().top <= 72
+        ? finalCta.getBoundingClientRect().top <= headerH + 8
         : false;
-      setShow(scrollPastHero && !inFinalCta);
+
+      setShow(scrollPastHero && !inFinalCta && !isInBreakdownReveal());
     };
+
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update, { passive: true });
+
+    const breakdown = document.getElementById("product-breakdown");
+    const breakdownObserver = new MutationObserver(update);
+    if (breakdown) {
+      breakdownObserver.observe(breakdown, {
+        attributes: true,
+        attributeFilter: ["data-breakdown-locked", "data-breakdown-complete"],
+      });
+    }
+
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      breakdownObserver.disconnect();
     };
   }, []);
 
   return (
     <div
       aria-hidden={!show}
-      className={`fixed inset-x-0 top-0 z-40 md:hidden transition-all duration-300 ease-out ${
+      className={`fixed inset-x-0 z-40 md:hidden transition-all duration-300 ease-out ${
         show
           ? "translate-y-0 opacity-100"
           : "-translate-y-full opacity-0 pointer-events-none"
       }`}
+      style={{ top: "var(--site-header-h)" }}
     >
       <div
         dir="rtl"
-        className="border-b border-cream/10 bg-ink/95 px-4 py-2.5 pt-[calc(8px+env(safe-area-inset-top))] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.4)]"
+        className="border-b border-cream/10 bg-ink/95 px-4 py-2.5 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.4)]"
       >
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => open()}
-            className="inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-full bg-clay px-5 text-[13px] font-semibold text-ink transition active:scale-[0.98]"
+            className="btn-clay min-h-[40px] shrink-0 px-5 text-[13px]"
           >
             להזמין עכשיו
           </button>

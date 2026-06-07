@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <LeadCaptureProvider>
       <StableViewportHeight />
-      <main id="main" className="flex min-h-[100svh] flex-col">
+      <main id="main" className="flex flex-col">
         <Hero />
         <ProductIntroduction />
         <ProductBreakdownDiagram />

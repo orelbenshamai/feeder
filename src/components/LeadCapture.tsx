@@ -141,6 +141,13 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
         throw new Error((data as { error?: string }).error ?? "שגיאה בשמירה, נסו שוב");
       }
 
+      if (window.fbq) {
+        window.fbq('track', 'Lead', {
+          content_name: 'שרינו לי 10% הנחה',
+          status: 'success'
+        });
+      }
+
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "שגיאה, נסו שוב");
@@ -281,14 +288,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="
-                    group mt-1 inline-flex min-h-[54px] w-full items-center
-                    justify-center gap-2 rounded-full bg-clay px-6 text-[15px]
-                    font-semibold text-ink
-                    shadow-[0_18px_44px_-22px_rgba(255,159,10,0.55)]
-                    transition hover:bg-clay/90 active:scale-[0.99]
-                    disabled:opacity-60 disabled:cursor-not-allowed
-                  "
+                  className="btn-clay group mt-1 w-full disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="inline-flex items-center gap-2">

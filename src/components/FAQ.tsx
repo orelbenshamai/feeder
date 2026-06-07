@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { whatsAppHref } from "@/lib/whatsapp";
-import { useShineOnEnter } from "@/hooks/useShineOnEnter";
-import Reveal from "./Reveal";
 import { LeadCaptureTrigger } from "./LeadCapture";
 
 const faqs = [
@@ -31,14 +29,13 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
-  const shineRef = useShineOnEnter();
 
   return (
     <section
       id="faq"
       className="
         section-pad relative isolate overflow-hidden bg-cream
-        max-sm:py-12
+        max-sm:pt-[calc(var(--site-header-h)+3rem)] max-sm:pb-12
         mt-0
       "
     >
@@ -55,13 +52,10 @@ export default function FAQ() {
 
       <div className="relative mx-auto max-w-3xl px-4 sm:px-8">
 
-        <Reveal delay={80}>
-          <h2 className="section-h2 mt-2 max-w-[16ch] text-center max-sm:mx-auto max-sm:text-[clamp(1.65rem,5.8vw,2.1rem)] max-sm:leading-[1.1] sm:mt-5 sm:max-w-none">
-            כל מה שרציתם לדעת{" "}
-            <span className="relative inline-block whitespace-nowrap">
-              <span ref={shineRef} className="faq-shine">
-                לפני שמזמינים
-              </span>
+        <h2 className="section-h2 mt-2 max-w-[16ch] text-center max-sm:mx-auto max-sm:text-[clamp(1.65rem,5.8vw,2.1rem)] max-sm:leading-[1.1] sm:mt-5 sm:max-w-none">
+          כל מה שרציתם לדעת{" "}
+          <span className="relative inline-block whitespace-nowrap">
+            <span className="faq-shine shine-active">לפני שמזמינים</span>
               <svg
                 aria-hidden
                 viewBox="0 0 240 14"
@@ -79,10 +73,8 @@ export default function FAQ() {
               </svg>
             </span>
           </h2>
-        </Reveal>
 
-        <Reveal delay={140}>
-          <p className="section-lead mx-auto mt-4 max-w-xl text-center max-sm:text-[15px] max-sm:leading-[1.65] sm:mt-6">
+        <p className="section-lead mx-auto mt-4 max-w-xl text-center max-sm:text-[15px] max-sm:leading-[1.65] sm:mt-6">
             ריכזנו את השאלות הכי שכיחות. עדיין מתלבטים?{" "}
             <a
               href={whatsAppHref()}
@@ -93,14 +85,13 @@ export default function FAQ() {
               שלחו לנו הודעה בוואטסאפ
             </a>{" "}
             — עונים אישית תוך כמה שעות.
-          </p>
-        </Reveal>
+        </p>
 
         <ul className="mt-8 flex flex-col gap-2.5 sm:mt-12 sm:gap-0 sm:overflow-hidden sm:rounded-3xl sm:border sm:border-line/70 sm:bg-cream sm:shadow-[0_10px_40px_-20px_rgba(31,58,82,0.18)]">
           {faqs.map((f, i) => {
             const isOpen = open === i;
             return (
-              <Reveal as="li" key={f.q} delay={i * 40}>
+              <li key={f.q}>
                 <div
                   className={`overflow-hidden rounded-2xl border border-line/60 bg-white/90 shadow-[0_4px_18px_-12px_rgba(31,58,82,0.08)] transition-colors duration-300 sm:rounded-none sm:border-0 sm:border-line/70 sm:bg-transparent sm:shadow-none ${
                     i > 0 ? "sm:border-t" : ""
@@ -145,7 +136,7 @@ export default function FAQ() {
                     </div>
                   </div>
                 </div>
-              </Reveal>
+              </li>
             );
           })}
         </ul>
