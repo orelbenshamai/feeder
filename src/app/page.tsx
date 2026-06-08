@@ -3,7 +3,7 @@ import ProductIntroduction from "@/components/ProductIntroduction";
 import ProductBreakdownDiagram from "@/components/ProductBreakdownDiagram";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
-import StickyMobileCTA from "@/components/StickyMobileCTA";
+// import StickyMobileCTA from "@/components/StickyMobileCTA";
 import { LeadCaptureProvider } from "@/components/LeadCapture";
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
         <FAQ />
         <FinalCTA />
       </main>
-      <StickyMobileCTA />
+      {/* <StickyMobileCTA /> */}
     </LeadCaptureProvider>
   );
 }
