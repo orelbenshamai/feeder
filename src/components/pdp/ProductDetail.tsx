@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import type { Product, ProductColorId, ProductSizeId } from "@/types/product";
-import { getProductDisplayImage, getVariantBySize } from "@/lib/products";
+import {
+  getAvailableColorsForSize,
+  getGalleryImagesForSelection,
+  getProductDisplayImage,
+  getVariantBySize,
+  resolveColorForSize,
+} from "@/lib/products";
 import ProductGallery from "./ProductGallery";
 import ProductPurchaseCard from "./ProductPurchaseCard";
 import ProductAboutPanel from "./ProductAboutPanel";
@@ -19,20 +25,38 @@ type ProductDetailProps = {
 export default function ProductDetail({ product }: ProductDetailProps) {
   const defaultSize =
     product.variants[1]?.id ?? product.variants[0]?.id ?? "medium";
-  const defaultColor = product.colors[0]?.id ?? "navy";
+  const defaultColor =
+    getAvailableColorsForSize(product, defaultSize)[0]?.id ??
+    product.colors[0]?.id ??
+    "gray";
 
   const [selectedSizeId, setSelectedSizeId] = useState<ProductSizeId>(defaultSize);
   const [selectedColorId, setSelectedColorId] =
     useState<ProductColorId>(defaultColor);
+
+  const handleSelectSize = (sizeId: ProductSizeId) => {
+    setSelectedSizeId(sizeId);
+    setSelectedColorId((current) => resolveColorForSize(product, sizeId, current));
+  };
 
   const selectedVariant = useMemo(
     () => getVariantBySize(product, selectedSizeId),
     [product, selectedSizeId],
   );
 
+  const galleryImages = useMemo(
+    () => getGalleryImagesForSelection(product, selectedSizeId, selectedColorId),
+    [product, selectedSizeId, selectedColorId],
+  );
+
   const displayImageUrl = useMemo(
     () => getProductDisplayImage(product, selectedSizeId, selectedColorId),
     [product, selectedSizeId, selectedColorId],
+  );
+
+  const availableColors = useMemo(
+    () => getAvailableColorsForSize(product, selectedSizeId),
+    [product, selectedSizeId],
   );
 
   const selectedColorLabel =
@@ -45,7 +69,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       {/* ── MOBILE ─────────────────────────────────────────────────────── */}
       <div className="lg:hidden">
         <ProductGallery
-          images={product.galleryImages}
+          images={galleryImages}
           variant={selectedVariant}
           productName={product.name}
           variantImageUrl={displayImageUrl}
@@ -68,10 +92,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <VariantSizeSelector
               variants={product.variants}
               selectedId={selectedSizeId}
-              onSelect={setSelectedSizeId}
+              onSelect={handleSelectSize}
             />
             <VariantColorSelector
-              colors={product.colors}
+              colors={availableColors}
               selectedId={selectedColorId}
               onSelect={setSelectedColorId}
             />
@@ -98,7 +122,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <section className="relative hidden lg:block">
         <div className="relative min-h-[calc(100svh-var(--site-header-h))]">
           <ProductGallery
-            images={product.galleryImages}
+            images={galleryImages}
             variant={selectedVariant}
             productName={product.name}
             variantImageUrl={displayImageUrl}
@@ -117,7 +141,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               selectedVariant={selectedVariant}
               selectedSizeId={selectedSizeId}
               selectedColorId={selectedColorId}
-              onSelectSize={setSelectedSizeId}
+              availableColors={availableColors}
+              onSelectSize={handleSelectSize}
               onSelectColor={setSelectedColorId}
             />
           </div>

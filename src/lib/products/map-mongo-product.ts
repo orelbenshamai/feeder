@@ -19,6 +19,9 @@ export type MongoProductDocument = {
     compareAtPrice?: number;
     imageUrl: string;
     sku: string;
+    inStock?: boolean;
+    availableColors?: ProductVariant["availableColors"];
+    galleryByColor?: ProductVariant["galleryByColor"];
   }>;
 };
 
@@ -41,6 +44,9 @@ export function mapMongoProduct(doc: MongoProductDocument): Product {
       compareAtPrice: v.compareAtPrice,
       imageUrl: v.imageUrl,
       sku: v.sku,
+      inStock: v.inStock ?? true,
+      availableColors: v.availableColors ?? [],
+      galleryByColor: v.galleryByColor ?? {},
     })),
   };
 }

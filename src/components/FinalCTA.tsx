@@ -78,7 +78,6 @@ export default function FinalCTA() {
       className="
         relative isolate flex h-[100svh] max-h-[100svh] min-h-[100svh] flex-col overflow-hidden
         text-cream bg-[#071520]
-        max-lg:h-[var(--app-vh,100svh)] max-lg:max-h-[var(--app-vh,100svh)] max-lg:min-h-[var(--app-vh,100svh)]
         shadow-[0_-24px_60px_-24px_rgba(31,58,82,0.18)]
         mt-0
       "

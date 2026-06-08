@@ -2,7 +2,7 @@
 export type ProductSizeId = "small" | "medium" | "large";
 
 /** Finish / color identifiers — stable across mock data and future MongoDB documents. */
-export type ProductColorId = "navy" | "slate" | "cream";
+export type ProductColorId = "gray" | "beige";
 
 export interface ProductColor {
   id: ProductColorId;
@@ -22,6 +22,11 @@ export interface ProductVariant {
   compareAtPrice?: number;
   imageUrl: string;
   sku: string;
+  inStock: boolean;
+  /** Colors offered for this size */
+  availableColors: ProductColorId[];
+  /** Gallery slides keyed by finish */
+  galleryByColor: Partial<Record<ProductColorId, string[]>>;
 }
 
 export interface ProductFeature {

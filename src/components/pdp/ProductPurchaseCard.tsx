@@ -2,6 +2,7 @@
 
 import type {
   Product,
+  ProductColor,
   ProductColorId,
   ProductSizeId,
   ProductVariant,
@@ -16,6 +17,7 @@ type ProductPurchaseCardProps = {
   selectedVariant: ProductVariant;
   selectedSizeId: ProductSizeId;
   selectedColorId: ProductColorId;
+  availableColors: ProductColor[];
   onSelectSize: (id: ProductSizeId) => void;
   onSelectColor: (id: ProductColorId) => void;
   className?: string;
@@ -28,6 +30,7 @@ export default function ProductPurchaseCard({
   selectedVariant,
   selectedSizeId,
   selectedColorId,
+  availableColors,
   onSelectSize,
   onSelectColor,
   className = "",
@@ -71,7 +74,7 @@ export default function ProductPurchaseCard({
             onSelect={onSelectSize}
           />
           <VariantColorSelector
-            colors={product.colors}
+            colors={availableColors}
             selectedId={selectedColorId}
             onSelect={onSelectColor}
           />

@@ -15,6 +15,8 @@ export default function VariantColorSelector({
 }: VariantColorSelectorProps) {
   const selected = colors.find((color) => color.id === selectedId);
 
+  if (colors.length === 0) return null;
+
   return (
     <div>
       <p className="text-label mb-3">בחירת צבע</p>
@@ -25,7 +27,7 @@ export default function VariantColorSelector({
       >
         {colors.map((color) => {
           const isSelected = color.id === selectedId;
-          const isLight = color.id === "cream";
+          const isLight = color.id === "beige";
 
           return (
             <button

@@ -76,7 +76,7 @@ export default function ProductGallery({
   };
 
   const imageShell = overlayControls
-    ? "absolute inset-0 bg-cream"
+    ? "absolute inset-0 bg-cream ps-[min(480px,calc(34vw+4.5rem))]"
     : "relative w-full overflow-visible";
 
   const imageFrame = overlayControls
@@ -93,11 +93,26 @@ export default function ProductGallery({
           alt={`${productName} — ${variant.sizeLabel}`}
           className={
             overlayControls
-              ? "absolute inset-0 m-auto h-full w-full max-h-full max-w-full object-contain object-center p-2 lg:p-4 xl:p-5"
-              : "absolute inset-0 h-full w-full object-contain object-center"
+              ? `absolute inset-0 m-auto h-full w-full max-h-full max-w-full object-contain object-left p-2 pe-6 pb-4 pt-4 lg:pe-10 lg:pb-6 lg:pt-6 ${
+                  !variant.inStock ? "opacity-60" : ""
+                }`
+              : `absolute inset-0 h-full w-full object-contain object-center ${
+                  !variant.inStock ? "opacity-60" : ""
+                }`
           }
           draggable={false}
         />
+        {!variant.inStock ? (
+          <div
+            className={
+              overlayControls
+                ? "absolute end-8 top-8 z-10 inline-flex items-center gap-2 rounded-full border border-line/70 bg-cream/95 px-3 py-1.5 text-xs font-medium text-stone backdrop-blur"
+                : "absolute start-5 top-5 inline-flex items-center gap-2 rounded-full border border-line/70 bg-cream/95 px-3 py-1.5 text-xs font-medium text-stone backdrop-blur"
+            }
+          >
+            אזל מהמלאי
+          </div>
+        ) : null}
       </div>
 
       {hasMultiple ? (
