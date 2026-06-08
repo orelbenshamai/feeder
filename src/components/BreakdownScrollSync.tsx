@@ -232,7 +232,6 @@ export default function BreakdownScrollSync({
     };
 
     const handleLockedWheelUp = () => {
-      if (!stepArmed) return;
       consumeGesture();
       releaseUp();
     };
@@ -257,12 +256,14 @@ export default function BreakdownScrollSync({
         e.preventDefault();
         e.stopPropagation();
 
-        if (!stepArmed) return;
-
         // Mouse wheel notches — one step per tick
         if (e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) {
-          if (delta > 0) handleLockedWheelDown(Math.abs(delta));
-          else if (delta < 0) handleLockedWheelUp();
+          if (delta > 0) {
+            if (!stepArmed) return;
+            handleLockedWheelDown(Math.abs(delta));
+          } else if (delta < 0) {
+            handleLockedWheelUp();
+          }
           return;
         }
 
@@ -271,8 +272,13 @@ export default function BreakdownScrollSync({
 
         const down = wheelAccum > 0;
         const momentum = Math.abs(wheelAccum);
-        if (down) handleLockedWheelDown(momentum);
-        else handleLockedWheelUp();
+        wheelAccum = 0;
+        if (down) {
+          if (!stepArmed) return;
+          handleLockedWheelDown(momentum);
+        } else {
+          handleLockedWheelUp();
+        }
         return;
       }
 
@@ -298,11 +304,20 @@ export default function BreakdownScrollSync({
 
       if (locked) {
         e.preventDefault();
-        if (!stepArmed) return;
-        if (Math.abs(touchAccum) < SWIPE_THRESHOLD_PX) return;
+
+        const absAccum = Math.abs(touchAccum);
+        if (absAccum < SWIPE_THRESHOLD_PX) return;
+
         const down = touchAccum > 0;
-        if (down) handleLockedWheelDown(60);
-        else handleLockedWheelUp();
+        touchAccum = 0;
+
+        if (!down) {
+          handleLockedWheelUp();
+          return;
+        }
+
+        if (!stepArmed) return;
+        handleLockedWheelDown(60);
         return;
       }
 
@@ -322,6 +337,17 @@ export default function BreakdownScrollSync({
           if (down) handleScrollDownIntent(amount);
         }
       }
+    };
+
+    const onTouchEnd = () => {
+      if (releasing || !locked) return;
+      // Partial upward swipe — escape even if full threshold wasn't reached
+      if (touchAccum < -(SWIPE_THRESHOLD_PX / 2)) {
+        touchAccum = 0;
+        handleLockedWheelUp();
+        return;
+      }
+      touchAccum = 0;
     };
 
     const onScroll = () => enforceBoundary();
@@ -353,6 +379,8 @@ export default function BreakdownScrollSync({
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true, capture: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true, capture: true });
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown, { capture: true });
     window.addEventListener("resize", onResize, { passive: true });
@@ -372,6 +400,8 @@ export default function BreakdownScrollSync({
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
+      window.removeEventListener("touchend", onTouchEnd, { capture: true });
+      window.removeEventListener("touchcancel", onTouchEnd, { capture: true });
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown, { capture: true });
       window.removeEventListener("resize", onResize);
