@@ -393,6 +393,35 @@
   animation: breakdown-scroll-chevron 1.85s ease-in-out infinite;
 }
 
+/* Mobile — keep diagram, hints, dots, and card in separate bands */
+@media (max-width: 1023px) {
+  #product-breakdown .mobile-diagram-scale {
+    transform: scale(1.72);
+  }
+
+  #product-breakdown .mobile-scroll-hint,
+  #product-breakdown .mobile-tap-hint {
+    bottom: 0.35rem;
+  }
+
+  #product-breakdown .mobile-card-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 1023px) and (max-height: 740px) {
+  #product-breakdown .mobile-diagram-scale {
+    transform: scale(1.55);
+  }
+
+  #product-breakdown .mobile-card-stack {
+    height: clamp(7.75rem, 15.5svh, 9.25rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #product-breakdown .breakdown-layer,
   #product-breakdown .desktop-card {

@@ -187,7 +187,7 @@ function CardInner({
         group relative flex rounded-2xl text-right
         ring-1 ring-black/[0.06]
         shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]
-        ${mobile ? "h-full min-h-0 gap-3 rounded-xl p-4 bg-cream items-center" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
+        ${mobile ? "h-full min-h-0 gap-2.5 overflow-hidden rounded-xl p-3 bg-cream items-start" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
       `}
     >
       <div
@@ -199,7 +199,7 @@ function CardInner({
           aria-hidden
           className={`
             grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20
-            ${mobile ? "h-14 w-14 rounded-lg [&_svg]:h-8 [&_svg]:w-8" : "breakdown-card-icon transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"}
+            ${mobile ? "h-11 w-11 rounded-lg [&_svg]:h-6 [&_svg]:w-6" : "breakdown-card-icon transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"}
           `}
         >
           {label.icon}
@@ -224,7 +224,7 @@ function CardInner({
         <p
           className={
             mobile
-              ? "mt-1 font-display text-[clamp(1.22rem,5.4vw,1.5rem)] font-semibold leading-[1.18] text-ink"
+              ? "mt-0.5 font-display text-[clamp(1.05rem,4.6vw,1.3rem)] font-semibold leading-[1.2] text-ink"
               : "breakdown-card-title mt-1 font-display font-semibold leading-snug text-ink"
           }
         >
@@ -233,7 +233,7 @@ function CardInner({
         <p
           className={
             mobile
-              ? "mt-2 text-[clamp(1rem,4.4vw,1.125rem)] leading-[1.5] text-ink/85"
+              ? "mobile-card-desc mt-1.5 text-[clamp(0.9rem,3.8vw,1rem)] leading-[1.45] text-ink/85"
               : "breakdown-card-desc mt-1.5 leading-[1.65] text-ink/82"
           }
         >
@@ -809,7 +809,7 @@ export default function ProductBreakdownDiagram() {
       />
 
       <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] flex-col overflow-hidden">
-        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-4 sm:px-8">
+        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:py-2">
           <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
             <div className="mobile-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
               <p className="text-center font-display text-[clamp(1.75rem,7vw,2.25rem)] font-bold leading-tight tracking-tight text-cream">
@@ -820,14 +820,14 @@ export default function ProductBreakdownDiagram() {
               </p>
             </div>
 
-            <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col pt-2">
-              <header className="shrink-0 px-1 pb-1 pt-3 text-center">
-                <BreakdownHeading className="section-h2 section-h2-on-dark text-[clamp(1.05rem,4.2vw,1.28rem)] leading-[1.15]" />
+            <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col pt-1">
+              <header className="shrink-0 px-1 pb-1.5 pt-1.5 text-center">
+                <BreakdownHeading className="section-h2 section-h2-on-dark text-[clamp(0.98rem,3.8vw,1.18rem)] leading-[1.2]" />
               </header>
 
-              <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-1 pb-1">
-                <div className="relative mx-auto flex min-h-0 w-full max-w-[min(100%,28rem)] items-center justify-center overflow-hidden">
-                  <div className="relative aspect-[1920/1088] max-h-full w-full origin-center scale-[1.6]">
+              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-2 pb-1">
+                <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden pb-8">
+                  <div className="mobile-diagram-scale relative aspect-[1920/1088] max-h-full w-full origin-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/media/product_breakdown.png"
@@ -853,9 +853,9 @@ export default function ProductBreakdownDiagram() {
                   <MobileTapHint />
                 </div>
 
-                <div className="shrink-0">
+                <div className="mobile-bottom-panel shrink-0 space-y-2">
                   <div
-                    className="mb-1.5 flex items-center justify-center gap-1.5"
+                    className="flex items-center justify-center gap-1.5"
                     role={mobileInteractive ? "tablist" : undefined}
                     aria-label={mobileInteractive ? "בחירת שכבה" : undefined}
                   >
@@ -879,7 +879,7 @@ export default function ProductBreakdownDiagram() {
                       ),
                     )}
                   </div>
-                  <div className="mobile-card-stack relative min-h-[clamp(11.5rem,28svh,14.5rem)]">
+                  <div className="mobile-card-stack relative h-[clamp(8.25rem,16.5svh,10rem)]">
                     {ORDERED_LABELS.map((l, i) => (
                       <div
                         key={l.index}
