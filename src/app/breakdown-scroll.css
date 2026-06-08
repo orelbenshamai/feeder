@@ -328,7 +328,8 @@
     visibility 0s linear 420ms;
 }
 
-#product-breakdown .mobile-scroll-hint {
+#product-breakdown .mobile-scroll-hint,
+#product-breakdown .mobile-tap-hint {
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
@@ -355,6 +356,17 @@
 #product-breakdown[data-mobile-phase="2"] .mobile-scroll-hint,
 #product-breakdown[data-mobile-phase="3"] .mobile-scroll-hint,
 #product-breakdown[data-mobile-phase="4"] .mobile-scroll-hint {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0s;
+}
+
+#product-breakdown[data-mobile-phase="5"]:not([data-tap-hint-dismissed="true"])
+  .mobile-tap-hint {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);

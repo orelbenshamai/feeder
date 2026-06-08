@@ -630,11 +630,14 @@ function MobileHotspotOverlay({
   );
 }
 
-/* ─── Scroll hint (phases 1–4) ─────────────────────────────────────────────── */
+/* ─── Scroll hint (phases 1–4) / tap hint (phase 5) ───────────────────────── */
+
+const HINT_PILL_CLASS =
+  "inline-flex items-center gap-2 rounded-full border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/55 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-4 sm:py-2 sm:text-[13px]";
 
 function ScrollHintPill() {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/55 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-4 sm:py-2 sm:text-[13px]">
+    <span className={HINT_PILL_CLASS}>
       <span>גללו לגלוי השכבות</span>
       <svg
         aria-hidden
@@ -654,22 +657,31 @@ function ScrollHintPill() {
   );
 }
 
+function TapHintPill() {
+  return (
+    <span className={HINT_PILL_CLASS}>
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        className="h-3.5 w-3.5 shrink-0 text-clay/80"
+        fill="none"
+      >
+        <circle cx="8" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.4" />
+        <circle cx="8" cy="8" r="1.1" fill="currentColor" />
+      </svg>
+      <span>לחצו על עיגול לפרטים</span>
+    </span>
+  );
+}
+
 function MobileTapHint() {
   return (
-    <p className="mobile-tap-hint pointer-events-none mb-1.5 text-center">
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-cream/10 bg-[#0D2438]/55 px-2.5 py-1 text-[11px] font-medium tracking-wide text-cream/50">
-        <svg
-          aria-hidden
-          viewBox="0 0 16 16"
-          className="h-3 w-3 shrink-0 text-clay/70"
-          fill="none"
-        >
-          <circle cx="8" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.4" />
-          <circle cx="8" cy="8" r="1.1" fill="currentColor" />
-        </svg>
-        לחצו על עיגול לפרטים
-      </span>
-    </p>
+    <div
+      aria-hidden
+      className="mobile-tap-hint pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center"
+    >
+      <TapHintPill />
+    </div>
   );
 }
 
@@ -781,6 +793,7 @@ export default function ProductBreakdownDiagram() {
       data-mobile-phase="0"
       data-desktop-phase="0"
       data-breakdown-step="0"
+      data-tap-hint-dismissed={showTapHint ? undefined : "true"}
       className="relative isolate mt-0 h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] bg-[#0D2438]"
       aria-labelledby="breakdown-heading"
     >
@@ -837,10 +850,10 @@ export default function ProductBreakdownDiagram() {
                     ))}
                   </div>
                   <MobileScrollHint />
+                  <MobileTapHint />
                 </div>
 
                 <div className="shrink-0">
-                  {mobileInteractive && showTapHint ? <MobileTapHint /> : null}
                   <div
                     className="mb-1.5 flex items-center justify-center gap-1.5"
                     role={mobileInteractive ? "tablist" : undefined}
