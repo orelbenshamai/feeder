@@ -5,19 +5,13 @@ import { useEffect, type RefObject } from "react";
 const MAX_STEP = 5;
 const WHEEL_STEP_THRESHOLD = 55;
 const SWIPE_THRESHOLD_PX = 40;
-const SWIPE_UP_THRESHOLD_PX = 18;
 const GESTURE_REARM_MS = 280;
 const APPROACH_PX = 320;
-const RELEASE_COOLDOWN_MS = 450;
 
 function getHeaderH(): number {
   const header = document.querySelector("body > header");
   if (header) return Math.round(header.getBoundingClientRect().height);
   return 44;
-}
-
-function isMobileViewport(): boolean {
-  return window.matchMedia("(max-width: 1023px)").matches;
 }
 
 function applyStep(sectionEl: HTMLElement, step: number) {
@@ -67,42 +61,27 @@ export default function BreakdownScrollSync({
     let touchLastY = 0;
     let touchAccum = 0;
     let locked = false;
-    let engaged = false;
     let releasing = false;
     let savedScrollY = 0;
     let guardId = 0;
     let stepArmed = true;
     let gestureIdleTimer = 0;
-    let releaseCooldownTimer = 0;
-    let mobile = isMobileViewport();
 
     applyStep(sectionEl, 0);
 
-    const isCaptured = () => locked || (mobile && engaged);
-
-    const setBreakdownLockedAttr = (value: boolean) => {
-      sectionEl.dataset.breakdownLocked = value ? "true" : "false";
-    };
-
+    /** Live document scroll position where section top meets the header. */
     const getLockY = () => {
       const headerH = getHeaderH();
       const rect = sectionEl.getBoundingClientRect();
       return Math.round(window.scrollY + rect.top - headerH);
     };
 
+    /** True only when the user is near the breakdown — not far above or below it. */
     const isBreakdownApproachable = () => {
       const rect = sectionEl.getBoundingClientRect();
       if (rect.bottom < -APPROACH_PX) return false;
       if (rect.top > window.innerHeight + APPROACH_PX) return false;
       return true;
-    };
-
-    const startReleaseCooldown = () => {
-      releasing = true;
-      window.clearTimeout(releaseCooldownTimer);
-      releaseCooldownTimer = window.setTimeout(() => {
-        releasing = false;
-      }, RELEASE_COOLDOWN_MS);
     };
 
     const lockPage = (top: number) => {
@@ -117,7 +96,7 @@ export default function BreakdownScrollSync({
       document.body.style.right = "0";
       document.body.style.width = "100%";
       if (scrollbarW > 0) document.body.style.paddingRight = `${scrollbarW}px`;
-      setBreakdownLockedAttr(true);
+      sectionEl.dataset.breakdownLocked = "true";
     };
 
     const unlockPage = (restoreY: number) => {
@@ -130,40 +109,14 @@ export default function BreakdownScrollSync({
       document.body.style.right = "";
       document.body.style.width = "";
       document.body.style.paddingRight = "";
-      setBreakdownLockedAttr(false);
+      sectionEl.dataset.breakdownLocked = "false";
       window.scrollTo({ top: restoreY, behavior: "auto" });
     };
 
-    const engageBreakdown = (lockY: number, resetStep: boolean) => {
-      if (engaged) return;
-      engaged = true;
-      setBreakdownLockedAttr(true);
-      if (Math.abs(window.scrollY - lockY) > 1) {
-        window.scrollTo({ top: lockY, behavior: "auto" });
-      }
-      if (resetStep) {
-        step = 0;
-        applyStep(sectionEl, 0);
-      }
-      wheelAccum = 0;
-      touchAccum = 0;
-      stepArmed = true;
-    };
-
-    const disengageBreakdown = () => {
-      engaged = false;
-      setBreakdownLockedAttr(false);
-    };
-
     const enterBreakdown = (resetStep: boolean) => {
-      if (releasing || step >= MAX_STEP || isCaptured()) return;
+      if (releasing || step >= MAX_STEP || locked) return;
 
       const lockY = getLockY();
-
-      if (mobile) {
-        engageBreakdown(lockY, resetStep);
-        return;
-      }
 
       if (resetStep) {
         step = 0;
@@ -204,6 +157,12 @@ export default function BreakdownScrollSync({
 
     const smoothScrollBy = (distance: number) => {
       const amount = Math.max(distance, 96);
+      if (reduced) {
+        window.scrollBy({ top: amount, behavior: "auto" });
+        releasing = false;
+        return;
+      }
+
       const startY = window.scrollY;
       const duration = Math.min(520, 220 + amount * 0.35);
       const startTime = performance.now();
@@ -220,14 +179,7 @@ export default function BreakdownScrollSync({
     };
 
     const releaseDown = (momentum = 0) => {
-      startReleaseCooldown();
-
-      if (mobile && engaged) {
-        disengageBreakdown();
-        requestAnimationFrame(() => smoothScrollBy(momentum));
-        return;
-      }
-
+      releasing = true;
       unlockPage(savedScrollY);
       requestAnimationFrame(() => smoothScrollBy(momentum));
     };
@@ -235,21 +187,15 @@ export default function BreakdownScrollSync({
     const releaseUp = () => {
       step = 0;
       applyStep(sectionEl, 0);
-      startReleaseCooldown();
-
-      if (mobile && engaged) {
-        disengageBreakdown();
-        requestAnimationFrame(() => {
-          window.scrollBy({ top: -Math.max(getHeaderH(), 96), behavior: "auto" });
-        });
-        return;
-      }
-
       unlockPage(Math.max(0, savedScrollY - getHeaderH()));
     };
 
+    /**
+     * Returns true when the event was consumed (caller should preventDefault).
+     * Blocks ANY downward input that would cross the breakdown top.
+     */
     const handleScrollDownIntent = (delta: number): boolean => {
-      if (releasing || step >= MAX_STEP || isCaptured() || delta <= 0) return false;
+      if (releasing || step >= MAX_STEP || locked || delta <= 0) return false;
       if (!isBreakdownApproachable()) return false;
 
       const lockY = getLockY();
@@ -275,7 +221,7 @@ export default function BreakdownScrollSync({
       return false;
     };
 
-    const handleCapturedWheelDown = (momentum = 0) => {
+    const handleLockedWheelDown = (momentum = 0) => {
       if (!stepArmed) return;
       if (step < MAX_STEP) {
         changeStep();
@@ -285,13 +231,13 @@ export default function BreakdownScrollSync({
       releaseDown(momentum);
     };
 
-    const handleCapturedWheelUp = () => {
+    const handleLockedWheelUp = () => {
       consumeGesture();
       releaseUp();
     };
 
     const enforceBoundary = () => {
-      if (isCaptured() || releasing || step >= MAX_STEP) return;
+      if (locked || releasing || step >= MAX_STEP) return;
       if (!isBreakdownApproachable()) return;
       const lockY = getLockY();
       if (window.scrollY >= lockY - 1) {
@@ -301,21 +247,22 @@ export default function BreakdownScrollSync({
 
     const onWheel = (e: WheelEvent) => {
       if (releasing) return;
-      if (step >= MAX_STEP && !isCaptured()) return;
+      if (step >= MAX_STEP && !locked) return;
 
       const delta = normalizeWheelDelta(e);
       if (Math.abs(delta) < 2) return;
 
-      if (isCaptured()) {
+      if (locked) {
         e.preventDefault();
         e.stopPropagation();
 
+        // Mouse wheel notches — one step per tick
         if (e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) {
           if (delta > 0) {
             if (!stepArmed) return;
-            handleCapturedWheelDown(Math.abs(delta));
+            handleLockedWheelDown(Math.abs(delta));
           } else if (delta < 0) {
-            handleCapturedWheelUp();
+            handleLockedWheelUp();
           }
           return;
         }
@@ -328,9 +275,9 @@ export default function BreakdownScrollSync({
         wheelAccum = 0;
         if (down) {
           if (!stepArmed) return;
-          handleCapturedWheelDown(momentum);
+          handleLockedWheelDown(momentum);
         } else {
-          handleCapturedWheelUp();
+          handleLockedWheelUp();
         }
         return;
       }
@@ -352,51 +299,30 @@ export default function BreakdownScrollSync({
       if (releasing) return;
 
       const y = e.touches[0]?.clientY ?? touchLastY;
-      const frameDelta = touchLastY - y;
-      touchAccum += frameDelta;
+      touchAccum += touchLastY - y;
       touchLastY = y;
 
-      if (isCaptured()) {
-        const upThreshold = mobile ? SWIPE_UP_THRESHOLD_PX : SWIPE_THRESHOLD_PX;
-        const scrollingUp = touchAccum < -upThreshold || frameDelta < -6;
-
-        if (scrollingUp) {
-          touchAccum = 0;
-          handleCapturedWheelUp();
-          return;
-        }
-
-        if (mobile) {
-          if (frameDelta > 0 || touchAccum > 0) {
-            e.preventDefault();
-          }
-
-          if (touchAccum >= SWIPE_THRESHOLD_PX) {
-            touchAccum = 0;
-            if (!stepArmed) return;
-            handleCapturedWheelDown(60);
-          }
-          return;
-        }
-
+      if (locked) {
         e.preventDefault();
 
-        if (Math.abs(touchAccum) < SWIPE_THRESHOLD_PX) return;
+        const absAccum = Math.abs(touchAccum);
+        if (absAccum < SWIPE_THRESHOLD_PX) return;
 
         const down = touchAccum > 0;
         touchAccum = 0;
 
         if (!down) {
-          handleCapturedWheelUp();
+          handleLockedWheelUp();
           return;
         }
 
         if (!stepArmed) return;
-        handleCapturedWheelDown(60);
+        handleLockedWheelDown(60);
         return;
       }
 
       if (step >= MAX_STEP) return;
+
       if (!isBreakdownApproachable()) return;
 
       const lockY = getLockY();
@@ -414,31 +340,20 @@ export default function BreakdownScrollSync({
     };
 
     const onTouchEnd = () => {
-      if (releasing || !isCaptured()) return;
-
-      const upThreshold = mobile ? SWIPE_UP_THRESHOLD_PX / 2 : SWIPE_THRESHOLD_PX / 2;
-      if (touchAccum < -upThreshold) {
+      if (releasing || !locked) return;
+      // Partial upward swipe — escape even if full threshold wasn't reached
+      if (touchAccum < -(SWIPE_THRESHOLD_PX / 2)) {
         touchAccum = 0;
-        handleCapturedWheelUp();
+        handleLockedWheelUp();
         return;
       }
       touchAccum = 0;
     };
 
-    const onScroll = () => {
-      if (mobile && engaged && !releasing) {
-        const lockY = getLockY();
-        if (window.scrollY < lockY - 8) {
-          step = 0;
-          applyStep(sectionEl, 0);
-          disengageBreakdown();
-        }
-      }
-      enforceBoundary();
-    };
+    const onScroll = () => enforceBoundary();
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (releasing || isCaptured() || step >= MAX_STEP) return;
+      if (releasing || locked || step >= MAX_STEP) return;
       if (!isBreakdownApproachable()) return;
       if (e.key !== "ArrowDown" && e.key !== "PageDown" && e.key !== " ") return;
 
@@ -450,7 +365,6 @@ export default function BreakdownScrollSync({
     };
 
     const onResize = () => {
-      mobile = isMobileViewport();
       step = Math.min(step, MAX_STEP);
       applyStep(sectionEl, step);
       if (locked) document.body.style.top = `-${savedScrollY}px`;
@@ -474,7 +388,6 @@ export default function BreakdownScrollSync({
     return () => {
       cancelAnimationFrame(guardId);
       window.clearTimeout(gestureIdleTimer);
-      window.clearTimeout(releaseCooldownTimer);
       if (locked) {
         document.body.classList.remove("breakdown-scroll-locked");
         document.body.style.position = "";
@@ -484,7 +397,6 @@ export default function BreakdownScrollSync({
         document.body.style.width = "";
         document.body.style.paddingRight = "";
       }
-      if (engaged) disengageBreakdown();
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
