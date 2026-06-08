@@ -235,11 +235,8 @@ export default function BreakdownScrollSync({
     const releaseDown = (momentum = 0) => {
       startReleaseCooldown();
       if (mobile && engaged) {
-        // Scroll to section bottom + small buffer so next content comes into view smoothly.
-        const rect = sectionEl.getBoundingClientRect();
-        const sectionAbsBottom = Math.round(window.scrollY + rect.bottom);
+        // Just disengage — let the user's next gesture scroll naturally to the next section.
         disengageBreakdown();
-        requestAnimationFrame(() => smoothScrollTo(sectionAbsBottom + 60));
         return;
       }
       unlockPage(savedScrollY);

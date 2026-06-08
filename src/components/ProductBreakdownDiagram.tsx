@@ -794,7 +794,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate mt-0 h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] bg-[#0D2438]"
+      className="relative isolate mt-0 h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] bg-[#0D2438]"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
@@ -808,7 +808,7 @@ export default function ProductBreakdownDiagram() {
         }}
       />
 
-      <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] flex-col overflow-hidden">
+      <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] flex-col overflow-hidden">
         <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:py-2">
           <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
             <div className="mobile-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
