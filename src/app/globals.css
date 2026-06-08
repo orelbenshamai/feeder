@@ -23,6 +23,8 @@
 :root {
   color-scheme: light;
   --site-header-h: 2.75rem;
+  /* Stable fallback before JS; overridden by StableViewportHeight (grow-only). */
+  --app-vh: 100svh;
 }
 
 html {
