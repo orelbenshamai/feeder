@@ -48,34 +48,6 @@ body.breakdown-scroll-locked {
   touch-action: none;
 }
 
-@media (max-width: 1023px) {
-  html.breakdown-mobile-engaged {
-    overflow: hidden;
-    overscroll-behavior: none;
-  }
-
-  html.breakdown-mobile-engaged body {
-    overflow: hidden;
-    overscroll-behavior: none;
-    touch-action: none;
-  }
-
-  #product-breakdown.breakdown-mobile-pinned {
-    position: fixed;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 40;
-    top: var(--site-header-h);
-    height: calc(var(--ios-vh) - var(--site-header-h));
-  }
-
-  .breakdown-pin-placeholder {
-    width: 100%;
-    pointer-events: none;
-  }
-}
-
 #product-breakdown {
   overscroll-behavior: contain;
   scroll-margin-top: 0;

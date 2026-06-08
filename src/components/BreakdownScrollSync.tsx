@@ -9,8 +9,6 @@ const SWIPE_UP_THRESHOLD_PX = 18;
 const GESTURE_REARM_MS = 280;
 const APPROACH_PX = 320;
 const RELEASE_COOLDOWN_MS = 450;
-const PIN_CLASS = "breakdown-mobile-pinned";
-const ENGAGED_CLASS = "breakdown-mobile-engaged";
 
 function getHeaderH(): number {
   const header = document.querySelector("body > header");
@@ -69,9 +67,7 @@ export default function BreakdownScrollSync({
     let touchLastY = 0;
     let touchAccum = 0;
     let locked = false;
-    let pinned = false;
-    let pinnedScrollY = 0;
-    let pinPlaceholder: HTMLDivElement | null = null;
+    let engaged = false;
     let releasing = false;
     let savedScrollY = 0;
     let guardId = 0;
@@ -82,14 +78,13 @@ export default function BreakdownScrollSync({
 
     applyStep(sectionEl, 0);
 
-    const isCaptured = () => locked || (mobile && pinned);
+    const isCaptured = () => locked || (mobile && engaged);
 
     const setBreakdownLockedAttr = (value: boolean) => {
       sectionEl.dataset.breakdownLocked = value ? "true" : "false";
     };
 
     const getLockY = () => {
-      if (pinned) return pinnedScrollY;
       const headerH = getHeaderH();
       const rect = sectionEl.getBoundingClientRect();
       return Math.round(window.scrollY + rect.top - headerH);
@@ -139,31 +134,13 @@ export default function BreakdownScrollSync({
       window.scrollTo({ top: restoreY, behavior: "auto" });
     };
 
-    const syncPinPlaceholder = () => {
-      if (!pinPlaceholder) return;
-      pinPlaceholder.style.height = `${sectionEl.offsetHeight}px`;
-    };
-
-    const pinSectionMobile = (lockY: number, resetStep: boolean) => {
-      if (pinned) return;
-
-      pinned = true;
-      pinnedScrollY = lockY;
-
+    const engageBreakdown = (lockY: number, resetStep: boolean) => {
+      if (engaged) return;
+      engaged = true;
+      setBreakdownLockedAttr(true);
       if (Math.abs(window.scrollY - lockY) > 1) {
         window.scrollTo({ top: lockY, behavior: "auto" });
       }
-
-      pinPlaceholder = document.createElement("div");
-      pinPlaceholder.className = "breakdown-pin-placeholder";
-      pinPlaceholder.setAttribute("aria-hidden", "true");
-      syncPinPlaceholder();
-      sectionEl.parentNode?.insertBefore(pinPlaceholder, sectionEl);
-
-      sectionEl.classList.add(PIN_CLASS);
-      document.documentElement.classList.add(ENGAGED_CLASS);
-      setBreakdownLockedAttr(true);
-
       if (resetStep) {
         step = 0;
         applyStep(sectionEl, 0);
@@ -173,22 +150,9 @@ export default function BreakdownScrollSync({
       stepArmed = true;
     };
 
-    const unpinSectionMobile = (restoreY?: number) => {
-      if (!pinned) return;
-
-      const targetY = restoreY ?? pinnedScrollY;
-      pinned = false;
-      pinnedScrollY = 0;
-
-      sectionEl.classList.remove(PIN_CLASS);
-      document.documentElement.classList.remove(ENGAGED_CLASS);
-      pinPlaceholder?.remove();
-      pinPlaceholder = null;
+    const disengageBreakdown = () => {
+      engaged = false;
       setBreakdownLockedAttr(false);
-
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: targetY, behavior: "auto" });
-      });
     };
 
     const enterBreakdown = (resetStep: boolean) => {
@@ -197,7 +161,7 @@ export default function BreakdownScrollSync({
       const lockY = getLockY();
 
       if (mobile) {
-        pinSectionMobile(lockY, resetStep);
+        engageBreakdown(lockY, resetStep);
         return;
       }
 
@@ -258,9 +222,8 @@ export default function BreakdownScrollSync({
     const releaseDown = (momentum = 0) => {
       startReleaseCooldown();
 
-      if (mobile && pinned) {
-        const exitY = pinnedScrollY;
-        unpinSectionMobile(exitY);
+      if (mobile && engaged) {
+        disengageBreakdown();
         requestAnimationFrame(() => smoothScrollBy(momentum));
         return;
       }
@@ -274,9 +237,11 @@ export default function BreakdownScrollSync({
       applyStep(sectionEl, 0);
       startReleaseCooldown();
 
-      if (mobile && pinned) {
-        const exitY = Math.max(0, pinnedScrollY - getHeaderH());
-        unpinSectionMobile(exitY);
+      if (mobile && engaged) {
+        disengageBreakdown();
+        requestAnimationFrame(() => {
+          window.scrollBy({ top: -Math.max(getHeaderH(), 96), behavior: "auto" });
+        });
         return;
       }
 
@@ -402,7 +367,9 @@ export default function BreakdownScrollSync({
         }
 
         if (mobile) {
-          e.preventDefault();
+          if (frameDelta > 0 || touchAccum > 0) {
+            e.preventDefault();
+          }
 
           if (touchAccum >= SWIPE_THRESHOLD_PX) {
             touchAccum = 0;
@@ -459,6 +426,14 @@ export default function BreakdownScrollSync({
     };
 
     const onScroll = () => {
+      if (mobile && engaged && !releasing) {
+        const lockY = getLockY();
+        if (window.scrollY < lockY - 8) {
+          step = 0;
+          applyStep(sectionEl, 0);
+          disengageBreakdown();
+        }
+      }
       enforceBoundary();
     };
 
@@ -479,7 +454,6 @@ export default function BreakdownScrollSync({
       step = Math.min(step, MAX_STEP);
       applyStep(sectionEl, step);
       if (locked) document.body.style.top = `-${savedScrollY}px`;
-      if (pinned) syncPinPlaceholder();
     };
 
     const guardLoop = () => {
@@ -510,7 +484,7 @@ export default function BreakdownScrollSync({
         document.body.style.width = "";
         document.body.style.paddingRight = "";
       }
-      if (pinned) unpinSectionMobile();
+      if (engaged) disengageBreakdown();
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
