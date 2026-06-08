@@ -5,9 +5,9 @@ import { useEffect, type RefObject } from "react";
 const MAX_STEP = 5;
 const WHEEL_STEP_THRESHOLD = 55;
 const SWIPE_THRESHOLD_PX = 40;
-const SWIPE_UP_THRESHOLD_PX = 18;
 const GESTURE_REARM_MS = 280;
 const APPROACH_PX = 320;
+const MOBILE_APPROACH_PX = 60;
 const RELEASE_COOLDOWN_MS = 500;
 
 function isMobileViewport(): boolean {
@@ -203,22 +203,23 @@ export default function BreakdownScrollSync({
       return true;
     };
 
-    const smoothScrollBy = (distance: number) => {
-      const amount = Math.max(distance, 96);
+    const smoothScrollTo = (targetY: number) => {
       if (reduced) {
-        window.scrollBy({ top: amount, behavior: "auto" });
+        window.scrollTo({ top: targetY, behavior: "auto" });
         releasing = false;
         return;
       }
 
       const startY = window.scrollY;
-      const duration = Math.min(520, 220 + amount * 0.35);
+      const distance = targetY - startY;
+      if (Math.abs(distance) < 2) { releasing = false; return; }
+      const duration = Math.min(620, 200 + Math.abs(distance) * 0.28);
       const startTime = performance.now();
 
       const tick = (now: number) => {
         const t = Math.min(1, (now - startTime) / duration);
         const eased = 1 - (1 - t) ** 3;
-        window.scrollTo({ top: startY + amount * eased, behavior: "auto" });
+        window.scrollTo({ top: startY + distance * eased, behavior: "auto" });
         if (t < 1) requestAnimationFrame(tick);
         else releasing = false;
       };
@@ -226,11 +227,19 @@ export default function BreakdownScrollSync({
       requestAnimationFrame(tick);
     };
 
+    const smoothScrollBy = (distance: number) => {
+      const amount = Math.max(distance, 96);
+      smoothScrollTo(window.scrollY + amount);
+    };
+
     const releaseDown = (momentum = 0) => {
       startReleaseCooldown();
       if (mobile && engaged) {
+        // Scroll to section bottom + small buffer so next content comes into view smoothly.
+        const rect = sectionEl.getBoundingClientRect();
+        const sectionAbsBottom = Math.round(window.scrollY + rect.bottom);
         disengageBreakdown();
-        requestAnimationFrame(() => smoothScrollBy(momentum));
+        requestAnimationFrame(() => smoothScrollTo(sectionAbsBottom + 60));
         return;
       }
       unlockPage(savedScrollY);
@@ -365,17 +374,13 @@ export default function BreakdownScrollSync({
 
       if (isCaptured()) {
         if (mobile) {
-          // Upward swipe: never preventDefault — let iOS scroll natively.
-          if (frameDelta < 0) return;
-
-          // Fast upward flick accumulated
-          if (touchAccum <= -SWIPE_UP_THRESHOLD_PX) {
+          // Upward swipe: never preventDefault — let iOS scroll natively out of the section.
+          if (frameDelta < 0) {
             touchAccum = 0;
-            handleLockedWheelUp();
             return;
           }
 
-          // Block downward scroll
+          // Block downward scroll and advance steps.
           if (frameDelta > 0 || touchAccum > 0) e.preventDefault();
 
           if (touchAccum >= SWIPE_THRESHOLD_PX) {
@@ -406,8 +411,9 @@ export default function BreakdownScrollSync({
 
       const lockY = getLockY();
       const remaining = lockY - window.scrollY;
+      const approachZone = mobile ? MOBILE_APPROACH_PX : APPROACH_PX;
 
-      if (remaining <= APPROACH_PX) {
+      if (remaining <= approachZone) {
         e.preventDefault();
         if (Math.abs(touchAccum) >= SWIPE_THRESHOLD_PX) {
           const down = touchAccum > 0;
@@ -420,8 +426,7 @@ export default function BreakdownScrollSync({
 
     const onTouchEnd = () => {
       if (releasing || !isCaptured()) return;
-      const upThreshold = mobile ? SWIPE_UP_THRESHOLD_PX / 2 : SWIPE_THRESHOLD_PX / 2;
-      if (touchAccum < -upThreshold) {
+      if (!mobile && touchAccum < -(SWIPE_THRESHOLD_PX / 2)) {
         touchAccum = 0;
         handleLockedWheelUp();
         return;
