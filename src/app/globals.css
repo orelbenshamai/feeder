@@ -30,17 +30,8 @@ html {
   scroll-padding-top: var(--site-header-h);
 }
 
-/* iOS Safari resizes the layout viewport when the URL bar hides — svh/lvh shift too.
-   --ios-vh is set once in layout <head> (px) and must not change during scroll. */
-@media (max-width: 1023px) {
-  html {
-    height: var(--ios-vh) !important;
-  }
-
-  body {
-    min-height: var(--ios-vh) !important;
-  }
-}
+/* iOS Safari URL bar: --ios-vh is locked in layout <head> (px, smallest height).
+   Full-height sections use it; html/body stay natural height so scroll does not jump. */
 
 body.breakdown-scroll-locked {
   overflow: hidden;

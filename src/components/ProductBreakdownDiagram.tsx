@@ -879,7 +879,7 @@ export default function ProductBreakdownDiagram() {
                       ),
                     )}
                   </div>
-                  <div className="mobile-card-stack relative h-[clamp(8.25rem,16.5svh,10rem)]">
+                  <div className="mobile-card-stack relative">
                     {ORDERED_LABELS.map((l, i) => (
                       <div
                         key={l.index}
