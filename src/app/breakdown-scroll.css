@@ -410,10 +410,6 @@
     -webkit-line-clamp: 3;
     overflow: hidden;
   }
-
-  #product-breakdown .mobile-card-stack {
-    height: clamp(8.25rem, calc(var(--ios-vh) * 0.165), 10rem);
-  }
 }
 
 @media (max-width: 1023px) and (max-height: 740px) {
@@ -422,7 +418,7 @@
   }
 
   #product-breakdown .mobile-card-stack {
-    height: clamp(7.75rem, calc(var(--ios-vh) * 0.155), 9.25rem);
+    height: clamp(7.75rem, 15.5svh, 9.25rem);
   }
 }
 

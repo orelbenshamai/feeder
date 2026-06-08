@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
 import { FacebookPixel } from "@/components/FacebookPixel";
@@ -17,13 +17,6 @@ const nunito = Nunito({
   display: "swap",
   weight: ["800"],
 });
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  interactiveWidget: "overlays-content",
-};
 
 export const metadata: Metadata = {
   title: "מסודר — רצפה יבשה, האכלה נקייה",
@@ -55,10 +48,11 @@ export default function RootLayout({
       className={`${heebo.variable} ${nunito.variable} h-full antialiased font-sans`}
     >
       <head>
-        {/* Lock iOS viewport to the smallest height (URL bar visible) — never grow on scroll. */}
+        {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){function r(){var h=window.innerHeight;if(window.visualViewport)h=Math.min(h,window.visualViewport.height);return h;}function a(h){var c=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ios-vh'));if(!c||h<c)document.documentElement.style.setProperty('--ios-vh',h+'px');}a(r());if(window.scrollY===0)requestAnimationFrame(function(){a(r());});})();`,
+            __html:
+              "document.documentElement.style.setProperty('--ios-vh',window.innerHeight+'px');",
           }}
         />
         <FacebookPixel />
