@@ -118,7 +118,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden"
+      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] max-lg:max-h-[calc(var(--ios-vh)-var(--site-header-h))]"
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >

@@ -23,10 +23,23 @@
 :root {
   color-scheme: light;
   --site-header-h: 2.75rem;
+  --ios-vh: 100svh;
 }
 
 html {
   scroll-padding-top: var(--site-header-h);
+}
+
+/* iOS Safari resizes the layout viewport when the URL bar hides — svh/lvh shift too.
+   --ios-vh is set once in layout <head> (px) and must not change during scroll. */
+@media (max-width: 1023px) {
+  html {
+    height: var(--ios-vh) !important;
+  }
+
+  body {
+    min-height: var(--ios-vh) !important;
+  }
 }
 
 body.breakdown-scroll-locked {

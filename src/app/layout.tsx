@@ -48,6 +48,13 @@ export default function RootLayout({
       className={`${heebo.variable} ${nunito.variable} h-full antialiased font-sans`}
     >
       <head>
+        {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.style.setProperty('--ios-vh',window.innerHeight+'px');",
+          }}
+        />
         <FacebookPixel />
       </head>
       <body className="min-h-full flex flex-col bg-cream text-ink selection:bg-ink selection:text-cream">

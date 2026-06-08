@@ -67,10 +67,10 @@ export default function StickyMobileCTA() {
   return (
     <div
       aria-hidden={!show}
-      className={`fixed inset-x-0 z-40 md:hidden transition-all duration-300 ease-out ${
+      className={`fixed inset-x-0 z-40 transition-opacity duration-300 md:hidden ${
         show
-          ? "translate-y-0 opacity-100"
-          : "-translate-y-full opacity-0 pointer-events-none"
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0"
       }`}
       style={{ top: "var(--site-header-h)" }}
     >
