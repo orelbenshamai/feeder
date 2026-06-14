@@ -49,11 +49,22 @@ export default function StickyMobileCTA() {
       const scrollPastHero = heroBottom <= headerH + 8;
 
       const finalCta = document.getElementById("bundle");
+      const vh = getStableViewportHeight();
       const inFinalCta = finalCta
-        ? finalCta.getBoundingClientRect().top <= headerH + 8
+        ? finalCta.getBoundingClientRect().top <= vh * 0.92
         : false;
 
-      setShow(scrollPastHero && !inFinalCta && !isInBreakdownReveal());
+      const beforeAfter = document.getElementById("before-after");
+      const passedBeforeAfter = beforeAfter
+        ? beforeAfter.getBoundingClientRect().bottom <= headerH + 8
+        : false;
+
+      setShow(
+        scrollPastHero &&
+          !inFinalCta &&
+          !isInBreakdownReveal() &&
+          !passedBeforeAfter,
+      );
     };
 
     update();

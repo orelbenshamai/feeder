@@ -29,12 +29,34 @@ export default function StickyPageCTA() {
   const [heroVisible, setHeroVisible] = useState(true);
   const [footerVisible, setFooterVisible] = useState(false);
   const [breakdownActive, setBreakdownActive] = useState(false);
+  const [passedBeforeAfter, setPassedBeforeAfter] = useState(false);
+  const [bundleActive, setBundleActive] = useState(false);
 
-  const syncBreakdown = useCallback(() => {
+  const syncSectionState = useCallback(() => {
     setBreakdownActive(shouldHideForBreakdown());
+    const vh = getStableViewportHeight();
+
+    const beforeAfter = document.getElementById("before-after");
+    const headerH =
+      document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+    if (!beforeAfter) {
+      setPassedBeforeAfter(false);
+      return;
+    }
+
+    const rect = beforeAfter.getBoundingClientRect();
+    setPassedBeforeAfter(rect.bottom <= headerH + 8);
+
+    const bundle = document.getElementById("bundle");
+    setBundleActive(Boolean(bundle && bundle.getBoundingClientRect().top <= vh * 0.92));
   }, []);
 
-  const visible = !heroVisible && !footerVisible && !breakdownActive;
+  const visible =
+    !heroVisible &&
+    !footerVisible &&
+    !breakdownActive &&
+    !passedBeforeAfter &&
+    !bundleActive;
 
   useEffect(() => {
     const hero = document.getElementById("hero");
@@ -57,10 +79,10 @@ export default function StickyPageCTA() {
       footerObserver.observe(footer);
     }
 
-    syncBreakdown();
+    syncSectionState();
 
     const breakdown = document.getElementById("product-breakdown");
-    const breakdownObserver = new MutationObserver(syncBreakdown);
+    const breakdownObserver = new MutationObserver(syncSectionState);
     if (breakdown) {
       breakdownObserver.observe(breakdown, {
         attributes: true,
@@ -73,17 +95,17 @@ export default function StickyPageCTA() {
       });
     }
 
-    window.addEventListener("scroll", syncBreakdown, { passive: true });
-    window.addEventListener("resize", syncBreakdown, { passive: true });
+    window.addEventListener("scroll", syncSectionState, { passive: true });
+    window.addEventListener("resize", syncSectionState, { passive: true });
 
     return () => {
       heroObserver?.disconnect();
       footerObserver?.disconnect();
       breakdownObserver.disconnect();
-      window.removeEventListener("scroll", syncBreakdown);
-      window.removeEventListener("resize", syncBreakdown);
+      window.removeEventListener("scroll", syncSectionState);
+      window.removeEventListener("resize", syncSectionState);
     };
-  }, [syncBreakdown]);
+  }, [syncSectionState]);
 
   return (
     <div
