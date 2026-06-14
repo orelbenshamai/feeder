@@ -42,16 +42,13 @@ function StickyReveal() {
 
       ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
-        const getCaptureH = () =>
-          Math.max(320, getStableViewportHeight() - getHeaderH());
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            // Section already sits below the sticky header in normal layout.
-            // Using top+=header here double-subtracts header space on iOS.
-            start: "top top",
-            end: () => `+=${getCaptureH() * 2.5}`,
+            // Pin exactly when the section fills the viewport below the sticky header.
+            start: () => `top top+=${getHeaderH()}`,
+            end: () => `+=${getStableViewportHeight() * 2.5}`,
             pin: true,
             pinSpacing: true,
             scrub: 1.4,
@@ -76,7 +73,7 @@ function StickyReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative h-below-header w-full"
+      className="relative h-screen-stable w-full"
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
