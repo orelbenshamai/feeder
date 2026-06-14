@@ -57,7 +57,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){function s(){document.documentElement.style.setProperty('--ios-vh',window.innerHeight+'px');}s();window.addEventListener('orientationchange',s);})();",
+              "(function(){var el=document.documentElement;var isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);function snap(){el.style.setProperty('--ios-vh',window.innerHeight+'px');}snap();if(isIOS){el.classList.add('ios');window.addEventListener('orientationchange',function(){setTimeout(snap,350);});}})();",
           }}
         />
         <FacebookPixel />

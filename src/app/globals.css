@@ -50,6 +50,27 @@ html {
   scroll-padding-top: var(--site-header-h);
 }
 
+/*
+ * iOS URL-bar fix — position:fixed on html locks it at the captured --ios-vh height.
+ * The iOS layout viewport can grow/shrink as the URL bar hides/shows, but html (and
+ * everything inside it) never changes size.  body becomes the scroll container so
+ * window.scrollY / GSAP / all scroll listeners keep working without modification.
+ */
+html.ios {
+  position: fixed;
+  width: 100%;
+  height: var(--ios-vh);
+  overflow: hidden;
+}
+
+html.ios body {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* scroll-padding needs to live on the actual scroll container */
+  scroll-padding-top: var(--site-header-h);
+}
+
 /* Stable viewport helpers — use instead of 100vh / 100svh / 100lvh on mobile. */
 @layer utilities {
   .h-screen-stable {
