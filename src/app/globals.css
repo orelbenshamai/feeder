@@ -76,24 +76,6 @@ html {
     max-height: calc(var(--screen-h) - var(--site-header-h));
   }
 
-  /* Live viewport helpers for sections that must track Safari chrome changes. */
-  .h-screen-live {
-    height: var(--screen-h);
-  }
-
-  .h-below-header-live {
-    height: calc(var(--screen-h) - var(--site-header-h));
-  }
-
-  @supports (height: 100dvh) {
-    .h-screen-live {
-      height: 100dvh;
-    }
-
-    .h-below-header-live {
-      height: calc(100dvh - var(--site-header-h));
-    }
-  }
 }
 
 body.breakdown-scroll-locked {
