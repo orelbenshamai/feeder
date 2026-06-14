@@ -631,7 +631,7 @@ body {
 }
 
 .hero-lead {
-  margin-top: clamp(0.875rem, 2vh, 1.35rem);
+  margin-top: clamp(0.875rem, calc(var(--screen-h) * 0.02), 1.35rem);
   max-width: 38rem;
   font-weight: 500;
   line-height: 1.65;
@@ -643,13 +643,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: clamp(1.15rem, 2.8vh, 1.85rem);
+  gap: clamp(1.15rem, calc(var(--screen-h) * 0.028), 1.85rem);
 }
 
 .hero-cta.btn-clay {
   width: 100%;
   max-width: 22rem;
-  min-height: clamp(3.5rem, 6vh, 4.35rem);
+  min-height: clamp(3.5rem, calc(var(--screen-h) * 0.06), 4.35rem);
   padding-inline: clamp(1.75rem, 4vw, 2.75rem);
   font-size: clamp(1.0625rem, 0.5vw + 0.95rem, 1.3125rem);
   font-weight: 700;
