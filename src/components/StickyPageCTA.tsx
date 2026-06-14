@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import GhostCTAButton from "./GhostCTAButton";
+import { getStableViewportHeight } from "@/lib/stable-viewport";
 
 function isMobileViewport() {
   return window.matchMedia("(max-width: 1023px)").matches;
@@ -14,7 +15,7 @@ function shouldHideForBreakdown(): boolean {
   if (!breakdown) return false;
 
   const rect = breakdown.getBoundingClientRect();
-  const vh = window.innerHeight;
+  const vh = getStableViewportHeight();
 
   if (rect.bottom < 0 || rect.top > vh) return false;
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
 import { useLeadCapture } from "./LeadCapture";
+import { getStableViewportHeight } from "@/lib/stable-viewport";
 
 function getSiteHeaderHeight() {
   if (typeof window === "undefined") return 64;
@@ -21,7 +22,7 @@ function shouldHideForBreakdown(): boolean {
   if (!breakdown) return false;
 
   const rect = breakdown.getBoundingClientRect();
-  const vh = window.innerHeight;
+  const vh = getStableViewportHeight();
 
   if (rect.bottom < 0 || rect.top > vh) return false;
 
@@ -44,7 +45,7 @@ export default function StickyMobileCTA() {
       const hero = document.getElementById("hero");
       const heroBottom = hero
         ? hero.getBoundingClientRect().bottom
-        : window.innerHeight * 0.6;
+        : getStableViewportHeight() * 0.6;
       const scrollPastHero = heroBottom <= headerH + 8;
 
       const finalCta = document.getElementById("bundle");
