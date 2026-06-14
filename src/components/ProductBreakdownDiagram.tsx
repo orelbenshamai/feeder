@@ -835,7 +835,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate -mt-px h-below-header bg-ink"
+      className="relative isolate -mt-px h-screen-stable bg-ink"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
