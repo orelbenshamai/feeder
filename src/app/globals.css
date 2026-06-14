@@ -47,7 +47,14 @@
 }
 
 html {
+  height: 100%;
+  overflow: hidden;
   scroll-padding-top: var(--site-header-h);
+}
+
+body {
+  height: 100%;
+  overflow: auto;
 }
 
 /* Stable viewport helpers — use instead of 100vh / 100svh / 100lvh on mobile. */
