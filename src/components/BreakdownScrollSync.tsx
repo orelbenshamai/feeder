@@ -164,6 +164,13 @@ export default function BreakdownScrollSync({
 
       const lockY = getLockY();
 
+      if (mobile) {
+        // On mobile, avoid body position:fixed locking (causes iOS bar-related size wobble).
+        // Use engaged-mode capture only; touch/wheel handlers already prevent default while captured.
+        engageBreakdown(lockY, resetStep);
+        return;
+      }
+
       if (resetStep) {
         step = 0;
         applyStep(sectionEl, 0);
@@ -172,12 +179,6 @@ export default function BreakdownScrollSync({
         window.scrollTo({ top: lockY, behavior: "auto" });
       }
       lockPage(lockY);
-      // Also mark engaged for mobile tracking
-      if (mobile) {
-        engaged = true;
-        engagedLockY = lockY;
-        sectionEl.dataset.breakdownLocked = "true";
-      }
       wheelAccum = 0;
       touchAccum = 0;
       stepArmed = true;
