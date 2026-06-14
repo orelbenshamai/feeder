@@ -505,18 +505,6 @@ export default function ProductGallery({
           </div>
         ) : null}
 
-        {!variant.inStock ? (
-          <div
-            className={
-              overlayControls
-                ? "absolute left-4 top-8 z-20 inline-flex items-center gap-2 rounded-full border border-line/70 bg-cream/95 px-3 py-1.5 text-xs font-medium text-stone backdrop-blur"
-                : "absolute start-5 top-5 z-20 inline-flex items-center gap-2 rounded-full border border-line/70 bg-cream/95 px-3 py-1.5 text-xs font-medium text-stone backdrop-blur"
-            }
-          >
-            אזל המלאי
-          </div>
-        ) : null}
-
         {hasMultiple ? (
           <div
             dir="ltr"
