@@ -7,8 +7,8 @@ const MAX_STEP = 5;
 const WHEEL_STEP_THRESHOLD = 55;
 const SWIPE_THRESHOLD_PX = 40;
 const GESTURE_REARM_MS = 280;
-const APPROACH_PX = 180;
-const MOBILE_APPROACH_PX = 36;
+const APPROACH_PX = 220;
+const MOBILE_APPROACH_PX = 72;
 const RELEASE_COOLDOWN_MS = 500;
 
 function isMobileViewport(): boolean {
@@ -80,6 +80,7 @@ export default function BreakdownScrollSync({
     let gestureIdleTimer = 0;
     let releaseCooldownTimer = 0;
     let mobile = isMobileViewport();
+    let lastScrollY = window.scrollY;
     applyStep(sectionEl, 0);
 
     const isCaptured = () => locked || (mobile && engaged);
@@ -403,6 +404,23 @@ export default function BreakdownScrollSync({
       touchAccum = 0;
     };
 
+    const onScroll = () => {
+      const currY = window.scrollY;
+      const scrollingDown = currY > lastScrollY + 0.5;
+      lastScrollY = currY;
+
+      if (!scrollingDown) return;
+      if (releasing || step >= MAX_STEP || isCaptured()) return;
+      if (!isBreakdownApproachable()) return;
+
+      const lockY = getLockY();
+      // Catch momentum/pass-through at the exact boundary without reintroducing
+      // upward magnet behavior.
+      if (currY >= lockY - 1) {
+        enterBreakdown(currY > lockY + 3);
+      }
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (releasing || isCaptured() || step >= MAX_STEP) return;
       if (!isBreakdownApproachable()) return;
@@ -436,6 +454,7 @@ export default function BreakdownScrollSync({
     window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
     window.addEventListener("touchend", onTouchEnd, { passive: true, capture: true });
     window.addEventListener("touchcancel", onTouchEnd, { passive: true, capture: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown, { capture: true });
     window.addEventListener("resize", onResize, { passive: true });
 
@@ -457,6 +476,7 @@ export default function BreakdownScrollSync({
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
       window.removeEventListener("touchend", onTouchEnd, { capture: true });
       window.removeEventListener("touchcancel", onTouchEnd, { capture: true });
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown, { capture: true });
       window.removeEventListener("resize", onResize);
       sectionEl.removeEventListener("breakdownForceComplete", onForceComplete);
