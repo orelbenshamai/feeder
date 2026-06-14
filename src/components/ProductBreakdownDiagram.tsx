@@ -835,7 +835,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate -mt-px h-below-header bg-ink"
+      className="relative isolate -mt-px h-below-header-live bg-ink"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
@@ -849,7 +849,7 @@ export default function ProductBreakdownDiagram() {
         }}
       />
 
-      <div className="sticky top-[var(--site-header-h)] flex h-below-header flex-col overflow-hidden">
+      <div className="sticky top-[var(--site-header-h)] flex h-below-header-live flex-col overflow-hidden">
         <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:px-1 max-lg:py-0">
           <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
             <div className="mobile-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-4 text-center">
