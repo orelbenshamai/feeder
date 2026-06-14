@@ -75,7 +75,7 @@ function StickyReveal() {
       ref={sectionRef}
       className="relative h-screen-stable w-full"
     >
-      <div className="absolute inset-x-0 -bottom-4 top-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
         <div ref={afterRef} className="absolute inset-0" style={{ opacity: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}

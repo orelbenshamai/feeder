@@ -406,6 +406,17 @@ export default function BreakdownScrollSync({
 
     const onScroll = () => {
       const currY = window.scrollY;
+
+      // While mobile capture is engaged, keep the document pinned at the lock
+      // position so momentum can't slip past the reveal section.
+      if (mobile && engaged) {
+        if (Math.abs(currY - engagedLockY) > 1) {
+          window.scrollTo({ top: engagedLockY, behavior: "auto" });
+          lastScrollY = engagedLockY;
+          return;
+        }
+      }
+
       const scrollingDown = currY > lastScrollY + 0.5;
       lastScrollY = currY;
 
