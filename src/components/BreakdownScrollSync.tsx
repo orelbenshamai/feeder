@@ -7,8 +7,8 @@ const MAX_STEP = 5;
 const WHEEL_STEP_THRESHOLD = 55;
 const SWIPE_THRESHOLD_PX = 40;
 const GESTURE_REARM_MS = 280;
-const APPROACH_PX = 320;
-const MOBILE_APPROACH_PX = 60;
+const APPROACH_PX = 180;
+const MOBILE_APPROACH_PX = 36;
 const RELEASE_COOLDOWN_MS = 500;
 
 function isMobileViewport(): boolean {
@@ -76,7 +76,6 @@ export default function BreakdownScrollSync({
     let engagedLockY = 0;
     let releasing = false;
     let savedScrollY = 0;
-    let guardId = 0;
     let stepArmed = true;
     let gestureIdleTimer = 0;
     let releaseCooldownTimer = 0;
@@ -297,15 +296,6 @@ export default function BreakdownScrollSync({
       releaseUp();
     };
 
-    const enforceBoundary = () => {
-      if (isCaptured() || releasing || step >= MAX_STEP) return;
-      if (!isBreakdownApproachable()) return;
-      const lockY = getLockY();
-      if (window.scrollY >= lockY - 1) {
-        enterBreakdown(window.scrollY > lockY + 3);
-      }
-    };
-
     const onWheel = (e: WheelEvent) => {
       if (releasing) return;
       if (step >= MAX_STEP && !isCaptured()) return;
@@ -389,7 +379,9 @@ export default function BreakdownScrollSync({
       const remaining = lockY - window.scrollY;
       const approachZone = mobile ? MOBILE_APPROACH_PX : APPROACH_PX;
 
-      if (remaining <= approachZone) {
+      if (remaining <= approachZone && touchAccum > 0) {
+        // Only capture downward swipes near the boundary.
+        // Upward movement should remain free so users can escape naturally.
         e.preventDefault();
         if (Math.abs(touchAccum) >= SWIPE_THRESHOLD_PX) {
           const down = touchAccum > 0;
@@ -408,10 +400,6 @@ export default function BreakdownScrollSync({
         return;
       }
       touchAccum = 0;
-    };
-
-    const onScroll = () => {
-      enforceBoundary();
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -441,37 +429,16 @@ export default function BreakdownScrollSync({
       if (locked) unlockPage(savedScrollY);
     };
 
-    // Auto-engage on mobile when section fills the viewport
-    const mobileEngageObserver = mobile
-      ? new IntersectionObserver(
-          (entries) => {
-            if (entries[0]?.isIntersecting && !isCaptured() && !releasing && step < MAX_STEP) {
-              enterBreakdown(false);
-            }
-          },
-          { threshold: 0.92 },
-        )
-      : null;
-    mobileEngageObserver?.observe(sectionEl);
-
-    const guardLoop = () => {
-      enforceBoundary();
-      guardId = requestAnimationFrame(guardLoop);
-    };
-    guardId = requestAnimationFrame(guardLoop);
-
     sectionEl.addEventListener("breakdownForceComplete", onForceComplete);
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
     window.addEventListener("touchend", onTouchEnd, { passive: true, capture: true });
     window.addEventListener("touchcancel", onTouchEnd, { passive: true, capture: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown, { capture: true });
     window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
-      cancelAnimationFrame(guardId);
       window.clearTimeout(gestureIdleTimer);
       window.clearTimeout(releaseCooldownTimer);
       if (engaged) disengageBreakdown();
@@ -489,11 +456,9 @@ export default function BreakdownScrollSync({
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
       window.removeEventListener("touchend", onTouchEnd, { capture: true });
       window.removeEventListener("touchcancel", onTouchEnd, { capture: true });
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown, { capture: true });
       window.removeEventListener("resize", onResize);
       sectionEl.removeEventListener("breakdownForceComplete", onForceComplete);
-      mobileEngageObserver?.disconnect();
     };
   }, [sectionRef]);
 
