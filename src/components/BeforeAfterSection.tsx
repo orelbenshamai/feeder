@@ -35,14 +35,19 @@ function StickyReveal() {
 
       // Use gsap.context so ctx.revert() cleanly undoes all GSAP work,
       // including reverting inline styles to their pre-animation values.
+      const getHeaderH = () => {
+        const header = document.querySelector("header");
+        return header ? Math.round(header.getBoundingClientRect().height) : 44;
+      };
+
       ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: "top top",
-            // ~2.5 screens — deliberate but not exhausting.
+            // Pin exactly when the section fills the viewport below the sticky header.
+            start: () => `top top+=${getHeaderH()}`,
             end: () => `+=${getStableViewportHeight() * 2.5}`,
             pin: true,
             pinSpacing: true,
