@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI!;
+const uri = process.env.MONGODB_URI;
 const options = {};
 
 declare global {
@@ -8,23 +8,26 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
+let clientPromise: Promise<MongoClient> | undefined;
 
-if (!uri) {
-  throw new Error("Please define MONGODB_URI in your .env.local");
-}
-
-if (process.env.NODE_ENV === "development") {
-  // In dev, use a global so the connection is reused across HMR reloads
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+/** Lazily connects so `next build` does not require MONGODB_URI at module load. */
+export default function getClientPromise(): Promise<MongoClient> {
+  if (!uri) {
+    throw new Error("Please define MONGODB_URI in your .env.local");
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
 
-export default clientPromise;
+  if (clientPromise) {
+    return clientPromise;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    if (!global._mongoClientPromise) {
+      global._mongoClientPromise = new MongoClient(uri, options).connect();
+    }
+    clientPromise = global._mongoClientPromise;
+  } else {
+    clientPromise = new MongoClient(uri, options).connect();
+  }
+
+  return clientPromise;
+}
