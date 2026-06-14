@@ -40,10 +40,11 @@ function StickyReveal() {
           scrollTrigger: {
             trigger: section,
             start: "top top",
-            end: () => `+=${window.innerHeight * 6}`,
+            // ~2.5 screens — deliberate but not exhausting.
+            end: () => `+=${window.innerHeight * 2.5}`,
             pin: true,
             pinSpacing: true,
-            scrub: 2,
+            scrub: 1.4,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },

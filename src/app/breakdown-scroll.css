@@ -77,10 +77,23 @@
   z-index: 15;
 }
 
+#product-breakdown .mobile-card-stack {
+  display: grid;
+}
+
+#product-breakdown .mobile-card-stack > .breakdown-layer {
+  position: relative;
+  inset: auto;
+  grid-area: 1 / 1;
+  display: none;
+  transform: none;
+}
+
 #product-breakdown[data-mobile-phase="1"] .mobile-card-1,
 #product-breakdown[data-mobile-phase="2"] .mobile-card-2,
 #product-breakdown[data-mobile-phase="3"] .mobile-card-3,
 #product-breakdown[data-mobile-phase="4"] .mobile-card-4 {
+  display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -95,6 +108,7 @@
 #product-breakdown[data-mobile-phase="5"][data-mobile-selected="2"] .mobile-card-2,
 #product-breakdown[data-mobile-phase="5"][data-mobile-selected="3"] .mobile-card-3,
 #product-breakdown[data-mobile-phase="5"][data-mobile-selected="4"] .mobile-card-4 {
+  display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -103,28 +117,6 @@
     opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
     visibility 0s linear 0s;
-}
-
-#product-breakdown[data-mobile-phase="1"] .mobile-dot-1,
-#product-breakdown[data-mobile-phase="2"] .mobile-dot-1,
-#product-breakdown[data-mobile-phase="3"] .mobile-dot-1,
-#product-breakdown[data-mobile-phase="4"] .mobile-dot-1,
-#product-breakdown[data-mobile-phase="2"] .mobile-dot-2,
-#product-breakdown[data-mobile-phase="3"] .mobile-dot-2,
-#product-breakdown[data-mobile-phase="4"] .mobile-dot-2,
-#product-breakdown[data-mobile-phase="3"] .mobile-dot-3,
-#product-breakdown[data-mobile-phase="4"] .mobile-dot-3,
-#product-breakdown[data-mobile-phase="4"] .mobile-dot-4 {
-  background-color: var(--color-clay);
-  opacity: 1;
-}
-
-#product-breakdown[data-mobile-phase="5"][data-mobile-selected="1"] .mobile-dot-1,
-#product-breakdown[data-mobile-phase="5"][data-mobile-selected="2"] .mobile-dot-2,
-#product-breakdown[data-mobile-phase="5"][data-mobile-selected="3"] .mobile-dot-3,
-#product-breakdown[data-mobile-phase="5"][data-mobile-selected="4"] .mobile-dot-4 {
-  background-color: var(--color-clay);
-  opacity: 1;
 }
 
 #product-breakdown .breakdown-hotspot__dot {
@@ -393,7 +385,7 @@
   animation: breakdown-scroll-chevron 1.85s ease-in-out infinite;
 }
 
-/* Mobile — keep diagram, hints, dots, and card in separate bands */
+/* Mobile — diagram, hints, and description card */
 @media (max-width: 1023px) {
   #product-breakdown .mobile-diagram-scale {
     transform: scale(1.72);
@@ -403,22 +395,11 @@
   #product-breakdown .mobile-tap-hint {
     bottom: 0.35rem;
   }
-
-  #product-breakdown .mobile-card-desc {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-  }
 }
 
 @media (max-width: 1023px) and (max-height: 740px) {
   #product-breakdown .mobile-diagram-scale {
     transform: scale(1.55);
-  }
-
-  #product-breakdown .mobile-card-stack {
-    height: clamp(7.75rem, 15.5svh, 9.25rem);
   }
 }
 

@@ -181,56 +181,50 @@ function CardInner({
   label: Label;
   mobile?: boolean;
 }) {
+  if (mobile) {
+    return (
+      <div
+        dir="rtl"
+        className="w-full rounded-xl bg-cream px-3 py-2.5 text-center ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]"
+      >
+        <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-stone/85">
+          {label.tag}
+        </p>
+        <p className="font-display text-[clamp(1.25rem,5.5vw,1.55rem)] font-bold leading-[1.2] text-ink">
+          {label.title}
+        </p>
+        <p className="mobile-card-desc text-[clamp(1rem,4.2vw,1.15rem)] leading-[1.45] text-ink/85">
+          {label.description}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       dir="rtl"
-      className={`
-        group relative flex rounded-2xl text-right
-        ring-1 ring-black/[0.06]
-        shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]
-        ${mobile ? "h-full min-h-0 overflow-hidden rounded-xl px-4 py-3 bg-cream flex-col justify-center" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
-      `}
+      className="group relative flex rounded-2xl text-right ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)] breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"
     >
-      {!mobile && (
-        <div className="relative flex shrink-0 flex-col items-center justify-center gap-1.5">
-          <span
-            aria-hidden
-            className="breakdown-card-icon grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"
-          >
-            {label.icon}
-          </span>
-          <span className="font-display text-xs font-semibold tracking-[0.16em] text-clay">
-            0{label.index}
-          </span>
-        </div>
-      )}
+      <div className="relative flex shrink-0 flex-col items-center justify-center gap-1.5">
+        <span
+          aria-hidden
+          className="breakdown-card-icon grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"
+        >
+          {label.icon}
+        </span>
+        <span className="font-display text-xs font-semibold tracking-[0.16em] text-clay">
+          0{label.index}
+        </span>
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <p
-          className={
-            mobile
-              ? "text-[15px] font-semibold uppercase tracking-[0.1em] text-stone/85"
-              : "breakdown-card-tag font-semibold uppercase tracking-[0.12em] text-stone/85"
-          }
-        >
+        <p className="breakdown-card-tag font-semibold uppercase tracking-[0.12em] text-stone/85">
           {label.tag}
         </p>
-        <p
-          className={
-            mobile
-              ? "mt-1 font-display text-[clamp(1.25rem,5.5vw,1.55rem)] font-bold leading-[1.2] text-ink"
-              : "breakdown-card-title mt-1 font-display font-semibold leading-snug text-ink"
-          }
-        >
+        <p className="breakdown-card-title mt-1 font-display font-semibold leading-snug text-ink">
           {label.title}
         </p>
-        <p
-          className={
-            mobile
-              ? "mobile-card-desc mt-2 text-[clamp(1rem,4.2vw,1.15rem)] leading-[1.5] text-ink/85"
-              : "breakdown-card-desc mt-1.5 leading-[1.65] text-ink/82"
-          }
-        >
+        <p className="breakdown-card-desc mt-1.5 leading-[1.65] text-ink/82">
           {label.description}
         </p>
       </div>
@@ -689,27 +683,40 @@ function MobileScrollHint() {
   );
 }
 
+function VerticalScrollSteps({
+  step,
+  dotSize = 8,
+  activeLength = 20,
+}: {
+  step: number;
+  dotSize?: number;
+  activeLength?: number;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      {[1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="block rounded-full transition-all duration-300"
+          style={{
+            width: dotSize,
+            height: i === step ? activeLength : dotSize,
+            background: i === step ? "#FF9F0A" : "rgba(255,255,255,0.25)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function MobileSwipeProgress({ step }: { step: number }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex flex-col items-center gap-2 pb-3"
+      className="pointer-events-none absolute inset-y-0 end-2 z-30 flex items-center"
       key={step}
     >
-      {/* progress dots */}
-      <div className="flex items-center gap-2">
-        {[1, 2, 3, 4].map((i) => (
-          <span
-            key={i}
-            className="block rounded-full transition-all duration-300"
-            style={{
-              width: i === step ? 20 : 8,
-              height: 8,
-              background: i === step ? "#FF9F0A" : "rgba(255,255,255,0.25)",
-            }}
-          />
-        ))}
-      </div>
+      <VerticalScrollSteps step={step} />
     </div>
   );
 }
@@ -729,35 +736,10 @@ function DesktopScrollProgress({ step }: { step: number }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 bottom-6 z-40 flex flex-col items-center gap-3"
+      className="pointer-events-none absolute inset-y-0 end-4 z-40 flex items-center"
       key={step}
     >
-      {/* progress dots */}
-      <div className="flex items-center gap-2.5">
-        {[1, 2, 3, 4].map((i) => (
-          <span
-            key={i}
-            className="block rounded-full transition-all duration-300"
-            style={{
-              width: i === step ? 28 : 10,
-              height: 10,
-              background: i === step ? "#FF9F0A" : "rgba(255,255,255,0.25)",
-            }}
-          />
-        ))}
-      </div>
-      {/* scroll cue pill */}
-      <div className="flex items-center gap-2.5 rounded-full border border-white/20 bg-black/50 px-7 py-3 backdrop-blur-sm">
-        <span className="text-base font-bold tracking-wide text-cream">גללו עוד</span>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className="h-5 w-5 shrink-0 text-clay motion-safe:animate-bounce"
-          style={{ animationDuration: "0.9s" }}
-        >
-          <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
+      <VerticalScrollSteps step={step} dotSize={10} activeLength={28} />
     </div>
   );
 }
@@ -908,7 +890,7 @@ export default function ProductBreakdownDiagram() {
                 )}
               </header>
 
-              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-1 pb-28">
+              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-0 pb-28">
                 <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden pb-2">
                   <div className="mobile-diagram-scale relative aspect-[1920/1088] max-h-full w-full origin-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -935,48 +917,15 @@ export default function ProductBreakdownDiagram() {
                   {mobilePhase >= 1 && mobilePhase < 5 && <MobileSwipeProgress step={mobilePhase} />}
                 </div>
 
-                <div className="mobile-bottom-panel shrink-0 space-y-2">
-                  {/* Tab row — visible feature icons + labels */}
-                  <div
-                    className="flex items-stretch justify-center gap-1.5 px-1"
-                    role="tablist"
-                    aria-label="בחירת שכבה"
-                    dir="rtl"
-                  >
-                    {ORDERED_LABELS.map((l, i) => (
-                      <button
-                        key={l.index}
-                        type="button"
-                        role="tab"
-                        aria-selected={mobileSelected === i + 1}
-                        aria-label={l.title}
-                        onClick={() => selectMobileFeature(i + 1)}
-                        className={`mobile-dot-${i + 1} flex flex-1 flex-col items-center gap-1 border py-2 px-1 transition-all duration-300`}
-                        style={{
-                          borderColor: mobileSelected === i + 1 ? "rgba(255,159,10,0.8)" : "rgba(255,255,255,0.15)",
-                          background: mobileSelected === i + 1 ? "rgba(255,159,10,0.12)" : "rgba(255,255,255,0.05)",
-                        }}
-                      >
-                        <span className={`transition-colors ${mobileSelected === i + 1 ? "text-clay" : "text-cream/40"}`}>
-                          {l.icon}
-                        </span>
-                        <span className={`text-[10px] font-semibold tracking-wide leading-tight text-center transition-colors ${mobileSelected === i + 1 ? "text-clay" : "text-cream/40"}`}>
-                          {l.tag}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  {/* Card stack — taller */}
-                  <div className="mobile-card-stack relative h-[clamp(12rem,26svh,16rem)]">
-                    {ORDERED_LABELS.map((l, i) => (
-                      <div
-                        key={l.index}
-                        className={`mobile-card-${i + 1} breakdown-layer absolute inset-x-0 top-0 h-full`}
-                      >
-                        <CardInner label={l} mobile />
-                      </div>
-                    ))}
-                  </div>
+                <div className="mobile-card-stack relative grid w-full shrink-0">
+                  {ORDERED_LABELS.map((l, i) => (
+                    <div
+                      key={l.index}
+                      className={`mobile-card-${i + 1} breakdown-layer col-start-1 row-start-1 w-full`}
+                    >
+                      <CardInner label={l} mobile />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
