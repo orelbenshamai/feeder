@@ -73,7 +73,7 @@ function StickyReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative h-below-header w-full"
+      className="relative h-screen-stable w-full"
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
