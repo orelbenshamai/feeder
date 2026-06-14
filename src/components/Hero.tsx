@@ -2,7 +2,7 @@ import { media } from "@/lib/media";
 import ProductIllustration from "./ProductIllustration";
 import HeroAutoplayVideo from "./HeroAutoplayVideo";
 import GhostCTAButton from "./GhostCTAButton";
-/** Served from `public/media/` (Turbopack cannot bundle `.mp4` imports). */
+/** Hero video URL from CDN via `media()` (mp4 cannot be bundled by Turbopack). */
 const DEFAULT_HERO_VIDEO = media("mesudar_main_video.mp4");
 
 const HERO_SCRIM =
