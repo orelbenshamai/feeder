@@ -73,7 +73,7 @@ function StickyReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative h-below-header w-full overflow-hidden"
+      className="relative h-screen-stable w-full"
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
@@ -160,7 +160,7 @@ export default function BeforeAfterSection() {
     <section
       id="before-after"
       dir="rtl"
-      className="relative overflow-hidden bg-ink text-cream"
+      className="relative isolate z-10 bg-ink text-cream"
     >
       <StickyReveal />
     </section>
