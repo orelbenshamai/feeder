@@ -1,6 +1,5 @@
 import { media } from "@/lib/media";
-import ProductIllustration from "./ProductIllustration";
-import HeroAutoplayVideo from "./HeroAutoplayVideo";
+import HeroMedia from "./HeroMedia";
 import GhostCTAButton from "./GhostCTAButton";
 /** Hero video URL from CDN via `media()` (mp4 cannot be bundled by Turbopack). */
 const DEFAULT_HERO_VIDEO = media("mesudar_main_video.mp4");
@@ -28,38 +27,6 @@ function HeroCopy({ headingId }: { headingId?: string }) {
   );
 }
 
-function HeroMedia({
-  videoSrc,
-  posterSrc,
-  objectPosition,
-  objectFit = "cover",
-  className,
-}: {
-  videoSrc: string;
-  posterSrc?: string;
-  objectPosition: string;
-  objectFit?: "cover" | "contain";
-  className?: string;
-}) {
-  if (videoSrc) {
-    return (
-      <HeroAutoplayVideo
-        src={videoSrc}
-        poster={posterSrc}
-        className={`h-full w-full ${objectFit === "contain" ? "object-contain" : "object-cover"} ${objectPosition} ${className ?? ""}`}
-      />
-    );
-  }
-
-  return (
-    <div
-      className={`flex h-full w-full items-center justify-center bg-gradient-to-br from-ink via-stone to-sand/40 ${className ?? ""}`}
-    >
-      <ProductIllustration className="h-full w-full p-8 opacity-90 sm:p-14" />
-    </div>
-  );
-}
-
 export default function Hero() {
   const envSrc = process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim();
   const envMobileSrc = process.env.NEXT_PUBLIC_HERO_VIDEO_MOBILE_URL?.trim();
@@ -74,7 +41,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden max-md:h-[calc(var(--ios-vh)-var(--site-header-h))] max-md:max-h-[calc(var(--ios-vh)-var(--site-header-h))]"
+      className="isolate h-below-header max-h-below-header overflow-hidden"
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >
@@ -83,9 +50,10 @@ export default function Hero() {
       </span>
 
       {/* ── PHONE — video band + copy panel ─────────────────────────────── */}
-      <div className="grid h-full grid-rows-[minmax(0,52svh)_1fr] overflow-hidden bg-ink md:hidden">
+      <div className="grid h-full grid-rows-[minmax(0,calc(var(--screen-h)*0.52))_1fr] overflow-hidden bg-ink md:hidden">
         <div className="relative overflow-hidden">
           <HeroMedia
+            layout="mobile"
             videoSrc={mobileVideoSrc}
             posterSrc={mobilePosterSrc}
             objectFit="cover"
@@ -107,6 +75,7 @@ export default function Hero() {
       <div className="relative isolate hidden h-full overflow-hidden bg-ink md:block">
         <div className="absolute inset-0 z-0">
           <HeroMedia
+            layout="desktop"
             videoSrc={desktopVideoSrc}
             posterSrc={desktopPosterSrc}
             objectPosition="object-[center_50%]"

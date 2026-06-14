@@ -26,7 +26,7 @@ export default async function MatPage() {
   if (!product) notFound();
 
   return (
-    <main id="main" className="min-h-[100svh] bg-cream text-ink">
+    <main id="main" className="min-h-screen-stable bg-cream text-ink">
       <ProductDetail
         product={product}
         scaleGalleryBySize

@@ -103,7 +103,7 @@ export default function BundleSection() {
             <img
               src={BUNDLE_IMAGE}
               alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
-              className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.4)] max-h-[min(70svh,32rem)] sm:max-h-[min(75svh,36rem)]"
+              className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.4)] max-h-[min(calc(var(--screen-h)*0.7),32rem)] sm:max-h-[min(calc(var(--screen-h)*0.75),36rem)]"
               draggable={false}
             />
           </motion.div>

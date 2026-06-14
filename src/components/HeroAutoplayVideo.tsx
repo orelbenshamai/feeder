@@ -61,7 +61,6 @@ export default function HeroAutoplayVideo({ src, poster, className }: Props) {
       disableRemotePlayback
       aria-hidden
     >
-      <source src={src} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
       <source src={src} type="video/mp4" />
     </video>
   );

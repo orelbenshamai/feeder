@@ -103,7 +103,7 @@ export default function AboutSection() {
 
       {/* ── Block 1: Hero ── */}
       {/* Mobile: full-viewport hero with text overlaid at bottom */}
-      <div className="relative lg:hidden w-full overflow-hidden h-[calc(100svh-var(--site-header-h))]">
+      <div className="relative h-below-header w-full overflow-hidden lg:hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={media("senior_golden_mobile.png")}
@@ -134,7 +134,7 @@ export default function AboutSection() {
       </div>
 
       {/* Desktop: full-viewport hero with overlaid text */}
-      <div className="relative hidden w-full overflow-hidden h-[calc(100svh-var(--site-header-h))] lg:block">
+      <div className="relative hidden h-below-header w-full overflow-hidden lg:block">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={media("senior_golden.png")}
@@ -172,7 +172,7 @@ export default function AboutSection() {
 
       {/* ── Block 3: Founder story + image ── */}
       {/* Mobile: text on top + image below, both in one viewport */}
-      <div className="lg:hidden flex flex-col min-h-[calc(100svh-var(--site-header-h))]">
+      <div className="flex min-h-below-header flex-col lg:hidden">
         {/* Text */}
         <div className="flex flex-col justify-center gap-5 bg-ink px-8 py-8 sm:px-10 sm:py-10" style={{ flex: "0 0 42%" }}>
           <FadeIn delay={0.05}>
@@ -186,7 +186,7 @@ export default function AboutSection() {
           </FadeIn>
         </div>
         {/* Image — focus on dog + product */}
-        <FadeIn className="relative min-h-[45svh] flex-1 overflow-hidden">
+        <FadeIn className="relative min-h-[calc(var(--screen-h)*0.45)] flex-1 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={media("before_mesudar_mobile.png")}
@@ -225,8 +225,8 @@ export default function AboutSection() {
 
       {/* ── Block 4: Closing statement + after image (mirror of story block) ── */}
       {/* Mobile: image on top, text below */}
-      <div className="lg:hidden flex flex-col min-h-[calc(100svh-var(--site-header-h))]">
-        <FadeIn className="relative min-h-[45svh] flex-1 overflow-hidden">
+      <div className="flex min-h-below-header flex-col lg:hidden">
+        <FadeIn className="relative min-h-[calc(var(--screen-h)*0.45)] flex-1 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={media("after_mesudar_mobile.png")}

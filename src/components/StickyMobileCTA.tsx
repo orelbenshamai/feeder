@@ -14,13 +14,24 @@ function getSiteHeaderHeight() {
   return document.querySelector("header")?.getBoundingClientRect().height ?? 64;
 }
 
-function isInBreakdownReveal() {
+function shouldHideForBreakdown(): boolean {
+  if (!window.matchMedia("(max-width: 1023px)").matches) return false;
+
   const breakdown = document.getElementById("product-breakdown");
   if (!breakdown) return false;
-  return (
-    breakdown.dataset.breakdownLocked === "true" &&
-    breakdown.dataset.breakdownComplete !== "true"
-  );
+
+  const rect = breakdown.getBoundingClientRect();
+  const vh = window.innerHeight;
+
+  if (rect.bottom < 0 || rect.top > vh) return false;
+
+  if (breakdown.dataset.breakdownComplete !== "true") return true;
+
+  return rect.bottom > vh * 0.38;
+}
+
+function isInBreakdownReveal() {
+  return shouldHideForBreakdown();
 }
 
 export default function StickyMobileCTA() {
@@ -53,7 +64,12 @@ export default function StickyMobileCTA() {
     if (breakdown) {
       breakdownObserver.observe(breakdown, {
         attributes: true,
-        attributeFilter: ["data-breakdown-locked", "data-breakdown-complete"],
+        attributeFilter: [
+          "data-breakdown-locked",
+          "data-breakdown-complete",
+          "data-breakdown-step",
+          "data-mobile-phase",
+        ],
       });
     }
 

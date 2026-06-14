@@ -124,7 +124,7 @@ export default function MatLandingSection() {
             <img
               src={MAT_IMAGE}
               alt={MAT_ALT}
-              className="max-h-[40svh] w-auto max-w-full select-none object-contain"
+              className="max-h-[calc(var(--screen-h)*0.4)] w-auto max-w-full select-none object-contain"
               draggable={false}
             />
           </motion.div>

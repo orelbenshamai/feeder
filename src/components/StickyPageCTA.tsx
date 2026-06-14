@@ -1,12 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import GhostCTAButton from "./GhostCTAButton";
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 1023px)").matches;
+}
+
+/** Hide sticky CTA on mobile while in/near the breakdown section (card + reveal). */
+function shouldHideForBreakdown(): boolean {
+  if (!isMobileViewport()) return false;
+
+  const breakdown = document.getElementById("product-breakdown");
+  if (!breakdown) return false;
+
+  const rect = breakdown.getBoundingClientRect();
+  const vh = window.innerHeight;
+
+  if (rect.bottom < 0 || rect.top > vh) return false;
+
+  if (breakdown.dataset.breakdownComplete !== "true") return true;
+
+  // After reveal — stay hidden until the section (and card) scrolls mostly off screen
+  return rect.bottom > vh * 0.38;
+}
 
 export default function StickyPageCTA() {
   const [heroVisible, setHeroVisible] = useState(true);
   const [footerVisible, setFooterVisible] = useState(false);
+  const [breakdownActive, setBreakdownActive] = useState(false);
 
-  const visible = !heroVisible && !footerVisible;
+  const syncBreakdown = useCallback(() => {
+    setBreakdownActive(shouldHideForBreakdown());
+  }, []);
+
+  const visible = !heroVisible && !footerVisible && !breakdownActive;
 
   useEffect(() => {
     const hero = document.getElementById("hero");
@@ -29,11 +56,33 @@ export default function StickyPageCTA() {
       footerObserver.observe(footer);
     }
 
+    syncBreakdown();
+
+    const breakdown = document.getElementById("product-breakdown");
+    const breakdownObserver = new MutationObserver(syncBreakdown);
+    if (breakdown) {
+      breakdownObserver.observe(breakdown, {
+        attributes: true,
+        attributeFilter: [
+          "data-breakdown-complete",
+          "data-breakdown-step",
+          "data-mobile-phase",
+          "data-breakdown-locked",
+        ],
+      });
+    }
+
+    window.addEventListener("scroll", syncBreakdown, { passive: true });
+    window.addEventListener("resize", syncBreakdown, { passive: true });
+
     return () => {
       heroObserver?.disconnect();
       footerObserver?.disconnect();
+      breakdownObserver.disconnect();
+      window.removeEventListener("scroll", syncBreakdown);
+      window.removeEventListener("resize", syncBreakdown);
     };
-  }, []);
+  }, [syncBreakdown]);
 
   return (
     <div

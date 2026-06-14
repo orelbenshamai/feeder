@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, type RefObject } from "react";
+import { getStableViewportHeight } from "@/lib/stable-viewport";
 
 const MAX_STEP = 5;
 const WHEEL_STEP_THRESHOLD = 55;
@@ -12,6 +13,10 @@ const RELEASE_COOLDOWN_MS = 500;
 
 function isMobileViewport(): boolean {
   return window.matchMedia("(max-width: 1023px)").matches;
+}
+
+function getViewportHeight(): number {
+  return isMobileViewport() ? getStableViewportHeight() : window.innerHeight;
 }
 
 function getHeaderH(): number {
@@ -99,7 +104,7 @@ export default function BreakdownScrollSync({
     const isBreakdownApproachable = () => {
       const rect = sectionEl.getBoundingClientRect();
       if (rect.bottom < -APPROACH_PX) return false;
-      if (rect.top > window.innerHeight + APPROACH_PX) return false;
+      if (rect.top > getViewportHeight() + APPROACH_PX) return false;
       return true;
     };
 
@@ -417,7 +422,7 @@ export default function BreakdownScrollSync({
       const lockY = getLockY();
       if (window.scrollY >= lockY - APPROACH_PX) {
         e.preventDefault();
-        handleScrollDownIntent(window.innerHeight);
+        handleScrollDownIntent(getViewportHeight());
       }
     };
 

@@ -199,7 +199,7 @@ export default function ProductIntroduction() {
         >
           {/* Mobile: image first — scaled up inside a fixed layout slot */}
           <motion.div variants={imgV} className="w-full lg:hidden">
-            <div className="mx-auto aspect-[1920/1088] max-h-[38svh] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
+            <div className="mx-auto aspect-[1920/1088] max-h-[calc(var(--screen-h)*0.38)] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={media("product_image.png")}

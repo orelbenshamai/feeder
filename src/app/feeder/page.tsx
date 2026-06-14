@@ -21,7 +21,7 @@ export default async function FeederPage() {
   const product = await getDefaultProduct();
 
   return (
-    <main id="main" className="min-h-[100svh] bg-cream text-ink">
+    <main id="main" className="min-h-screen-stable bg-cream text-ink">
       <ProductDetail product={product} bundleUpsell={FEEDER_MAT_BUNDLE} scaleGalleryBySize />
     </main>
   );

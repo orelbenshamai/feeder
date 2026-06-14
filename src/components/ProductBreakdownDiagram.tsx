@@ -185,15 +185,15 @@ function CardInner({
     return (
       <div
         dir="rtl"
-        className="w-full rounded-xl bg-cream px-3 py-2.5 text-center ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]"
+        className="flex h-full min-h-full w-full flex-col justify-center rounded-xl bg-cream px-4 py-3 text-center ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]"
       >
-        <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-stone/85">
+        <p className="mobile-card-tag text-[clamp(0.95rem,4.2vw,1.1rem)] font-semibold uppercase tracking-[0.1em] text-stone/85">
           {label.tag}
         </p>
-        <p className="font-display text-[clamp(1.25rem,5.5vw,1.55rem)] font-bold leading-[1.2] text-ink">
+        <p className="mobile-card-title font-display text-[clamp(1.4rem,6.2vw,1.85rem)] font-bold leading-[1.15] text-ink">
           {label.title}
         </p>
-        <p className="mobile-card-desc text-[clamp(1rem,4.2vw,1.15rem)] leading-[1.45] text-ink/85">
+        <p className="mobile-card-desc mt-1 text-[clamp(1.05rem,4.6vw,1.22rem)] leading-[1.5] text-ink/85">
           {label.description}
         </p>
       </div>
@@ -835,7 +835,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate -mt-px h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] bg-ink"
+      className="relative isolate -mt-px h-below-header bg-ink"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
@@ -849,23 +849,23 @@ export default function ProductBreakdownDiagram() {
         }}
       />
 
-      <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] flex-col overflow-hidden">
-        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:py-2">
+      <div className="sticky top-[var(--site-header-h)] flex h-below-header flex-col overflow-hidden">
+        <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:px-1 max-lg:py-0">
           <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
-            <div className="mobile-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-6 text-center">
-              <p className="text-center font-display text-[clamp(1.7rem,6.5vw,2.2rem)] font-bold leading-tight tracking-tight text-cream">
+            <div className="mobile-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-4 text-center">
+              <p className="text-center font-display text-[clamp(2rem,8vw,2.65rem)] font-bold leading-[1.05] tracking-tight text-cream">
                 איך עמדת ההאכלה של{" "}
                 <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>{" "}
                 <br />
                 עובדת
               </p>
               <div className="mt-8 flex flex-col items-center gap-2">
-                <p className="text-lg font-semibold tracking-wide text-cream/80">גללו עוד</p>
+                <p className="text-xl font-semibold tracking-wide text-cream/80">גללו עוד</p>
                 <svg
                   aria-hidden
                   viewBox="0 0 24 24"
                   fill="none"
-                  className="h-9 w-9 text-clay motion-safe:animate-bounce"
+                  className="h-10 w-10 text-clay motion-safe:animate-bounce"
                   style={{ animationDuration: "1s" }}
                 >
                   <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -873,26 +873,45 @@ export default function ProductBreakdownDiagram() {
               </div>
             </div>
 
-            <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col pt-1">
-              <header className="shrink-0 px-1 pb-1.5 pt-1.5 text-center">
-                {mobilePhase < 5 && (
-                  <div className="inline-flex items-center gap-2">
-                    <span className="text-[clamp(1rem,4vw,1.25rem)] font-black tracking-widest text-cream uppercase">גללו עוד</span>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="h-5 w-5 shrink-0 text-clay motion-safe:animate-bounce"
-                      style={{ animationDuration: "0.9s" }}
+            <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col">
+              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.22fr)_minmax(0,1fr)_auto] gap-1 max-lg:pb-2">
+                <div className="mobile-breakdown-header flex min-h-0 items-center justify-center px-2">
+                  <div className="text-center">
+                    <h2
+                      id="breakdown-heading"
+                      className="mobile-breakdown-title font-display text-[clamp(1.05rem,5.5vw,2rem)] font-bold leading-none tracking-tight text-cream whitespace-nowrap"
                     >
-                      <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                      הכירו את עמדת ההאכלה{" "}
+                      <span
+                        style={{
+                          fontFamily: "var(--font-nunito)",
+                          fontWeight: 800,
+                          color: "#FF9F0A",
+                        }}
+                      >
+                        MESUDAR
+                      </span>
+                    </h2>
+                    {mobilePhase < 5 && (
+                      <div className="mt-2 inline-flex items-center gap-2">
+                        <span className="text-[clamp(0.8rem,3.2vw,1rem)] font-black tracking-widest text-cream/80 uppercase">
+                          גללו עוד
+                        </span>
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="h-5 w-5 shrink-0 text-clay motion-safe:animate-bounce"
+                          style={{ animationDuration: "0.9s" }}
+                        >
+                          <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
-                )}
-              </header>
+                </div>
 
-              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-0 pb-28">
-                <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden pb-2">
-                  <div className="mobile-diagram-scale relative aspect-[1920/1088] max-h-full w-full origin-center">
+                <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden">
+                  <div className="mobile-diagram-scale relative aspect-[1920/1088] w-full max-w-full origin-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={media("product_breakdown.png")}
@@ -921,7 +940,7 @@ export default function ProductBreakdownDiagram() {
                   {ORDERED_LABELS.map((l, i) => (
                     <div
                       key={l.index}
-                      className={`mobile-card-${i + 1} breakdown-layer col-start-1 row-start-1 w-full`}
+                      className={`mobile-card-${i + 1} breakdown-layer col-start-1 row-start-1 h-full w-full`}
                     >
                       <CardInner label={l} mobile />
                     </div>

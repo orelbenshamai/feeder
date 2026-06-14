@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { media } from "@/lib/media";
+import { getStableViewportHeight } from "@/lib/stable-viewport";
 
 function StickyReveal() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -16,6 +17,7 @@ function StickyReveal() {
       const { gsap }          = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
 
       // Guard: if the component unmounted while the async import was in flight, bail out.
       if (!mounted) return;
@@ -41,7 +43,7 @@ function StickyReveal() {
             trigger: section,
             start: "top top",
             // ~2.5 screens — deliberate but not exhausting.
-            end: () => `+=${window.innerHeight * 2.5}`,
+            end: () => `+=${getStableViewportHeight() * 2.5}`,
             pin: true,
             pinSpacing: true,
             scrub: 1.4,
@@ -66,8 +68,7 @@ function StickyReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative w-full"
-      style={{ height: "100vh" }}
+      className="relative h-screen-stable w-full"
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}

@@ -23,7 +23,9 @@
 :root {
   color-scheme: light;
   --site-header-h: 2.75rem;
+  /* Fallback until layout head script runs; then --ios-vh becomes a fixed px height. */
   --ios-vh: 100svh;
+  --screen-h: 100svh;
 }
 
 @media (min-width: 640px) {
@@ -38,19 +40,40 @@
   }
 }
 
+@media (max-width: 1023px) {
+  :root {
+    --screen-h: var(--ios-vh);
+  }
+}
+
 html {
   scroll-padding-top: var(--site-header-h);
 }
 
-/* iOS Safari resizes the layout viewport when the URL bar hides — svh/lvh shift too.
-   --ios-vh is set once in layout <head> (px) and must not change during scroll. */
-@media (max-width: 1023px) {
-  html {
-    height: var(--ios-vh) !important;
+/* Stable viewport helpers — use instead of 100vh / 100svh / 100lvh on mobile. */
+@layer utilities {
+  .h-screen-stable {
+    height: var(--screen-h);
   }
 
-  body {
-    min-height: var(--ios-vh) !important;
+  .min-h-screen-stable {
+    min-height: var(--screen-h);
+  }
+
+  .max-h-screen-stable {
+    max-height: var(--screen-h);
+  }
+
+  .h-below-header {
+    height: calc(var(--screen-h) - var(--site-header-h));
+  }
+
+  .min-h-below-header {
+    min-height: calc(var(--screen-h) - var(--site-header-h));
+  }
+
+  .max-h-below-header {
+    max-height: calc(var(--screen-h) - var(--site-header-h));
   }
 }
 
