@@ -157,11 +157,7 @@ function StickyReveal() {
 
 export default function BeforeAfterSection() {
   return (
-    <section
-      id="before-after"
-      dir="rtl"
-      className="relative h-below-header bg-ink text-cream"
-    >
+    <section id="before-after" dir="rtl" className="relative bg-ink text-cream">
       <StickyReveal />
     </section>
   );

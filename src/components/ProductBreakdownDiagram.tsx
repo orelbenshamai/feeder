@@ -835,7 +835,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate -mt-px h-screen-stable bg-ink"
+      className="relative isolate -mt-px h-below-header bg-ink"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
@@ -874,7 +874,7 @@ export default function ProductBreakdownDiagram() {
             </div>
 
             <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col">
-              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.22fr)_minmax(0,1fr)_auto] gap-1 max-lg:pb-2">
+              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,0.22fr)_minmax(0,1fr)_auto] gap-1 max-lg:pb-0">
                 <div className="mobile-breakdown-header flex min-h-0 items-center justify-center px-2">
                   <div className="text-center">
                     <h2
