@@ -76,7 +76,6 @@ export default function BreakdownScrollSync({
     let gestureIdleTimer = 0;
     let releaseCooldownTimer = 0;
     let mobile = isMobileViewport();
-
     applyStep(sectionEl, 0);
 
     const isCaptured = () => locked || (mobile && engaged);
@@ -161,12 +160,6 @@ export default function BreakdownScrollSync({
 
       const lockY = getLockY();
 
-      // Mobile: soft engagement only — never position:fixed the body on iOS.
-      if (mobile) {
-        engageBreakdown(lockY, resetStep);
-        return;
-      }
-
       if (resetStep) {
         step = 0;
         applyStep(sectionEl, 0);
@@ -175,6 +168,12 @@ export default function BreakdownScrollSync({
         window.scrollTo({ top: lockY, behavior: "auto" });
       }
       lockPage(lockY);
+      // Also mark engaged for mobile tracking
+      if (mobile) {
+        engaged = true;
+        engagedLockY = lockY;
+        sectionEl.dataset.breakdownLocked = "true";
+      }
       wheelAccum = 0;
       touchAccum = 0;
       stepArmed = true;
@@ -234,11 +233,7 @@ export default function BreakdownScrollSync({
 
     const releaseDown = (momentum = 0) => {
       startReleaseCooldown();
-      if (mobile && engaged) {
-        // Just disengage — let the user's next gesture scroll naturally to the next section.
-        disengageBreakdown();
-        return;
-      }
+      if (mobile && engaged) disengageBreakdown();
       unlockPage(savedScrollY);
       requestAnimationFrame(() => smoothScrollBy(momentum));
     };
@@ -247,12 +242,7 @@ export default function BreakdownScrollSync({
       step = 0;
       applyStep(sectionEl, 0);
       startReleaseCooldown();
-      if (mobile && engaged) {
-        const exitY = Math.max(0, engagedLockY - Math.max(getHeaderH(), 120));
-        disengageBreakdown();
-        requestAnimationFrame(() => window.scrollTo({ top: exitY, behavior: "auto" }));
-        return;
-      }
+      if (mobile && engaged) disengageBreakdown();
       unlockPage(Math.max(0, savedScrollY - getHeaderH()));
     };
 
@@ -370,29 +360,13 @@ export default function BreakdownScrollSync({
       touchLastY = y;
 
       if (isCaptured()) {
-        if (mobile) {
-          // Upward swipe: never preventDefault — let iOS scroll natively out of the section.
-          if (frameDelta < 0) {
-            touchAccum = 0;
-            return;
-          }
-
-          // Block downward scroll and advance steps.
-          if (frameDelta > 0 || touchAccum > 0) e.preventDefault();
-
-          if (touchAccum >= SWIPE_THRESHOLD_PX) {
-            touchAccum = 0;
-            if (!stepArmed) return;
-            handleLockedWheelDown(60);
-          }
-          return;
-        }
-
-        // Desktop: block all directions, handle both up and down
+        // Block ALL scroll in both directions while engaged (mobile and desktop)
         e.preventDefault();
+
         if (Math.abs(touchAccum) < SWIPE_THRESHOLD_PX) return;
         const down = touchAccum > 0;
         touchAccum = 0;
+
         if (down) {
           if (!stepArmed) return;
           handleLockedWheelDown(60);
@@ -423,7 +397,7 @@ export default function BreakdownScrollSync({
 
     const onTouchEnd = () => {
       if (releasing || !isCaptured()) return;
-      if (!mobile && touchAccum < -(SWIPE_THRESHOLD_PX / 2)) {
+      if (touchAccum < -(SWIPE_THRESHOLD_PX / 2)) {
         touchAccum = 0;
         handleLockedWheelUp();
         return;
@@ -432,15 +406,6 @@ export default function BreakdownScrollSync({
     };
 
     const onScroll = () => {
-      // On mobile, native upward scroll exits the section automatically.
-      if (mobile && engaged && !releasing && engagedLockY > 0) {
-        if (window.scrollY < engagedLockY - 6) {
-          step = 0;
-          applyStep(sectionEl, 0);
-          disengageBreakdown();
-          startReleaseCooldown();
-        }
-      }
       enforceBoundary();
     };
 
@@ -464,12 +429,33 @@ export default function BreakdownScrollSync({
       if (engaged) engagedLockY = getLockY();
     };
 
+    const onForceComplete = () => {
+      step = MAX_STEP;
+      applyStep(sectionEl, MAX_STEP);
+      if (engaged) disengageBreakdown();
+      if (locked) unlockPage(savedScrollY);
+    };
+
+    // Auto-engage on mobile when section fills the viewport
+    const mobileEngageObserver = mobile
+      ? new IntersectionObserver(
+          (entries) => {
+            if (entries[0]?.isIntersecting && !isCaptured() && !releasing && step < MAX_STEP) {
+              enterBreakdown(false);
+            }
+          },
+          { threshold: 0.92 },
+        )
+      : null;
+    mobileEngageObserver?.observe(sectionEl);
+
     const guardLoop = () => {
       enforceBoundary();
       guardId = requestAnimationFrame(guardLoop);
     };
     guardId = requestAnimationFrame(guardLoop);
 
+    sectionEl.addEventListener("breakdownForceComplete", onForceComplete);
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
@@ -501,6 +487,8 @@ export default function BreakdownScrollSync({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown, { capture: true });
       window.removeEventListener("resize", onResize);
+      sectionEl.removeEventListener("breakdownForceComplete", onForceComplete);
+      mobileEngageObserver?.disconnect();
     };
   }, [sectionRef]);
 

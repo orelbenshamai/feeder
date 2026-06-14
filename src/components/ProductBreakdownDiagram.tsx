@@ -1,4 +1,5 @@
 "use client";
+import { media } from "@/lib/media";
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import BreakdownScrollSync from "./BreakdownScrollSync";
@@ -116,10 +117,10 @@ const LABELS: Label[] = [
   },
   {
     index: 3,
-    tag: "אגן איסוף",
+    tag: "מיכל איסוף",
     title: "מיכל איסוף מים תחתון",
     description:
-      "אגן רחב הלוכד את כל הנוזלים שנשפכו — הרצפה נשארת יבשה לחלוטין",
+      "מיכל רחב הלוכד את כל הנוזלים שנשפכו — הרצפה נשארת יבשה לחלוטין",
     top: 68,
     tipX: 56,
     tipY: 70,
@@ -187,35 +188,28 @@ function CardInner({
         group relative flex rounded-2xl text-right
         ring-1 ring-black/[0.06]
         shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]
-        ${mobile ? "h-full min-h-0 gap-2.5 overflow-hidden rounded-xl p-3 bg-cream items-start" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
+        ${mobile ? "h-full min-h-0 overflow-hidden rounded-xl px-4 py-3 bg-cream flex-col justify-center" : "breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"}
       `}
     >
-      <div
-        className={`relative flex shrink-0 flex-col items-center justify-center ${
-          mobile ? "gap-1" : "gap-1.5"
-        }`}
-      >
-        <span
-          aria-hidden
-          className={`
-            grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20
-            ${mobile ? "h-11 w-11 rounded-lg [&_svg]:h-6 [&_svg]:w-6" : "breakdown-card-icon transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"}
-          `}
-        >
-          {label.icon}
-        </span>
-        <span
-          className={`font-display text-xs font-semibold tracking-[0.16em] text-clay`}
-        >
-          0{label.index}
-        </span>
-      </div>
+      {!mobile && (
+        <div className="relative flex shrink-0 flex-col items-center justify-center gap-1.5">
+          <span
+            aria-hidden
+            className="breakdown-card-icon grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"
+          >
+            {label.icon}
+          </span>
+          <span className="font-display text-xs font-semibold tracking-[0.16em] text-clay">
+            0{label.index}
+          </span>
+        </div>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col justify-center">
         <p
           className={
             mobile
-              ? "text-[13px] font-semibold uppercase tracking-[0.1em] text-stone/85"
+              ? "text-[15px] font-semibold uppercase tracking-[0.1em] text-stone/85"
               : "breakdown-card-tag font-semibold uppercase tracking-[0.12em] text-stone/85"
           }
         >
@@ -224,7 +218,7 @@ function CardInner({
         <p
           className={
             mobile
-              ? "mt-0.5 font-display text-[clamp(1.05rem,4.6vw,1.3rem)] font-semibold leading-[1.2] text-ink"
+              ? "mt-1 font-display text-[clamp(1.25rem,5.5vw,1.55rem)] font-bold leading-[1.2] text-ink"
               : "breakdown-card-title mt-1 font-display font-semibold leading-snug text-ink"
           }
         >
@@ -233,7 +227,7 @@ function CardInner({
         <p
           className={
             mobile
-              ? "mobile-card-desc mt-1.5 text-[clamp(0.9rem,3.8vw,1rem)] leading-[1.45] text-ink/85"
+              ? "mobile-card-desc mt-2 text-[clamp(1rem,4.2vw,1.15rem)] leading-[1.5] text-ink/85"
               : "breakdown-card-desc mt-1.5 leading-[1.65] text-ink/82"
           }
         >
@@ -566,8 +560,8 @@ function DesktopBreakdownStage() {
       <div ref={stageRef} className="desktop-breakdown-stage mx-auto">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/media/product_breakdown.png"
-          alt="פירוק המוצר: עמדת האכלה עם סימון 4 הרכיבים העיקריים"
+          src={media("product_breakdown.png")}
+          alt="פירוק המוצר: עמדת ההאכלה עם סימון 4 הרכיבים העיקריים"
           className="absolute inset-0 m-auto block h-full w-full max-w-[94%] select-none object-contain"
           style={{
             maskImage: IMG_MASK,
@@ -638,7 +632,7 @@ const HINT_PILL_CLASS =
 function ScrollHintPill() {
   return (
     <span className={HINT_PILL_CLASS}>
-      <span>גללו לגלוי השכבות</span>
+      <span>גלו את המוצר</span>
       <svg
         aria-hidden
         viewBox="0 0 16 16"
@@ -660,16 +654,15 @@ function ScrollHintPill() {
 function TapHintPill() {
   return (
     <span className={HINT_PILL_CLASS}>
+      <span>בחרו תכונה למטה</span>
       <svg
         aria-hidden
         viewBox="0 0 16 16"
         className="h-3.5 w-3.5 shrink-0 text-clay/80"
         fill="none"
       >
-        <circle cx="8" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.4" />
-        <circle cx="8" cy="8" r="1.1" fill="currentColor" />
+        <path d="M8 3v8M5 9l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <span>לחצו על עיגול לפרטים</span>
     </span>
   );
 }
@@ -696,6 +689,31 @@ function MobileScrollHint() {
   );
 }
 
+function MobileSwipeProgress({ step }: { step: number }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex flex-col items-center gap-2 pb-3"
+      key={step}
+    >
+      {/* progress dots */}
+      <div className="flex items-center gap-2">
+        {[1, 2, 3, 4].map((i) => (
+          <span
+            key={i}
+            className="block rounded-full transition-all duration-300"
+            style={{
+              width: i === step ? 20 : 8,
+              height: 8,
+              background: i === step ? "#FF9F0A" : "rgba(255,255,255,0.25)",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DesktopScrollHint() {
   return (
     <div
@@ -703,6 +721,43 @@ function DesktopScrollHint() {
       className="desktop-scroll-hint pointer-events-none absolute inset-x-0 bottom-3 z-40 flex justify-center sm:bottom-4"
     >
       <ScrollHintPill />
+    </div>
+  );
+}
+
+function DesktopScrollProgress({ step }: { step: number }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-x-0 bottom-6 z-40 flex flex-col items-center gap-3"
+      key={step}
+    >
+      {/* progress dots */}
+      <div className="flex items-center gap-2.5">
+        {[1, 2, 3, 4].map((i) => (
+          <span
+            key={i}
+            className="block rounded-full transition-all duration-300"
+            style={{
+              width: i === step ? 28 : 10,
+              height: 10,
+              background: i === step ? "#FF9F0A" : "rgba(255,255,255,0.25)",
+            }}
+          />
+        ))}
+      </div>
+      {/* scroll cue pill */}
+      <div className="flex items-center gap-2.5 rounded-full border border-white/20 bg-black/50 px-7 py-3 backdrop-blur-sm">
+        <span className="text-base font-bold tracking-wide text-cream">גללו עוד</span>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          className="h-5 w-5 shrink-0 text-clay motion-safe:animate-bounce"
+          style={{ animationDuration: "0.9s" }}
+        >
+          <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
     </div>
   );
 }
@@ -777,10 +832,14 @@ export default function ProductBreakdownDiagram() {
 
   const selectMobileFeature = (index: number) => {
     const section = sectionRef.current;
-    if (!section || Number(section.dataset.mobilePhase) !== 5) return;
+    if (!section) return;
+    // If not yet in interactive phase, force-complete the scroll animation first
+    if (Number(section.dataset.mobilePhase) < 5) {
+      section.dispatchEvent(new Event("breakdownForceComplete", { bubbles: false }));
+    }
     section.dataset.mobileSelected = String(index);
     setMobileSelected(index);
-    setShowTapHint(false);
+    // hint stays visible
   };
 
   const mobileInteractive = mobilePhase >= 5;
@@ -794,7 +853,7 @@ export default function ProductBreakdownDiagram() {
       data-desktop-phase="0"
       data-breakdown-step="0"
       data-tap-hint-dismissed={showTapHint ? undefined : "true"}
-      className="relative isolate mt-0 h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] bg-[#0D2438]"
+      className="relative isolate -mt-px h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] bg-ink"
       aria-labelledby="breakdown-heading"
     >
       <BreakdownScrollSync sectionRef={sectionRef} />
@@ -811,26 +870,50 @@ export default function ProductBreakdownDiagram() {
       <div className="sticky top-[var(--site-header-h)] flex h-[calc(100svh-var(--site-header-h))] max-lg:h-[calc(100lvh-var(--site-header-h))] flex-col overflow-hidden">
         <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:py-2">
           <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
-            <div className="mobile-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
-              <p className="text-center font-display text-[clamp(1.75rem,7vw,2.25rem)] font-bold leading-tight tracking-tight text-cream">
-                איך המוצר שלנו עובד
+            <div className="mobile-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-6 text-center">
+              <p className="text-center font-display text-[clamp(1.7rem,6.5vw,2.2rem)] font-bold leading-tight tracking-tight text-cream">
+                איך עמדת ההאכלה של{" "}
+                <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>{" "}
+                <br />
+                עובדת
               </p>
-              <p className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse">
-                גללו ↓
-              </p>
+              <div className="mt-8 flex flex-col items-center gap-2">
+                <p className="text-lg font-semibold tracking-wide text-cream/80">גללו עוד</p>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="h-9 w-9 text-clay motion-safe:animate-bounce"
+                  style={{ animationDuration: "1s" }}
+                >
+                  <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
             </div>
 
             <div className="mobile-body breakdown-layer relative flex h-full min-h-0 flex-1 flex-col pt-1">
               <header className="shrink-0 px-1 pb-1.5 pt-1.5 text-center">
-                <BreakdownHeading className="section-h2 section-h2-on-dark text-[clamp(0.98rem,3.8vw,1.18rem)] leading-[1.2]" />
+                {mobilePhase < 5 && (
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-[clamp(1rem,4vw,1.25rem)] font-black tracking-widest text-cream uppercase">גללו עוד</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="h-5 w-5 shrink-0 text-clay motion-safe:animate-bounce"
+                      style={{ animationDuration: "0.9s" }}
+                    >
+                      <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
               </header>
 
-              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-2 pb-1">
-                <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden pb-8">
+              <div className="mobile-body-grid grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-1 pb-28">
+                <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden pb-2">
                   <div className="mobile-diagram-scale relative aspect-[1920/1088] max-h-full w-full origin-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/media/product_breakdown.png"
+                      src={media("product_breakdown.png")}
                       alt="פירוק המוצר"
                       className="absolute inset-0 h-full w-full select-none object-contain"
                       draggable={false}
@@ -849,37 +932,42 @@ export default function ProductBreakdownDiagram() {
                       </div>
                     ))}
                   </div>
-                  <MobileScrollHint />
-                  <MobileTapHint />
+                  {mobilePhase >= 1 && mobilePhase < 5 && <MobileSwipeProgress step={mobilePhase} />}
                 </div>
 
                 <div className="mobile-bottom-panel shrink-0 space-y-2">
+                  {/* Tab row — visible feature icons + labels */}
                   <div
-                    className="flex items-center justify-center gap-1.5"
-                    role={mobileInteractive ? "tablist" : undefined}
-                    aria-label={mobileInteractive ? "בחירת שכבה" : undefined}
+                    className="flex items-stretch justify-center gap-1.5 px-1"
+                    role="tablist"
+                    aria-label="בחירת שכבה"
+                    dir="rtl"
                   >
-                    {ORDERED_LABELS.map((l, i) =>
-                      mobileInteractive ? (
-                        <button
-                          key={l.index}
-                          type="button"
-                          role="tab"
-                          aria-selected={mobileSelected === i + 1}
-                          aria-label={l.title}
-                          onClick={() => selectMobileFeature(i + 1)}
-                          className={`mobile-dot-${i + 1} h-1.5 w-1.5 rounded-full bg-cream/25 transition-[width,background-color,opacity] duration-300`}
-                        />
-                      ) : (
-                        <span
-                          key={l.index}
-                          aria-hidden
-                          className={`mobile-dot-${i + 1} h-1.5 w-1.5 rounded-full bg-cream/25 transition-[width,background-color] duration-300`}
-                        />
-                      ),
-                    )}
+                    {ORDERED_LABELS.map((l, i) => (
+                      <button
+                        key={l.index}
+                        type="button"
+                        role="tab"
+                        aria-selected={mobileSelected === i + 1}
+                        aria-label={l.title}
+                        onClick={() => selectMobileFeature(i + 1)}
+                        className={`mobile-dot-${i + 1} flex flex-1 flex-col items-center gap-1 border py-2 px-1 transition-all duration-300`}
+                        style={{
+                          borderColor: mobileSelected === i + 1 ? "rgba(255,159,10,0.8)" : "rgba(255,255,255,0.15)",
+                          background: mobileSelected === i + 1 ? "rgba(255,159,10,0.12)" : "rgba(255,255,255,0.05)",
+                        }}
+                      >
+                        <span className={`transition-colors ${mobileSelected === i + 1 ? "text-clay" : "text-cream/40"}`}>
+                          {l.icon}
+                        </span>
+                        <span className={`text-[10px] font-semibold tracking-wide leading-tight text-center transition-colors ${mobileSelected === i + 1 ? "text-clay" : "text-cream/40"}`}>
+                          {l.tag}
+                        </span>
+                      </button>
+                    ))}
                   </div>
-                  <div className="mobile-card-stack relative h-[clamp(8.25rem,16.5svh,10rem)]">
+                  {/* Card stack — taller */}
+                  <div className="mobile-card-stack relative h-[clamp(12rem,26svh,16rem)]">
                     {ORDERED_LABELS.map((l, i) => (
                       <div
                         key={l.index}
@@ -895,13 +983,24 @@ export default function ProductBreakdownDiagram() {
           </div>
 
           <div className="relative hidden h-full min-h-0 flex-1 lg:block">
-            <div className="desktop-intro breakdown-layer z-30 flex flex-col items-center justify-center px-6">
-              <p className="text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-bold leading-tight tracking-tight text-cream">
-                איך המוצר שלנו עובד
+            <div className="desktop-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-6 text-center">
+              <p className="text-center font-display text-[clamp(1.9rem,3.6vw,3rem)] font-bold leading-tight tracking-tight text-cream">
+                איך עמדת ההאכלה של{" "}
+                <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>{" "}
+                עובדת
               </p>
-              <p className="mt-6 text-sm font-medium text-cream/50 motion-safe:animate-pulse">
-                גללו ↓
-              </p>
+              <div className="mt-8 flex flex-col items-center gap-2">
+                <p className="text-lg font-semibold tracking-wide text-cream/80">גללו עוד</p>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="h-9 w-9 text-clay motion-safe:animate-bounce"
+                  style={{ animationDuration: "1s" }}
+                >
+                  <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
             </div>
 
             <div className="desktop-body breakdown-layer relative flex h-full min-h-0 flex-col">
@@ -912,7 +1011,9 @@ export default function ProductBreakdownDiagram() {
               <DesktopBreakdownStage />
             </div>
 
-            <DesktopScrollHint />
+            {mobilePhase >= 1 && mobilePhase < 5
+              ? <DesktopScrollProgress step={mobilePhase} />
+              : <DesktopScrollHint />}
           </div>
         </div>
       </div>

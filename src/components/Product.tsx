@@ -114,7 +114,7 @@ export default function Product() {
             </Reveal>
             <Reveal delay={140}>
               <p className="mt-3 text-stone leading-relaxed">
-                מותג ארגון בית לבעלי חיות: מגש נגד שפיכות, גובה נכון לאכילה,
+                מותג ארגון בית לבעלי חיות מחמד: מגש לאיסוף הישפכות, גובה נכון לאכילה,
                 ומראה שמשתלב במטבח או בסלון — בלי “מראה חנות חיות”.
               </p>
             </Reveal>

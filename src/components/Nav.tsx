@@ -1,4 +1,5 @@
 "use client";
+import { media } from "@/lib/media";
 
 import { useEffect, useState } from "react";
 import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
@@ -32,7 +33,7 @@ export default function Nav() {
         <a href="#" aria-label="מסודר — חזרה לראש הדף">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/media/logo.png"
+            src={media("logo.png")}
             alt="מסודר"
             className="h-12 w-auto md:h-14"
             draggable={false}

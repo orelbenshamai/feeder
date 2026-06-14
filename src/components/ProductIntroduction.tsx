@@ -1,4 +1,5 @@
 "use client";
+import { media } from "@/lib/media";
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
@@ -38,6 +39,7 @@ interface Feature {
   icon: React.ReactNode;
   title: string;
   desc: string;
+  shortDesc: string;
 }
 
 const features: Feature[] = [
@@ -79,6 +81,7 @@ const features: Feature[] = [
     ),
     title: "קערות נירוסטה פרימיום",
     desc: "נשלפות בשנייה ונכנסות למדיח — עמידות, היגייניות, ללא ריחות וחלודה",
+    shortDesc: "נשלפות בשנייה, נכנסות למדיח",
   },
   {
     icon: (
@@ -117,6 +120,7 @@ const features: Feature[] = [
     ),
     title: "מערכת איסוף נוזלים חכמה",
     desc: "משטח מדורג + תעלות ניקוז קדמיות מנתבות כל טיפה אל נקודה אחת — אפס בלגן",
+    shortDesc: "תעלות ניקוז שמנתבות כל טיפה",
   },
   {
     icon: (
@@ -157,6 +161,7 @@ const features: Feature[] = [
     ),
     title: "אפס לכלוך, רצפה יבשה",
     desc: "בסיס ייצוב מגן על הפרקט, האריחים והשטיח מנזילות, כתמים ושריטות",
+    shortDesc: "מגן על הפרקט מנזילות וכתמים",
   },
 ];
 
@@ -173,7 +178,7 @@ export default function ProductIntroduction() {
       aria-labelledby="intro-heading"
       className="
         relative isolate overflow-x-clip bg-cream
-        max-lg:pb-14 max-lg:pt-[calc(var(--site-header-h)+1rem+env(safe-area-inset-top,0px))]
+        max-lg:pb-10 max-lg:pt-[calc(var(--site-header-h)+0.75rem+env(safe-area-inset-top,0px))]
         py-12 sm:py-16
         lg:min-h-[calc(100svh-var(--site-header-h))] lg:flex lg:items-center lg:overflow-visible lg:py-20
         shadow-[0_-18px_50px_-20px_rgba(31,58,82,0.10)]
@@ -187,19 +192,19 @@ export default function ProductIntroduction() {
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="
-            mx-auto flex max-w-7xl flex-col gap-10 max-lg:gap-11
+            mx-auto flex max-w-7xl flex-col gap-6 max-lg:gap-7
             lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1fr_minmax(17rem,36%)]
             lg:items-center lg:gap-8 xl:gap-10
           "
         >
           {/* Mobile: image first — scaled up inside a fixed layout slot */}
           <motion.div variants={imgV} className="w-full lg:hidden">
-            <div className="mx-auto aspect-[1920/1088] w-full max-w-[min(100%,28rem)] overflow-hidden sm:max-w-[32rem]">
+            <div className="mx-auto aspect-[1920/1088] max-h-[38svh] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/media/product_image.png"
+                src={media("product_image.png")}
                 alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
-                className="mx-auto block h-full w-full origin-center scale-[1.24] select-none object-contain"
+                className="mx-auto block h-full w-full origin-center scale-[1.1] select-none object-contain"
                 draggable={false}
               />
             </div>
@@ -212,7 +217,7 @@ export default function ProductIntroduction() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/media/product_image.png"
+              src={media("product_image.png")}
               alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
               className="
                 block h-auto w-auto max-h-[min(98vh,calc(100svh-var(--site-header-h)-0.5rem))]
@@ -224,23 +229,34 @@ export default function ProductIntroduction() {
           </motion.div>
 
           {/* Copy — RIGHT on desktop */}
-          <div dir="rtl" className="flex min-w-0 flex-col gap-5 max-lg:items-center max-lg:text-center sm:gap-6 lg:col-start-2 lg:row-start-1 lg:items-stretch lg:text-start">
-            <motion.div variants={headV} className="max-lg:flex max-lg:justify-center">
-              <span className="section-eyebrow">הכירו את MESUDAR</span>
+          <div dir="rtl" className="flex min-w-0 flex-col gap-3 max-lg:items-stretch max-lg:text-start sm:gap-6 lg:col-start-2 lg:row-start-1 lg:gap-5 lg:items-stretch lg:text-start">
+            <motion.div variants={headV}>
+              <span className="section-eyebrow max-lg:text-[11px]">הכירו את <span style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span></span>
             </motion.div>
 
             <motion.h2
               id="intro-heading"
               variants={headV}
-              className="section-h2 max-w-lg text-[clamp(1.65rem,6.2vw,2.1rem)] leading-[1.1] max-lg:mx-auto max-lg:max-w-[15ch] lg:mx-0 lg:text-[2.95rem] lg:leading-[1.05]"
+              className="section-h2 max-w-lg text-[clamp(1.5rem,5.8vw,2.1rem)] leading-[1.1] lg:mx-0 lg:text-[2.95rem] lg:leading-[1.05]"
             >
-              הפתרון המעוצב לסביבת האכלה{" "}
-              <span className="text-clay">נקייה ויבשה</span>
+              <span className="lg:hidden">
+                האכלה <span className="text-clay">נקייה ויבשה</span>
+              </span>
+              <span className="hidden lg:inline">
+                הפתרון המעוצב לסביבת האכלה{" "}
+                <span className="text-clay">נקייה ויבשה</span>
+              </span>
             </motion.h2>
 
             <motion.p
               variants={headV}
-              className="section-lead max-w-md text-[15px] leading-[1.72] max-lg:mx-auto sm:text-[17px] sm:leading-[1.7] lg:mx-0"
+              className="section-lead max-w-md text-[14px] leading-[1.6] lg:hidden lg:mx-0"
+            >
+              פלטפורמה אחת שמחזיקה את הקערות, אוספת נוזלים ומגינה על הרצפה.
+            </motion.p>
+            <motion.p
+              variants={headV}
+              className="section-lead max-w-md hidden text-[17px] leading-[1.7] lg:mx-0 lg:block"
             >
               אם אתם מכירים את התמונה — קערה שמתהפכת, מים שמתפשטים, מזון
               שמגיע לפינות. מסודר תוכננה כדי לפתור בדיוק את זה: פלטפורמה
@@ -250,16 +266,17 @@ export default function ProductIntroduction() {
 
             <motion.ul
               variants={containerV}
-              className="mt-1 flex w-full flex-col gap-3 max-lg:mt-2 sm:mt-2 sm:gap-3"
+              className="mt-0 flex w-full flex-col gap-2 max-lg:mt-1 sm:mt-2 sm:gap-3"
             >
               {features.map((f) => (
                 <motion.li
                   key={f.title}
                   variants={cardV}
                   className="
-                    group flex items-start gap-4 rounded-2xl border px-4 py-4
+                    group flex items-start gap-3 rounded-2xl border px-3.5 py-3
                     transition-all duration-300
                     max-lg:w-full max-lg:border-r-[3px] max-lg:border-r-clay/45 max-lg:text-start
+                    sm:gap-4 sm:px-4 sm:py-4
                     border-line/60 bg-white/85 shadow-[0_4px_20px_-12px_rgba(31,58,82,0.1)]
                     lg:border-ink/[0.08] lg:bg-ink lg:px-5 lg:py-4 lg:shadow-none
                     hover:border-clay/35 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.2)]
@@ -268,11 +285,11 @@ export default function ProductIntroduction() {
                 >
                   <span
                     className="
-                      mt-0.5 grid h-11 w-11 shrink-0 place-items-center
+                      mt-0.5 grid h-9 w-9 shrink-0 place-items-center
                       rounded-xl bg-clay/15 text-clay ring-1 ring-clay/25
                       shadow-[0_4px_12px_-4px_rgba(255,159,10,0.30)]
                       transition-transform duration-300 group-hover:scale-105
-                      lg:h-10 lg:w-10
+                      sm:h-11 sm:w-11 lg:h-10 lg:w-10
                     "
                     aria-hidden
                   >
@@ -280,10 +297,13 @@ export default function ProductIntroduction() {
                   </span>
 
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-[16px] font-semibold leading-snug text-ink max-lg:leading-[1.35] lg:text-[17px] lg:text-cream">
+                    <p className="font-display text-[15px] font-semibold leading-snug text-ink sm:text-[16px] lg:text-[17px] lg:text-cream">
                       {f.title}
                     </p>
-                    <p className="mt-1.5 text-[14px] leading-[1.65] text-ink/72 lg:mt-1 lg:text-[14px] lg:text-cream/60">
+                    <p className="mt-1 text-[13px] leading-snug text-ink/72 lg:hidden">
+                      {f.shortDesc}
+                    </p>
+                    <p className="mt-1.5 hidden text-[14px] leading-[1.65] text-ink/72 lg:mt-1 lg:block lg:text-cream/60">
                       {f.desc}
                     </p>
                   </div>

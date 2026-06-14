@@ -1,0 +1,190 @@
+"use client";
+import { media } from "@/lib/media";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { MesudarWordmark, renderTextWithMesudar } from "@/components/MesudarWordmark";
+import { FEEDER_MAT_BUNDLE } from "@/lib/bundles/feeder-mat-bundle";
+import { formatILS } from "@/lib/pricing";
+
+const FEEDER_MEDIUM_PRICE = 219;
+const BUNDLE_ADDON_MEDIUM = FEEDER_MAT_BUNDLE.addonPriceBySize.medium;
+const BUNDLE_FROM_PRICE = FEEDER_MEDIUM_PRICE + BUNDLE_ADDON_MEDIUM;
+const BUNDLE_IMAGE = media("bundle.png");
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const DURATION = 0.7;
+
+const containerV = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+
+const imgV = {
+  hidden: { opacity: 0, scale: 0.94, y: 28 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: DURATION + 0.1, ease: EASE },
+  },
+};
+
+const headV = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: { duration: DURATION, ease: EASE } },
+};
+
+const cardV = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
+
+interface Feature {
+  title: string;
+  desc: string;
+}
+
+const features: Feature[] = [
+  {
+    title: "עמדת ההאכלה MESUDAR",
+    desc: "גובה מדויק לחיית המחמד, קערות נירוסטה נשלפות ומערכת ניקוז שמונעת בלגן סביב האוכל",
+  },
+  {
+    title: "משטח ההאכלה MESUDAR",
+    desc: "מותאם בדיוק לעמדת ההאכלה MESUDAR — שוליים מוגבהים שמכילים מזון ומים שנשפכים והתזות לפני שהן מגיעות לרצפה",
+  },
+  {
+    title: "משלוח חינם · אחריות שנתיים",
+    desc: "כל החבילה מגיעה באריזה מוגנת, משלוח חינם לכל הארץ ואחריות יצרן לשנתיים",
+  },
+];
+
+export default function BundleSection() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px 0px" });
+
+  return (
+    <section
+      ref={ref}
+      id="bundle"
+      dir="rtl"
+      aria-labelledby="bundle-heading"
+      className="relative isolate overflow-x-clip bg-ink text-cream max-lg:pt-6 max-lg:pb-10 lg:min-h-[calc(100svh-var(--site-header-h))] lg:flex lg:items-center lg:pt-10 lg:pb-16"
+    >
+      <motion.div
+        variants={containerV}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        className="w-full px-4 sm:px-8 lg:px-[5vw]"
+      >
+        {/* ── MOBILE: vertical stack ── */}
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-8 lg:hidden">
+          {/* Titles */}
+          <div className="flex w-full flex-col gap-3 text-center">
+            <motion.p
+              variants={headV}
+              className="mx-auto max-w-[20rem] text-balance text-[15px] font-semibold leading-[1.45] text-cream/85 sm:max-w-[22rem] sm:text-[16px]"
+            >
+              הפתרון המלא לפינת האכלה מסודרת ונקייה
+            </motion.p>
+            <motion.h2 id="bundle-heading" variants={headV} className="section-h2 section-h2-on-dark text-[clamp(1.5rem,5.8vw,2.1rem)] leading-[1.1]">
+              <strong className="font-bold">עמדת ההאכלה ומשטח ההאכלה</strong>{" "}
+              של <MesudarWordmark />
+            </motion.h2>
+            <motion.p variants={headV} className="section-lead section-lead-on-dark text-[14px] leading-[1.6]">
+              תוכננו יחד עבור פינת האכלה מסודרת ונקייה.
+            </motion.p>
+          </div>
+
+          {/* Image */}
+          <motion.div variants={imgV} className="flex w-full flex-col items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={BUNDLE_IMAGE}
+              alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
+              className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.4)] max-h-[min(70svh,32rem)] sm:max-h-[min(75svh,36rem)]"
+              draggable={false}
+            />
+          </motion.div>
+
+          {/* Feature cards */}
+          <motion.ul variants={containerV} className="w-full flex flex-col gap-2">
+            {features.map((f) => (
+              <motion.li
+                key={f.title}
+                variants={cardV}
+                className="group border border-cream/10 bg-cream/[0.06] px-3.5 py-3.5 transition-all duration-300 hover:border-clay/40"
+              >
+                <p className="font-display text-[15px] font-semibold leading-snug text-cream">
+                  {renderTextWithMesudar(f.title)}
+                </p>
+                <p className="mt-1.5 text-[14px] leading-[1.65] text-cream/70">
+                  {renderTextWithMesudar(f.desc)}
+                </p>
+              </motion.li>
+            ))}
+          </motion.ul>
+
+        </div>
+
+        {/* ── DESKTOP: eyebrow full-width, then two-column ── */}
+        <div
+          dir="ltr"
+          className="mx-auto hidden max-w-7xl lg:grid lg:grid-cols-[minmax(0,64%)_minmax(0,36%)] lg:items-center lg:gap-x-8 lg:gap-y-5 xl:gap-x-10"
+        >
+          <motion.div
+            variants={headV}
+            className="col-span-2 flex w-full justify-center"
+          >
+            <span className="section-eyebrow section-eyebrow-on-dark">
+              הפתרון המלא לפינת האכלה מסודרת ונקייה
+            </span>
+          </motion.div>
+
+          {/* Image — left */}
+          <motion.div variants={imgV} className="flex items-center justify-center self-center">
+            <div className="flex w-full max-w-none items-center justify-center py-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={BUNDLE_IMAGE}
+                alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
+                className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_28px_56px_rgba(31,58,82,0.22)] max-h-[min(82vh,44rem)] xl:max-h-[min(88vh,50rem)]"
+                draggable={false}
+              />
+            </div>
+          </motion.div>
+
+          {/* Copy — right */}
+          <div dir="rtl" className="relative z-10 flex min-w-0 flex-col gap-6 self-center text-start xl:gap-7">
+            <motion.h2 variants={headV} className="section-h2 section-h2-on-dark text-[3.25rem] leading-[1.08] xl:text-[3.65rem]">
+              <strong className="font-bold">עמדת ההאכלה ומשטח ההאכלה</strong>{" "}
+              של <MesudarWordmark />
+            </motion.h2>
+            <motion.p variants={headV} className="section-lead section-lead-on-dark max-w-lg text-[19px] leading-[1.75] xl:text-[21px]">
+              {renderTextWithMesudar(
+                "עמדת ההאכלה MESUDAR ומשטח ההאכלה MESUDAR תוכננו יחד — הגודל תואם, החומרים משלימים זה את זה, והרצפה נשארת נקייה ויבשה גם אחרי ארוחה.",
+              )}
+            </motion.p>
+            <motion.ul variants={containerV} className="flex w-full flex-col gap-4">
+              {features.map((f) => (
+                <motion.li
+                  key={f.title}
+                  variants={cardV}
+                  className="group border border-cream/10 bg-cream/[0.06] px-6 py-5 transition-all duration-300 hover:border-clay/40 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.25)]"
+                >
+                  <p className="font-display text-[19px] font-semibold leading-snug text-cream xl:text-[21px]">
+                    {renderTextWithMesudar(f.title)}
+                  </p>
+                  <p className="mt-1.5 text-[16px] leading-[1.7] text-cream/70 xl:text-[17px]">
+                    {renderTextWithMesudar(f.desc)}
+                  </p>
+                </motion.li>
+              ))}
+            </motion.ul>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}

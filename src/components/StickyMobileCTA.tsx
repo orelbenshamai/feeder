@@ -36,7 +36,7 @@ export default function StickyMobileCTA() {
         : window.innerHeight * 0.6;
       const scrollPastHero = heroBottom <= headerH + 8;
 
-      const finalCta = document.getElementById("final-cta");
+      const finalCta = document.getElementById("bundle");
       const inFinalCta = finalCta
         ? finalCta.getBoundingClientRect().top <= headerH + 8
         : false;

@@ -1,72 +1,28 @@
+import { media } from "@/lib/media";
 import ProductIllustration from "./ProductIllustration";
 import HeroAutoplayVideo from "./HeroAutoplayVideo";
-import { LeadCaptureTrigger } from "./LeadCapture";
-
+import GhostCTAButton from "./GhostCTAButton";
 /** Served from `public/media/` (Turbopack cannot bundle `.mp4` imports). */
-const DEFAULT_HERO_VIDEO = "/media/ad1.mp4";
+const DEFAULT_HERO_VIDEO = media("mesudar_main_video.mp4");
 
 const HERO_SCRIM =
-  "linear-gradient(to top, rgba(31,58,82,0.72) 0%, rgba(31,58,82,0.28) 28%, transparent 58%)";
+  "linear-gradient(to top, rgba(31,58,82,0.92) 0%, rgba(31,58,82,0.62) 32%, rgba(31,58,82,0.18) 62%, transparent 78%)";
 
 function HeroCopy({ headingId }: { headingId?: string }) {
   return (
-    <div className="mx-auto w-full max-w-7xl" dir="rtl">
-      <article className="hero-rise flex min-h-0 flex-col gap-3 max-lg:items-center max-lg:gap-3.5 lg:flex-row lg:items-end lg:justify-between lg:gap-8 xl:gap-16">
-        <div className="min-w-0 max-w-2xl max-lg:mx-auto max-lg:text-center lg:text-start">
+    <div className="mx-auto w-full max-w-7xl md:mx-0 md:me-auto" dir="rtl">
+      <article className="hero-rise hero-copy-panel">
+        <div className="min-w-0">
           <h1
             {...(headingId ? { id: headingId } : {})}
-            className="
-              font-display font-medium tracking-tight text-cream
-              text-center lg:text-start
-              text-[clamp(1.75rem,6.8vw,2.25rem)] leading-[1.1]
-              lg:text-[clamp(2.35rem,3.4vw,3.85rem)] lg:leading-[1.06]
-              [text-shadow:0_2px_16px_rgba(0,0,0,0.35)]
-            "
+            className="hero-title flex flex-col items-center gap-1 text-center"
           >
-            <span className="lg:hidden">
-              כי נמאס לנקות
-              <br />
-              את הרצפה
-              <br />
-              <span className="text-cream/95">שלוש פעמים ביום</span>
-            </span>
-            <span className="hidden lg:inline">
-              כי נמאס לנקות את הרצפה{" "}
-              <span className="text-cream/95">שלוש פעמים ביום</span>
-            </span>
+            <span className="text-[0.7em] font-light tracking-[0.15em] text-cream/80 uppercase">תשמרו על הבית שלכם</span>
+            <span className="text-[1.6em] font-black tracking-[0.25em] text-clay leading-none" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
+            <span className="text-[0.7em] font-light tracking-[0.15em] text-cream/80 uppercase">לאחר כל ארוחה</span>
           </h1>
-          <p className="mt-3 max-w-xl max-lg:mx-auto text-center text-[15px] font-medium leading-[1.65] text-cream/85 sm:mt-3.5 sm:text-[16px] lg:mx-0 lg:mt-4 lg:text-start lg:text-[17px] lg:leading-[1.7]">
-            <span className="lg:hidden">
-              עמדת האכלה חכמה שקולטת
-              <br />
-              את כל השאריות וההתזות
-              <br />
-              <span className="text-cream/65">רצפה יבשה, בלי בלגן</span>
-            </span>
-            <span className="hidden lg:inline">
-              עמדת האכלה חכמה שקולטת את כל השאריות וההתזות —{" "}
-              <span className="text-cream/65">רצפה יבשה, בלי בלגן</span>
-            </span>
-          </p>
         </div>
-
-        <LeadCaptureTrigger className="btn-clay group w-full max-lg:mt-0.5 sm:w-auto px-7 sm:px-8">
-          <span>שריינו לי 10% הנחה</span>
-          <svg
-            viewBox="0 0 20 20"
-            className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:-translate-x-1"
-            fill="none"
-            aria-hidden
-          >
-            <path
-              d="M11.5 5 5.5 10l6 5M5.5 10h9"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </LeadCaptureTrigger>
+        <GhostCTAButton className="mx-auto mt-8" />
       </article>
     </div>
   );
@@ -118,17 +74,17 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden max-lg:h-[calc(var(--ios-vh)-var(--site-header-h))] max-lg:max-h-[calc(var(--ios-vh)-var(--site-header-h))]"
+      className="isolate h-[calc(100svh-var(--site-header-h))] max-h-[calc(100svh-var(--site-header-h))] overflow-hidden max-md:h-[calc(var(--ios-vh)-var(--site-header-h))] max-md:max-h-[calc(var(--ios-vh)-var(--site-header-h))]"
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >
       <span id="hero-visual-desc" className="sr-only">
-        סרטון לולאה: כלב אוכל בעמדת האכלה והרצפה נשארת יבשה לגמרי.
+        סרטון לולאה: כלב אוכל בעמדת ההאכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      {/* ── MOBILE — video band + copy below (no full-screen crop) ─────── */}
-      <div className="grid h-full grid-rows-[57fr_43fr] overflow-hidden bg-ink lg:hidden">
-        <div className="relative min-h-0 overflow-hidden">
+      {/* ── PHONE — video band + copy panel ─────────────────────────────── */}
+      <div className="grid h-full grid-rows-[minmax(0,52svh)_1fr] overflow-hidden bg-ink md:hidden">
+        <div className="relative overflow-hidden">
           <HeroMedia
             videoSrc={mobileVideoSrc}
             posterSrc={mobilePosterSrc}
@@ -138,17 +94,17 @@ export default function Hero() {
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-ink via-ink/80 to-transparent"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-ink via-ink/85 to-transparent"
           />
         </div>
 
-        <div className="relative z-10 flex min-h-0 flex-col justify-center overflow-hidden bg-ink px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3 sm:px-8">
+        <div className="relative z-10 grid h-full place-items-center bg-ink px-5 sm:px-8" style={{ paddingBottom: "calc(2rem + env(safe-area-inset-bottom))", paddingTop: "2rem" }}>
           <HeroCopy headingId="hero-heading" />
         </div>
       </div>
 
-      {/* ── DESKTOP ────────────────────────────────────────────────────── */}
-      <div className="relative isolate hidden h-full overflow-hidden bg-ink lg:block">
+      {/* ── TABLET + DESKTOP — full-bleed video with bottom overlay ───── */}
+      <div className="relative isolate hidden h-full overflow-hidden bg-ink md:block">
         <div className="absolute inset-0 z-0">
           <HeroMedia
             videoSrc={desktopVideoSrc}
@@ -164,9 +120,15 @@ export default function Hero() {
           style={{ background: HERO_SCRIM }}
         />
 
-        <div className="absolute inset-x-0 bottom-0 z-10 px-10 pb-12 xl:px-16 xl:pb-14">
-          <HeroCopy />
+        <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-10 pt-16 sm:px-8 sm:pb-12 md:px-10 md:pb-14 lg:px-12 lg:pb-16 xl:px-16 xl:pb-20">
+          <HeroCopy headingId="hero-heading" />
         </div>
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-20"
+          style={{ background: "linear-gradient(to bottom, transparent, var(--color-ink))" }}
+        />
       </div>
     </section>
   );

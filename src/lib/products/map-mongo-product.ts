@@ -15,6 +15,7 @@ export type MongoProductDocument = {
   variants: Array<{
     sizeId: ProductVariant["id"];
     sizeLabel: string;
+    sizeDimensions?: string;
     price: number;
     compareAtPrice?: number;
     imageUrl: string;
@@ -40,6 +41,7 @@ export function mapMongoProduct(doc: MongoProductDocument): Product {
     variants: doc.variants.map((v) => ({
       id: v.sizeId,
       sizeLabel: v.sizeLabel,
+      sizeDimensions: v.sizeDimensions,
       price: v.price,
       compareAtPrice: v.compareAtPrice,
       imageUrl: v.imageUrl,

@@ -25,7 +25,7 @@ export default function Solution() {
             <Reveal delay={160}>
               <p className="mt-6 text-cream/70 leading-relaxed max-w-md">
                 חפץ אחד יפה שמכיל את הבלגן, מרים את הקערות לגובה הנכון,
-                ומשתלב בעיצוב הבית במקום להבליט שיש שם חיה.
+                ומשתלב בעיצוב הבית במקום להבליט שיש שם חיית מחמד.
               </p>
             </Reveal>
 

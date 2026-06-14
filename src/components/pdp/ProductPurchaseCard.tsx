@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  BundleUpsellOffer,
   Product,
   ProductColor,
   ProductColorId,
@@ -8,9 +9,14 @@ import type {
   ProductVariant,
 } from "@/types/product";
 import { formatILS } from "@/lib/pricing";
+import {
+  getBundleCompareAtPrice,
+  getBundleTotalPrice,
+} from "@/lib/bundles/pricing";
 import VariantSizeSelector from "./VariantSizeSelector";
 import VariantColorSelector from "./VariantColorSelector";
-import AddToCartButton from "./AddToCartButton";
+import BundleUpsell from "./BundleUpsell";
+import ProductCompanionLink from "./ProductCompanionLink";
 
 type ProductPurchaseCardProps = {
   product: Product;
@@ -20,10 +26,31 @@ type ProductPurchaseCardProps = {
   availableColors: ProductColor[];
   onSelectSize: (id: ProductSizeId) => void;
   onSelectColor: (id: ProductColorId) => void;
+  bundleUpsell?: BundleUpsellOffer;
+  bundleEnabled: boolean;
+  onBundleChange: (enabled: boolean) => void;
   className?: string;
+  companionLink?: {
+    href: string;
+    label: string;
+  };
 };
 
-const DELIVERY_NOTE = "משלוח חינם לכל הארץ · 3–5 ימי עסקים";
+function Stars({ rating = 4.9, count = 127 }: { rating?: number; count?: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5 text-clay" aria-hidden>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <svg key={i} viewBox="0 0 20 20" className="h-5 w-5" fill="currentColor">
+            <path d="M10 1.5l2.2 4.6 5 .5-3.8 3.4 1.1 5L10 13.2l-4.5 2.3 1.1-5L2.8 6.6l5-.5L10 1.5Z" />
+          </svg>
+        ))}
+      </div>
+      <span className="text-base font-bold text-ink">{rating}</span>
+      <span className="text-sm text-stone">({count} ביקורות)</span>
+    </div>
+  );
+}
 
 export default function ProductPurchaseCard({
   product,
@@ -33,67 +60,83 @@ export default function ProductPurchaseCard({
   availableColors,
   onSelectSize,
   onSelectColor,
+  bundleUpsell,
+  bundleEnabled,
+  onBundleChange,
   className = "",
+  companionLink,
 }: ProductPurchaseCardProps) {
   const selectedColorLabel =
     product.colors.find((color) => color.id === selectedColorId)?.label ??
     product.colors[0]?.label ??
     "";
 
+  const totalPrice = bundleUpsell
+    ? getBundleTotalPrice(selectedVariant, bundleUpsell, bundleEnabled)
+    : selectedVariant.price;
+
+  const compareAtPrice = bundleUpsell
+    ? getBundleCompareAtPrice(selectedVariant, bundleUpsell, bundleEnabled)
+    : selectedVariant.compareAtPrice;
+
   return (
-    <div className={`surface-card overflow-hidden ${className}`}>
-      {/* On gallery: title, price, size, color */}
-      <div className="p-8 sm:p-9">
-        <h1 className="product-title">{product.name}</h1>
+    <div className={`purchase-card overflow-hidden ${className}`}>
+      {/* Header */}
+      <div className="px-7 pb-5 pt-7">
+        <Stars />
 
-        <div className="mt-5 flex items-end justify-between gap-4 border-b border-line/70 pb-6">
-          <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
-            <p className="product-price">{formatILS(selectedVariant.price)}</p>
-            {selectedVariant.compareAtPrice ? (
-              <p className="pb-1 text-sm text-stone line-through">
-                {formatILS(selectedVariant.compareAtPrice)}
-              </p>
-            ) : null}
-          </div>
-          <div className="flex items-center gap-1.5 text-sm">
-            <span className="font-semibold text-ink">4.9</span>
-            <div className="flex gap-0.5 text-clay" aria-hidden>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg key={i} viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor">
-                  <path d="M10 1.5l2.2 4.6 5 .5-3.8 3.4 1.1 5L10 13.2l-4.5 2.3 1.1-5L2.8 6.6l5-.5L10 1.5Z" />
-                </svg>
-              ))}
-            </div>
-          </div>
-        </div>
+        <h1 className="product-title mt-2">
+          {product.category}{" "}
+          <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
+        </h1>
 
-        <div className="space-y-6 pt-6">
-          <VariantSizeSelector
-            variants={product.variants}
-            selectedId={selectedSizeId}
-            onSelect={onSelectSize}
-          />
-          <VariantColorSelector
-            colors={availableColors}
-            selectedId={selectedColorId}
-            onSelect={onSelectColor}
-          />
+        <div className="mt-3 flex items-end gap-3">
+          <p className="product-price leading-none">{formatILS(totalPrice)}</p>
+          {compareAtPrice && compareAtPrice > totalPrice ? (
+            <p className="pb-0.5 text-[15px] text-stone line-through">
+              {formatILS(compareAtPrice)}
+            </p>
+          ) : null}
         </div>
       </div>
 
-      {/* On about section: checkout + delivery */}
-      <div className="border-t border-line/70 bg-cream px-8 pb-8 pt-6 sm:px-9 sm:pb-9">
-        <AddToCartButton
-          product={product}
-          variant={selectedVariant}
-          colorId={selectedColorId}
-          colorLabel={selectedColorLabel}
+      {/* Divider */}
+      <div className="mx-7 border-t border-line/50" />
+
+      {/* Options */}
+      <div className="space-y-5 px-7 py-5">
+        <VariantSizeSelector
+          variants={product.variants}
+          selectedId={selectedSizeId}
+          onSelect={onSelectSize}
+          labelClassName="purchase-label"
+          compact
         />
-        <p className="text-caption mt-3 text-center leading-relaxed">{DELIVERY_NOTE}</p>
-        <p className="text-caption mt-2 text-center leading-relaxed">
-          הנחת הרשמה מוקדמת חלה בקופה.
-        </p>
+        <VariantColorSelector
+          colors={availableColors}
+          selectedId={selectedColorId}
+          onSelect={onSelectColor}
+          labelClassName="purchase-label"
+        />
+        {bundleUpsell ? (
+          <BundleUpsell
+            bundle={bundleUpsell}
+            sizeId={selectedSizeId}
+            checked={bundleEnabled}
+            disabled={!selectedVariant.inStock}
+            onChange={onBundleChange}
+          />
+        ) : null}
       </div>
+
+      {companionLink ? (
+        <div className="px-7 pb-7 pt-2">
+          <ProductCompanionLink
+            href={companionLink.href}
+            label={companionLink.label}
+          />
+        </div>
+      ) : <div className="pb-4" />}
     </div>
   );
 }

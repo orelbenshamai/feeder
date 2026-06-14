@@ -2,7 +2,7 @@ import Reveal from "./Reveal";
 
 const features = [
   {
-    title: "מונע שפיכות מים",
+    title: "מונע מים שנשפכים",
     desc: "מגש פנימי שמקדים את השלוליות והפריכות לפני שהן מגיעות לרצפה.",
     icon: (
       <svg viewBox="0 0 48 48" fill="none" aria-hidden className="h-6 w-6">
@@ -28,7 +28,7 @@ const features = [
     ),
   },
   {
-    title: "עיצוב מוגבה ובריא יותר לחיות",
+    title: "עיצוב מוגבה ובריא יותר לחיות מחמד",
     desc: "מבנה מוגבה שמיישר את גובה הקערה לגוף — פחות לחץ על הצוואר והגב.",
     icon: (
       <svg viewBox="0 0 48 48" fill="none" aria-hidden className="h-6 w-6">

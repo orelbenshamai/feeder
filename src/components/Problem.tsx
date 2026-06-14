@@ -127,7 +127,7 @@ export default function Problem() {
         </Reveal>
         <Reveal delay={160}>
           <p className="mt-5 max-w-xl text-stone leading-relaxed">
-            זה לא “בעיה של חיה”. זאת הבלגן שאתם רואים כל יום.
+            זה לא “בעיה של חיית מחמד”. זאת הבלגן שאתם רואים כל יום.
           </p>
         </Reveal>
 
