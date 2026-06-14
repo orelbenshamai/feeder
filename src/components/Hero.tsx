@@ -66,7 +66,9 @@ export default function Hero() {
           />
         </div>
 
-        <div className="relative z-10 grid h-full place-items-center bg-ink px-5 sm:px-8" style={{ paddingBottom: "calc(2rem + env(safe-area-inset-bottom))", paddingTop: "2rem" }}>
+        <div
+          className="relative z-10 grid h-full place-items-center bg-ink px-5 pt-8 pb-8 sm:px-8"
+        >
           <HeroCopy headingId="hero-heading" />
         </div>
       </div>

@@ -57,7 +57,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var r=document.documentElement;var locked=0;function snap(){locked=window.innerHeight;r.style.setProperty('--ios-vh',locked+'px');}snap();if(window.visualViewport){window.visualViewport.addEventListener('resize',function(){var h=window.visualViewport.height;if(h<locked-1){snap();}});}window.addEventListener('orientationchange',function(){locked=0;setTimeout(snap,350);});})();",
+              "(function(){function snap(){document.documentElement.style.setProperty('--ios-vh',window.innerHeight+'px');}snap();window.addEventListener('orientationchange',function(){setTimeout(snap,350);});})();",
           }}
         />
         <FacebookPixel />
