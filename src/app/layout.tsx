@@ -65,6 +65,8 @@ export default function RootLayout({
       <body className="flex min-h-screen-stable flex-col bg-cream text-ink selection:bg-ink selection:text-cream">
         <CartProvider>
           <SiteHeader />
+          {/* Spacer so fixed header doesn't overlap page content */}
+          <div className="h-11 shrink-0 sm:h-12 md:h-14" aria-hidden />
           <CartDrawer />
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />

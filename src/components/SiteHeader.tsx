@@ -74,7 +74,7 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full shrink-0 overflow-visible border-b border-ink/20 bg-ink">
+      <header className="fixed inset-x-0 top-0 z-[70] w-full shrink-0 overflow-visible border-b border-ink/20 bg-ink">
         {/* Cart: pinned to viewport inline-end */}
         <div className="absolute inset-y-0 end-3 z-10 flex items-center sm:end-4 md:end-5 lg:end-6">
           <button
@@ -187,7 +187,7 @@ export default function SiteHeader() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-40 touch-none overscroll-none bg-ink/40 sm:hidden"
+              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[60] touch-none overscroll-none bg-ink/40 sm:hidden"
               onClick={() => setMenuOpen(false)}
             />
 
@@ -200,7 +200,7 @@ export default function SiteHeader() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 34 }}
-              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-50 flex flex-col overflow-y-auto bg-ink sm:hidden"
+              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[65] flex flex-col overflow-y-auto bg-ink sm:hidden"
               data-scroll-lock-scrollable
             >
               {/* ── Shop section ── */}
