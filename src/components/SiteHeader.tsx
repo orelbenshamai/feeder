@@ -1,5 +1,4 @@
 "use client";
-import { media } from "@/lib/media";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,13 +42,13 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full shrink-0 overflow-visible border-b border-line/60 bg-cream/95 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full shrink-0 overflow-visible border-b border-ink/20 bg-ink">
         {/* Cart: pinned to viewport inline-end */}
         <div className="absolute inset-y-0 end-3 z-10 flex items-center sm:end-4 md:end-5 lg:end-6">
           <button
             type="button"
             onClick={openCart}
-            className="inline-flex items-center gap-1.5 text-[14px] font-[650] text-ink transition-colors hover:text-clay"
+            className="inline-flex items-center gap-1.5 text-[14px] font-[650] text-cream transition-colors hover:text-clay"
             aria-label={`פתח עגלה — ${cartCount} פריטים`}
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
@@ -80,7 +79,7 @@ export default function SiteHeader() {
             aria-label={menuOpen ? "סגור תפריט" : "פתח תפריט"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] text-ink transition-colors hover:text-clay"
+            className="flex h-9 w-9 flex-col items-center justify-center gap-[5px] text-cream transition-colors hover:text-clay"
           >
             <span className={`block h-[2px] w-5 bg-current transition-all duration-300 origin-center ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`} />
             <span className={`block h-[2px] w-5 bg-current transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`} />
@@ -95,13 +94,12 @@ export default function SiteHeader() {
           onClick={handleLogoClick}
           className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("logo.png")}
-            alt="מסודר"
-            className="h-[4.5rem] w-auto sm:h-20 md:h-[8.75rem]"
-            draggable={false}
-          />
+          <span
+            className="text-2xl font-bold tracking-widest text-cream sm:text-3xl"
+            style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, letterSpacing: "0.06em", lineHeight: 1.2, color: 'var(--color-cream)' }}
+          >
+            MESUDAR
+          </span>
         </Link>
 
         <div className="relative mx-auto h-11 max-w-[1440px] sm:h-12 md:h-[3.5rem]" aria-hidden/>
@@ -148,13 +146,12 @@ export default function SiteHeader() {
                   <span className="block h-[2px] w-5 bg-current origin-center -translate-y-[7px] -rotate-45 transition-all duration-300" />
                 </button>
                 {/* Logo centered in the drawer header */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={media("logo.png")}
-                  alt="מסודר"
-                  className="absolute left-1/2 top-1/2 h-[4.5rem] w-auto -translate-x-1/2 -translate-y-1/2"
-                  draggable={false}
-                />
+                <span
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-bold tracking-widest text-ink"
+                  style={{ fontFamily: "var(--font-nunito)" }}
+                >
+                  MESUDAR
+                </span>
               </div>
 
               {/* Links */}

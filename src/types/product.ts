@@ -98,7 +98,7 @@ export interface CartLineItem {
   bundleComponents?: CartBundleComponent[];
 }
 
-/** Optional mat upsell shown on the feeder PDP. */
+/** Optional addon upsell shown on a PDP. */
 export interface BundleUpsellOffer {
   id: string;
   matProductId: string;
@@ -107,12 +107,24 @@ export interface BundleUpsellOffer {
   checkboxLabel: string;
   checkboxHint: string;
   bundleLabel: string;
+  /** Card title — the name of the addon product. */
+  addonName: string;
+  /** Card tagline — one line under the title. */
+  addonTagline: string;
+  /** Banner text when unchecked. */
+  bannerLabel: string;
+  /** Banner text when checked. */
+  bannerCheckedLabel: string;
+  /** CTA button text when unchecked. */
+  ctaLabel: string;
+  /** Benefit bullets shown in the card body. */
+  benefits: string[];
   addonPriceBySize: Record<ProductSizeId, number>;
   matRetailPriceBySize: Record<ProductSizeId, number>;
   matSkuBySize: Record<ProductSizeId, string>;
   bundleSkuBySize: Record<ProductSizeId, string>;
   /** Full bundle hero image (gallery / cart when bundle selected). */
   bundleImageBySize: Record<ProductSizeId, string>;
-  /** Mat-only image shown on the upsell card. */
+  /** Addon product image shown on the upsell card. */
   matImageBySize: Record<ProductSizeId, string>;
 }

@@ -36,9 +36,6 @@ export default function Footer() {
               <li>
                 <Link href="/mat" className="text-ink transition-colors hover:text-clay">משטח ההאכלה</Link>
               </li>
-              <li>
-                <Link href="/#bundle" className="text-ink transition-colors hover:text-clay">תכונות</Link>
-              </li>
             </ul>
           </div>
 

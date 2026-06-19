@@ -151,9 +151,6 @@ export default function ProductDetail({
             {/* Price */}
             <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
               <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
-              {compareAtPrice && compareAtPrice > totalPrice ? (
-                <p className="text-base text-stone line-through">{formatILS(compareAtPrice)}</p>
-              ) : null}
             </div>
           </div>
 
@@ -218,9 +215,6 @@ export default function ProductDetail({
           <div className="flex items-center gap-3">
             <div className="flex flex-col shrink-0">
               <span className="font-display text-xl font-bold text-ink leading-none">{formatILS(totalPrice)}</span>
-              {compareAtPrice && compareAtPrice > totalPrice ? (
-                <span className="text-xs text-stone line-through">{formatILS(compareAtPrice)}</span>
-              ) : null}
             </div>
             <AddToCartButton
               product={product}
@@ -257,24 +251,23 @@ export default function ProductDetail({
         {/* Purchase panel — 40% */}
         <div
           ref={desktopPanelRef}
-          className="pdp-desktop-panel sticky top-[var(--site-header-h)] flex h-below-header w-2/5 shrink-0 flex-col overflow-hidden border-e border-line/50 bg-cream px-8 py-8 xl:px-10"
+          className="pdp-desktop-panel sticky top-[var(--site-header-h)] flex h-below-header w-2/5 shrink-0 flex-col border-e border-line/50 bg-cream px-8 py-6 xl:px-10 xl:py-8"
         >
+          {/* Header — title + price */}
           <div className="shrink-0">
-            <h1 className="font-display text-3xl font-bold leading-snug tracking-tight text-ink xl:text-4xl">
+            <h1 className="font-display text-2xl font-bold leading-snug tracking-tight text-ink xl:text-3xl">
               {product.category}{" "}
               <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
             </h1>
 
-            <div className="mt-3 flex items-baseline gap-3">
-              <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
-              {compareAtPrice && compareAtPrice > totalPrice ? (
-                <p className="text-base text-stone line-through">{formatILS(compareAtPrice)}</p>
-              ) : null}
+            <div className="mt-2 flex items-baseline gap-3">
+              <p className="font-display text-2xl font-bold text-ink xl:text-3xl">{formatILS(totalPrice)}</p>
             </div>
           </div>
 
-          <div className="mt-6 min-h-0 flex-1 overflow-y-auto border-t border-line/40 pt-6">
-            <div className="flex flex-col gap-5">
+          {/* Selectors */}
+          <div className="mt-5 shrink-0 border-t border-line/40 pt-5">
+            <div className="flex flex-col gap-4">
               <VariantSizeSelector
                 variants={product.variants}
                 selectedId={selectedSizeId}
@@ -288,24 +281,32 @@ export default function ProductDetail({
                 onSelect={setSelectedColorId}
                 labelClassName="purchase-label"
               />
-              {bundleUpsell ? (
-                <BundleUpsell
-                  bundle={bundleUpsell}
-                  sizeId={selectedSizeId}
-                  checked={bundleEnabled}
-                  onChange={setBundleEnabled}
-                />
-              ) : null}
-              {companionLink ? (
-                <ProductCompanionLink
-                  href={companionLink.href}
-                  label={companionLink.label}
-                />
-              ) : null}
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-line/40 pt-5">
+          {/* Bundle — flexible, grows into remaining space */}
+          {bundleUpsell ? (
+            <div className="mt-4 min-h-0 flex-1">
+              <BundleUpsell
+                bundle={bundleUpsell}
+                sizeId={selectedSizeId}
+                checked={bundleEnabled}
+                onChange={setBundleEnabled}
+              />
+            </div>
+          ) : null}
+
+          {companionLink ? (
+            <div className="mt-3 shrink-0">
+              <ProductCompanionLink
+                href={companionLink.href}
+                label={companionLink.label}
+              />
+            </div>
+          ) : null}
+
+          {/* CTA — always at the bottom */}
+          <div className="mt-auto shrink-0 border-t border-line/40 pt-4">
             <AddToCartButton
               product={product}
               variant={selectedVariant}
@@ -314,7 +315,7 @@ export default function ProductDetail({
               totalPrice={totalPrice}
               bundleEnabled={bundleEnabled}
               bundleUpsell={bundleUpsell}
-              className="w-full !py-5 !text-base"
+              className="w-full !py-4 !text-base"
             />
           </div>
         </div>

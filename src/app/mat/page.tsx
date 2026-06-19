@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/pdp/ProductDetail";
 import { getProductBySlug } from "@/lib/products";
+import { MAT_FEEDER_BUNDLE } from "@/lib/bundles/mat-feeder-bundle";
 
 const SLUG = "mesudar-mat";
 
@@ -29,11 +30,8 @@ export default async function MatPage() {
     <main id="main" className="min-h-screen-stable bg-cream text-ink">
       <ProductDetail
         product={product}
+        bundleUpsell={MAT_FEEDER_BUNDLE}
         scaleGalleryBySize
-        companionLink={{
-          href: "/feeder",
-          label: "רוצים האכלה בלי בלגן? לעמדת ההאכלה MESUDAR",
-        }}
       />
     </main>
   );

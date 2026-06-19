@@ -221,20 +221,16 @@ function StockNotifyModal({
 
               <div className="text-center">
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-stone sm:text-sm">
-                  אזל המלאי
+                  המלאי אזל — הביקוש גבר על הציפיות
                 </p>
                 <h2
                   id={titleId}
                   className="font-display mt-4 text-[clamp(1.85rem,6.5vw,2.35rem)] font-bold leading-[1.1] tracking-tight text-ink sm:mt-5 sm:text-[2.5rem]"
                 >
-                  נודיע לכם כשזה חוזר
+                  הרצפה הנקייה מחכה לכם
                 </h2>
                 <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink/72 sm:mt-5 sm:text-[17px] sm:leading-[1.7]">
-                  {product.category}{" "}
-                  <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>
-                    MESUDAR
-                  </span>
-                  {selectionLabel ? ` · ${selectionLabel}` : ""}
+                  השאירו מספר ונודיע לכם ראשונים כשהמלאי חוזר. אין ספאם — רק הודעה אחת בוואטסאפ כשאפשר להזמין.
                 </p>
               </div>
 
@@ -274,7 +270,7 @@ function StockNotifyModal({
                       שומרים…
                     </span>
                   ) : (
-                    "שלחו לי עדכון"
+                    "עדכנו אותי כשחוזר למלאי"
                   )}
                 </button>
 
@@ -285,7 +281,7 @@ function StockNotifyModal({
                 ) : null}
 
                 <p className="text-center text-xs leading-relaxed text-stone sm:text-sm">
-                  נשלח עדכון בוואטסאפ כשהמלאי חוזר · ללא ספאם
+                  הודעה אחת בוואטסאפ בלבד · ללא ספאם · מלאי מוגבל לפי סדר ההרשמה
                 </p>
               </form>
             </>
@@ -303,10 +299,10 @@ function StockNotifyModal({
                 </svg>
               </div>
               <p className="font-display mt-6 text-[clamp(1.75rem,5vw,2.15rem)] font-bold text-ink sm:text-[2.25rem]">
-                רשמנו אתכם
+                רשמנו — נעדכן בוואטסאפ
               </p>
               <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink/72 sm:text-[17px]">
-                ברגע שהמלאי חוזר — נשלח לכם הודעה עם קישור ישיר להזמנה
+                ברגע שהמלאי חוזר תקבלו הודעה עם קישור ישיר. אלפי בעלי כלבים וחתולים כבר הפסיקו לנגב אחרי כל ארוחה — בקרוב גם אתם.
               </p>
               <button
                 type="button"

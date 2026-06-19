@@ -17,12 +17,6 @@ type BundleUpsellProps = {
   showSectionLabel?: boolean;
 };
 
-const BUNDLE_BENEFITS = [
-  "עמדה + משטח — האכלה בלי בלגן על הרצפה",
-  "מותאמים בדיוק זה לזה · פינה אחת מסודרת",
-  "חיסכון בחבילה · משלוח חינם על הכל",
-];
-
 export default function BundleUpsell({
   bundle,
   sizeId,
@@ -67,7 +61,7 @@ export default function BundleUpsell({
               checked ? "text-ink" : "text-cream"
             }`}
           >
-            {checked ? "✓ החבילה המלאה בהזמנה" : "הפתרון המלא — עמדה + משטח"}
+            {checked ? `✓ ${bundle.bannerCheckedLabel}` : bundle.bannerLabel}
           </p>
           {savings > 0 ? (
             <span
@@ -85,11 +79,11 @@ export default function BundleUpsell({
         <div className="pdp-bundle-upsell__body p-4 sm:p-5">
           <div className="flex items-start gap-4">
             {bundleImageUrl ? (
-              <div className="pdp-bundle-upsell__media relative shrink-0">
+              <div className="pdp-bundle-upsell__media relative h-20 w-20 shrink-0 sm:h-24 sm:w-24">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={bundleImageUrl}
-                  alt="משטח האכלה MESUDAR"
+                  alt={bundle.addonName}
                   className="h-full w-full object-contain"
                   draggable={false}
                 />
@@ -98,16 +92,14 @@ export default function BundleUpsell({
 
             <div className="min-w-0 flex-1">
               <h3 className="pdp-bundle-upsell__title font-display text-[1.05rem] font-bold leading-snug text-ink sm:text-lg">
-                {renderTextWithMesudar("משטח האכלה MESUDAR")}
+                {renderTextWithMesudar(bundle.addonName)}
               </h3>
               <p className="pdp-bundle-upsell__tagline mt-1.5 text-[13px] font-semibold leading-snug text-ink/75 sm:text-[14px]">
-                {renderTextWithMesudar(
-                  "עמדת האכלה MESUDAR + משטח ההאכלה MESUDAR = האכלה בלי בלגן",
-                )}
+                {bundle.addonTagline}
               </p>
 
               <ul className="pdp-bundle-upsell__benefits mt-3 space-y-1.5">
-                {BUNDLE_BENEFITS.map((benefit) => (
+                {bundle.benefits.map((benefit) => (
                   <li
                     key={benefit}
                     className="flex items-start gap-2 text-[12.5px] leading-snug text-ink/80 sm:text-[13px]"
@@ -157,8 +149,8 @@ export default function BundleUpsell({
             }`}
           >
             {checked
-              ? "לחצו לביטול החבילה"
-              : `לבחור בחבילה המלאה — ${formatILS(addonPrice)}+`}
+              ? "לחצו לביטול"
+              : bundle.ctaLabel}
           </div>
         </div>
       </label>

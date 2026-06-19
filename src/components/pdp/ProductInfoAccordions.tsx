@@ -21,21 +21,19 @@ export default function ProductInfoAccordions({
   const centered = centeredOnDesktop || Boolean(product.aboutTitle);
 
   return (
-    <div className={centered ? "mx-auto text-center" : ""}>
+    <div>
       <div className={className}>
         {product.aboutTitle ? (
           <h2
-            className={`font-display text-[clamp(1.85rem,7vw,2.5rem)] font-bold leading-tight tracking-tight text-cream ${
-              centered ? "mb-6" : "mb-5"
-            } ${centeredOnDesktop ? "lg:mb-10 lg:text-5xl xl:text-6xl" : ""}`}
+            className={`font-display text-[clamp(1.85rem,7vw,2.5rem)] font-bold leading-tight tracking-tight text-cream mb-6 ${
+              centeredOnDesktop ? "lg:mb-10 lg:text-5xl xl:text-6xl text-center" : ""
+            }`}
           >
             {renderTextWithMesudar(product.aboutTitle)}
           </h2>
         ) : null}
 
-        <div
-          className={`pdp-info-accordions ${centeredOnDesktop ? "mx-auto max-w-3xl text-start xl:max-w-4xl" : ""}`}
-        >
+        <div className="pdp-info-accordions">
           {showDescriptionAccordion ? (
             <ProductDescriptionAccordion
               product={product}
