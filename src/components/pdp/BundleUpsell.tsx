@@ -128,7 +128,7 @@ export default function BundleUpsell({
           <div className="pdp-bundle-upsell__pricing mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line/50 pt-4">
             <div className="pdp-bundle-upsell__pricing-bundle text-start">
               <p className="pdp-bundle-upsell__price font-display text-[1.35rem] font-bold leading-none tabular-nums text-clay sm:text-2xl">
-                {formatILS(addonPrice)}+
+                +{formatILS(addonPrice)}
               </p>
             </div>
             <div className="pdp-bundle-upsell__pricing-retail text-start">

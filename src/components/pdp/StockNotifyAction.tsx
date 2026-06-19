@@ -135,7 +135,9 @@ function StockNotifyModal({
     setError(null);
     setLoading(true);
 
-    const phone = new FormData(e.currentTarget).get("phone") as string;
+    const fd = new FormData(e.currentTarget);
+    const phone = fd.get("phone") as string;
+    const nameRaw = (fd.get("name") as string | null)?.trim() || undefined;
     const bundleSku =
       bundleEnabled && bundleUpsell
         ? bundleUpsell.bundleSkuBySize[variant.id]
@@ -147,6 +149,7 @@ function StockNotifyModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
+          name: nameRaw,
           productId: product.id,
           productSlug: product.slug,
           productName: product.name,
@@ -239,6 +242,21 @@ function StockNotifyModal({
                 onSubmit={handleSubmit}
               >
                 <label className="block">
+                  <span className="mb-2 flex items-center gap-1.5 text-sm font-bold text-ink/85 sm:text-base">
+                    שם
+                    <span className="text-xs font-normal text-stone">(אופציונלי)</span>
+                  </span>
+                  <input
+                    name="name"
+                    type="text"
+                    autoComplete="given-name"
+                    placeholder="השם שלך"
+                    dir="rtl"
+                    className="w-full rounded-2xl border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
+                  />
+                </label>
+
+                <label className="block">
                   <span className="mb-2 block text-sm font-bold text-ink/85 sm:text-base">
                     טלפון / וואטסאפ
                   </span>
@@ -302,7 +320,7 @@ function StockNotifyModal({
                 רשמנו — נעדכן בוואטסאפ
               </p>
               <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink/72 sm:text-[17px]">
-                ברגע שהמלאי חוזר תקבלו הודעה עם קישור ישיר. אלפי בעלי כלבים וחתולים כבר הפסיקו לנגב אחרי כל ארוחה — בקרוב גם אתם.
+                ברגע שהמלאי חוזר תקבלו הודעה עם קישור ישיר. אלפי בעלי כלבים וחתולים כבר הפסיקו לנקות אחרי כל ארוחה — בקרוב גם אתם.
               </p>
               <button
                 type="button"

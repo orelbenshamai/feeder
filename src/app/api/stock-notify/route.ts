@@ -3,6 +3,7 @@ import getClientPromise from "@/lib/mongodb";
 
 type StockNotifyPayload = {
   phone?: string;
+  name?: string;
   productId?: string;
   productSlug?: string;
   productName?: string;
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as StockNotifyPayload;
     const {
       phone,
+      name,
       productId,
       productSlug,
       productName,
@@ -72,6 +74,7 @@ export async function POST(req: NextRequest) {
 
     await collection.insertOne({
       ...notifyKey,
+      ...(name ? { name } : {}),
       productId,
       productSlug,
       productName,
