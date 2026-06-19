@@ -11,15 +11,9 @@ type VariantSizeSelectorProps = {
   labelClassName?: string;
 };
 
-function OutOfStockBadge({ muted = false }: { muted?: boolean }) {
+function OutOfStockBadge() {
   return (
-    <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide ${
-        muted
-          ? "bg-stone/15 text-stone/80"
-          : "bg-stone/20 text-stone"
-      }`}
-    >
+    <span className="shrink-0 rounded-full bg-clay/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-clay">
       אזל המלאי
     </span>
   );
@@ -46,34 +40,24 @@ function DimensionRow({
       aria-checked={selected}
       onClick={() => onSelect(variant.id)}
       className={`
-        group relative w-full rounded-xl border px-4 py-3 text-start transition-all duration-200
+        pdp-size-option group relative w-full rounded-xl border px-4 py-3 text-start transition-all duration-200
         ${
           selected
-            ? outOfStock
-              ? "border-ink/30 bg-soft shadow-[inset_0_0_0_1px_rgba(31,58,82,0.08)]"
-              : "border-ink bg-ink text-cream shadow-[0_6px_20px_-8px_rgba(31,58,82,0.45)]"
-            : outOfStock
-              ? "border-line/45 bg-cream/60 hover:border-stone/35 hover:bg-cream"
-              : "border-line/55 bg-cream hover:border-ink/25 hover:bg-cream hover:shadow-[0_2px_10px_-6px_rgba(31,58,82,0.12)]"
+            ? "border-ink bg-ink text-cream shadow-[0_6px_20px_-8px_rgba(31,58,82,0.45)]"
+            : "border-line/55 bg-cream hover:border-ink/25 hover:bg-cream hover:shadow-[0_2px_10px_-6px_rgba(31,58,82,0.12)]"
         }
       `}
     >
       <div className="flex items-center justify-between gap-3">
         <span
-          className={`text-[15px] font-bold leading-none ${
-            selected
-              ? outOfStock
-                ? "text-ink"
-                : "text-cream"
-              : outOfStock
-                ? "text-stone/70"
-                : "text-ink"
+          className={`pdp-size-option-label text-[15px] font-bold leading-none ${
+            selected ? "text-cream" : "text-ink"
           }`}
         >
           {variant.sizeLabel}
         </span>
         {outOfStock ? (
-          <OutOfStockBadge muted={!selected} />
+          <OutOfStockBadge />
         ) : selected ? (
           <span
             className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-clay text-ink"
@@ -94,14 +78,8 @@ function DimensionRow({
 
       {dimensions ? (
         <p
-          className={`mt-1.5 text-[13px] font-medium leading-snug tabular-nums ${
-            selected
-              ? outOfStock
-                ? "text-stone/75"
-                : "text-cream/72"
-              : outOfStock
-                ? "text-stone/55"
-                : "text-stone"
+          className={`pdp-size-option-dims mt-1.5 text-[13px] font-medium leading-snug tabular-nums ${
+            selected ? "text-cream/72" : "text-stone"
           }`}
         >
           {dimensions}
@@ -161,18 +139,14 @@ export default function VariantSizeSelector({
                 min-h-[48px] px-3 py-2 text-center ${compact ? "text-[15px]" : "text-[16px]"}
                 ${
                   selected
-                    ? outOfStock
-                      ? "border-ink/30 bg-soft text-ink"
-                      : "border-ink bg-ink text-cream shadow-[0_4px_14px_-4px_rgba(31,58,82,0.4)]"
-                    : outOfStock
-                      ? "border-line/45 bg-cream/60 text-stone/70 hover:border-stone/35"
-                      : "border-line/55 bg-cream text-ink hover:border-ink/25 hover:shadow-[0_2px_8px_-2px_rgba(31,58,82,0.12)]"
+                    ? "border-ink bg-ink text-cream shadow-[0_4px_14px_-4px_rgba(31,58,82,0.4)]"
+                    : "border-line/55 bg-cream text-ink hover:border-ink/25 hover:shadow-[0_2px_8px_-2px_rgba(31,58,82,0.12)]"
                 }
               `}
             >
               <span className="leading-snug">{variant.sizeLabel}</span>
               {outOfStock ? (
-                <span className="mt-0.5 block text-[11px] font-normal leading-tight opacity-80">
+                <span className="mt-0.5 block text-[11px] font-semibold leading-tight text-clay">
                   אזל המלאי
                 </span>
               ) : null}

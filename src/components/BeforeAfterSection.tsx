@@ -33,8 +33,6 @@ function StickyReveal() {
         .filter((st) => st.trigger === section)
         .forEach((st) => st.kill());
 
-      // Use gsap.context so ctx.revert() cleanly undoes all GSAP work,
-      // including reverting inline styles to their pre-animation values.
       const getHeaderH = () => {
         const header = document.querySelector("header");
         return header ? Math.round(header.getBoundingClientRect().height) : 44;
@@ -46,7 +44,7 @@ function StickyReveal() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            // Pin exactly when the section fills the viewport below the sticky header.
+            // Pin exactly when section reaches the visible viewport below header.
             start: () => `top top+=${getHeaderH()}`,
             end: () => `+=${getStableViewportHeight() * 2.5}`,
             pin: true,
@@ -73,7 +71,7 @@ function StickyReveal() {
   return (
     <div
       ref={sectionRef}
-      className="relative h-screen-stable w-full"
+      className="relative h-below-header w-full"
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}

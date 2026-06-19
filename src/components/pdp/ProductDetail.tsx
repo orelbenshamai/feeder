@@ -20,7 +20,7 @@ import {
 } from "@/lib/bundles/pricing";
 import { PDP_OVERLAY_CARD } from "@/lib/pdp-overlay-layout";
 import ProductGallery from "./ProductGallery";
-import ProductAboutPanel from "./ProductAboutPanel";
+import ProductInfoAccordions from "./ProductInfoAccordions";
 import ProductFeaturesGrid from "./ProductFeaturesGrid";
 import ProductVideoSection from "./ProductVideoSection";
 import GallerySlide from "./GallerySlide";
@@ -29,7 +29,6 @@ import VariantColorSelector from "./VariantColorSelector";
 import BundleUpsell from "./BundleUpsell";
 import AddToCartButton from "./AddToCartButton";
 import ProductCompanionLink from "./ProductCompanionLink";
-import ProductAccordion from "./ProductAccordion";
 import { formatILS } from "@/lib/pricing";
 
 type ProductCompanionLinkConfig = {
@@ -128,20 +127,6 @@ export default function ProductDetail({
     ? getBundleCompareAtPrice(selectedVariant, bundleUpsell, bundleEnabled)
     : selectedVariant.compareAtPrice;
 
-  const productAccordions = (
-    <div className="mt-2 border-t border-line/40 pt-2">
-      {product.accordions.map((item, index) => (
-        <ProductAccordion
-          key={item.id}
-          title={item.title}
-          content={item.content}
-          defaultOpen={item.id !== "size-chart" && index === 0}
-          variant="light"
-        />
-      ))}
-    </div>
-  );
-
   return (
     <div>
       {/* ── MOBILE ─────────────────────────────────────────────────────── */}
@@ -197,7 +182,6 @@ export default function ProductDetail({
                 bundle={bundleUpsell}
                 sizeId={selectedSizeId}
                 checked={bundleEnabled}
-                disabled={!selectedVariant.inStock}
                 onChange={setBundleEnabled}
               />
             </div>
@@ -211,8 +195,6 @@ export default function ProductDetail({
               />
             </div>
           ) : null}
-
-          <div className="pdp-mobile-section">{productAccordions}</div>
         </div>
       </div>
 
@@ -251,17 +233,14 @@ export default function ProductDetail({
               className="flex-1"
             />
           </div>
-          <p className="mt-1.5 text-center text-xs text-stone/70">
-            משלוח חינם לכל הארץ · 3–5 ימי עסקים · אחריות שנתיים
-          </p>
         </div>
       </div>
 
       {/* ── DESKTOP ── */}
-      <div className="hidden lg:flex bg-cream" dir="rtl">
+      <div className="hidden min-h-below-header lg:flex bg-cream" dir="rtl">
 
-        {/* RIGHT: images — cream background */}
-        <div className="flex-1 space-y-2 bg-cream p-2">
+        {/* Gallery — 60% */}
+        <div className="w-3/5 shrink-0 space-y-2 bg-cream p-2">
           {galleryImages.map((src, i) => (
             <GallerySlide
               key={`${src}-${i}`}
@@ -275,55 +254,58 @@ export default function ProductDetail({
           ))}
         </div>
 
-        {/* LEFT: sticky product details */}
-        <div ref={desktopPanelRef} className="w-[420px] xl:w-[460px] shrink-0 sticky top-[var(--site-header-h)] h-[calc(100svh-var(--site-header-h))] overflow-y-auto border-e border-line/50 bg-cream px-8 py-8 xl:px-10">
-          {/* Title */}
-          <h1 className="font-display text-3xl font-bold leading-snug tracking-tight text-ink xl:text-4xl">
-            {product.category}{" "}
-            <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
-          </h1>
+        {/* Purchase panel — 40% */}
+        <div
+          ref={desktopPanelRef}
+          className="pdp-desktop-panel sticky top-[var(--site-header-h)] flex h-below-header w-2/5 shrink-0 flex-col overflow-hidden border-e border-line/50 bg-cream px-8 py-8 xl:px-10"
+        >
+          <div className="shrink-0">
+            <h1 className="font-display text-3xl font-bold leading-snug tracking-tight text-ink xl:text-4xl">
+              {product.category}{" "}
+              <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
+            </h1>
 
-          {/* Price */}
-          <div className="mt-3 flex items-baseline gap-3">
-            <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
-            {compareAtPrice && compareAtPrice > totalPrice ? (
-              <p className="text-base text-stone line-through">{formatILS(compareAtPrice)}</p>
-            ) : null}
-          </div>
-
-          <div className="mt-6 border-t border-line/40 pt-6 space-y-5">
-            <VariantSizeSelector
-              variants={product.variants}
-              selectedId={selectedSizeId}
-              onSelect={handleSelectSize}
-              labelClassName="purchase-label"
-              compact
-            />
-            <VariantColorSelector
-              colors={availableColors}
-              selectedId={selectedColorId}
-              onSelect={setSelectedColorId}
-              labelClassName="purchase-label"
-            />
-            {bundleUpsell ? (
-              <BundleUpsell
-                bundle={bundleUpsell}
-                sizeId={selectedSizeId}
-                checked={bundleEnabled}
-                disabled={!selectedVariant.inStock}
-                onChange={setBundleEnabled}
-              />
-            ) : null}
-          </div>
-
-          {companionLink ? (
-            <div className="mt-6">
-              <ProductCompanionLink href={companionLink.href} label={companionLink.label} />
+            <div className="mt-3 flex items-baseline gap-3">
+              <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
+              {compareAtPrice && compareAtPrice > totalPrice ? (
+                <p className="text-base text-stone line-through">{formatILS(compareAtPrice)}</p>
+              ) : null}
             </div>
-          ) : null}
+          </div>
 
-          {/* Inline CTA — desktop only, visible while panel is in viewport */}
-          <div className="mt-6 border-t border-line/40 pt-5 space-y-3">
+          <div className="mt-6 min-h-0 flex-1 overflow-y-auto border-t border-line/40 pt-6">
+            <div className="flex flex-col gap-5">
+              <VariantSizeSelector
+                variants={product.variants}
+                selectedId={selectedSizeId}
+                onSelect={handleSelectSize}
+                labelClassName="purchase-label"
+                compact
+              />
+              <VariantColorSelector
+                colors={availableColors}
+                selectedId={selectedColorId}
+                onSelect={setSelectedColorId}
+                labelClassName="purchase-label"
+              />
+              {bundleUpsell ? (
+                <BundleUpsell
+                  bundle={bundleUpsell}
+                  sizeId={selectedSizeId}
+                  checked={bundleEnabled}
+                  onChange={setBundleEnabled}
+                />
+              ) : null}
+              {companionLink ? (
+                <ProductCompanionLink
+                  href={companionLink.href}
+                  label={companionLink.label}
+                />
+              ) : null}
+            </div>
+          </div>
+
+          <div className="shrink-0 border-t border-line/40 pt-5">
             <AddToCartButton
               product={product}
               variant={selectedVariant}
@@ -334,16 +316,7 @@ export default function ProductDetail({
               bundleUpsell={bundleUpsell}
               className="w-full !py-5 !text-base"
             />
-            <div className="flex items-center justify-center gap-1.5 text-xs text-stone">
-              <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="none" aria-hidden>
-                <path d="M3 7V5a5 5 0 0110 0v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                <rect x="1.5" y="7" width="13" height="8" rx="2" stroke="currentColor" strokeWidth="1.4"/>
-              </svg>
-              <span>רכישה מאובטחת · משלוח חינם · אחריות שנתיים</span>
-            </div>
           </div>
-
-          {productAccordions}
         </div>
       </div>
 
@@ -352,17 +325,15 @@ export default function ProductDetail({
 
       {/* Dark sections */}
       <div className="pdp-dark">
-        {/* Mobile about panel */}
         <div className="lg:hidden bg-ink">
           <div className="pdp-mobile-section">
-            <ProductAboutPanel product={product} className="border-t-0 pt-0" />
+            <ProductInfoAccordions product={product} className="border-t-0 pt-0" />
           </div>
         </div>
 
-        {/* Desktop about panel — full viewport width, centered */}
         <div className="hidden lg:block w-full bg-ink">
           <div className="mx-auto max-w-6xl px-10 py-20 xl:max-w-7xl xl:px-16 xl:py-28">
-            <ProductAboutPanel
+            <ProductInfoAccordions
               product={product}
               className="border-t-0 pt-0"
               centeredOnDesktop

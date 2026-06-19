@@ -7,9 +7,9 @@ export const FEEDER_MAT_BUNDLE: BundleUpsellOffer = {
   matProductId: "prod_mesudar_mat_001",
   matColorId: "gray",
   matColorLabel: "אפור",
-  checkboxLabel: "הוסיפו משטח ההאכלה MESUDAR",
-  checkboxHint: "הגנה מלאה על הרצפה · מותאם לגודל העמדה",
-  bundleLabel: "עמדת ההאכלה + משטח ההאכלה",
+  checkboxLabel: "בחרו בחבילה המלאה — עמדה + משטח",
+  checkboxHint: "הפתרון המלא לפינת אוכל נקייה · חיסכון בחבילה",
+  bundleLabel: "חבילה מלאה — עמדת האכלה + משטח ההאכלה",
   addonPriceBySize: {
     small: 79,
     medium: 89,
@@ -34,5 +34,10 @@ export const FEEDER_MAT_BUNDLE: BundleUpsellOffer = {
     small: media("small_gray_1.png"),
     medium: media("medium_gray_1.png"),
     large: media("medium_gray_1.png"),
+  },
+  matImageBySize: {
+    small: media("mat_gray_1.png"),
+    medium: media("mat_gray_1.png"),
+    large: media("mat_gray_1.png"),
   },
 };

@@ -123,7 +123,6 @@ export default function ProductPurchaseCard({
             bundle={bundleUpsell}
             sizeId={selectedSizeId}
             checked={bundleEnabled}
-            disabled={!selectedVariant.inStock}
             onChange={onBundleChange}
           />
         ) : null}

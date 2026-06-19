@@ -29,7 +29,7 @@ export default function ProductAccordion({
       <summary
         className={
           isDark
-            ? "flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-cream transition-colors group-hover:text-cream/80 [&::-webkit-details-marker]:hidden"
+            ? "flex cursor-pointer list-none items-center justify-between gap-4 font-display font-bold leading-snug tracking-tight text-cream transition-colors group-hover:text-cream/80 [&::-webkit-details-marker]:hidden"
             : "flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-ink transition-colors group-hover:text-ink/80 [&::-webkit-details-marker]:hidden"
         }
       >
@@ -38,7 +38,7 @@ export default function ProductAccordion({
           viewBox="0 0 20 20"
           className={
             isDark
-              ? "h-4 w-4 shrink-0 text-cream/45 transition-transform duration-300 group-open:rotate-180 group-open:text-clay"
+              ? "shrink-0 text-cream/45 transition-transform duration-300 group-open:rotate-180 group-open:text-clay"
               : "h-4 w-4 shrink-0 text-stone transition-transform duration-300 group-open:rotate-180 group-open:text-clay"
           }
           fill="none"

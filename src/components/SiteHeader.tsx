@@ -1,9 +1,10 @@
 "use client";
 import { media } from "@/lib/media";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import { AnimatePresence, motion } from "framer-motion";
 
 const NAV_LINKS = [
@@ -18,6 +19,21 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    lockPageScroll();
+    return () => unlockPageScroll();
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (!isHome) return;
@@ -102,7 +118,7 @@ export default function SiteHeader() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-40 bg-ink/40 sm:hidden"
+              className="fixed inset-0 z-40 touch-none overscroll-none bg-ink/40 sm:hidden"
               onClick={() => setMenuOpen(false)}
             />
 
@@ -115,7 +131,8 @@ export default function SiteHeader() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 32 }}
-              className="fixed inset-y-0 start-0 z-50 flex w-72 flex-col bg-cream shadow-2xl sm:hidden"
+              className="fixed inset-y-0 start-0 z-50 flex w-72 flex-col overflow-y-auto bg-cream shadow-2xl sm:hidden"
+              data-scroll-lock-scrollable
             >
               {/* Drawer header — matches site header height exactly */}
               <div className="relative flex h-11 shrink-0 items-center border-b border-line/60 bg-cream/95 px-3 sm:h-12 md:h-14">

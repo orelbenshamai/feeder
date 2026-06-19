@@ -111,5 +111,8 @@ export interface BundleUpsellOffer {
   matRetailPriceBySize: Record<ProductSizeId, number>;
   matSkuBySize: Record<ProductSizeId, string>;
   bundleSkuBySize: Record<ProductSizeId, string>;
+  /** Full bundle hero image (gallery / cart when bundle selected). */
   bundleImageBySize: Record<ProductSizeId, string>;
+  /** Mat-only image shown on the upsell card. */
+  matImageBySize: Record<ProductSizeId, string>;
 }

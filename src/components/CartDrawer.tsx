@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { formatILS } from "@/lib/pricing";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
   prod_mesudar_feeder_001: media("medium_gray_1.png"),
@@ -16,22 +17,20 @@ const EASE = [0.32, 0, 0.18, 1] as const;
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQty, totalPrice, totalCount } = useCart();
 
-  // Lock body scroll when open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
+    if (!isOpen) return;
+    lockPageScroll();
+    return () => unlockPageScroll();
   }, [isOpen]);
 
-  // Close on Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") closeCart(); };
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeCart();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [closeCart]);
+  }, [isOpen, closeCart]);
 
   const whatsappMessage = encodeURIComponent(
     "שלום! אני רוצה להזמין:\n" +
@@ -53,7 +52,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] touch-none overscroll-none bg-ink/40 backdrop-blur-sm"
             onClick={closeCart}
             aria-hidden
           />
@@ -102,7 +101,7 @@ export default function CartDrawer() {
             </div>
 
             {/* Items */}
-            <div className="flex-1 overflow-y-auto px-6 py-4">
+            <div className="flex-1 overflow-y-auto px-6 py-4" data-scroll-lock-scrollable>
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
                   <svg viewBox="0 0 48 48" className="h-14 w-14 text-line" fill="none" aria-hidden>

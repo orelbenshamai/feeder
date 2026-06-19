@@ -43,7 +43,7 @@ export default function VariantColorSelector({
               title={color.label}
               onClick={() => onSelect(color.id)}
               className={`
-                relative h-11 w-11 shrink-0 border-2 transition-all
+                pdp-color-swatch relative h-11 w-11 shrink-0 border-2 transition-all
                 ${
                   isSelected
                     ? "border-ink shadow-[0_4px_14px_-4px_rgba(31,58,82,0.4)]"

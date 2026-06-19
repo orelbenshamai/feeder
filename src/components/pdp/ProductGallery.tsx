@@ -425,16 +425,10 @@ export default function ProductGallery({
 
   const mainImageClass =
     overlayControls && hasMultiple
-      ? `h-full w-[88%] max-w-[88%] -ml-[4%] object-contain object-left py-4 lg:py-6 ${
-          !variant.inStock ? "opacity-60" : ""
-        }`
+      ? "h-full w-[88%] max-w-[88%] -ml-[4%] object-contain object-left py-4 lg:py-6"
       : overlayControls
-        ? `h-full w-full object-contain object-center py-4 lg:py-6 ${
-            !variant.inStock ? "opacity-60" : ""
-          }`
-        : `block w-full h-auto ${
-            !variant.inStock ? "opacity-60" : ""
-          }`;
+        ? "h-full w-full object-contain object-center py-4 lg:py-6"
+        : "block w-full h-auto";
 
   const trackClass = "flex h-full will-change-transform";
 

@@ -7,6 +7,8 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import { createPortal } from "react-dom";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import type {
   BundleUpsellOffer,
   Product,
@@ -111,10 +113,8 @@ function StockNotifyModal({
     .join(" · ");
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    lockPageScroll();
+    return () => unlockPageScroll();
   }, []);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ function StockNotifyModal({
     }
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-6"
       role="presentation"
@@ -183,7 +183,7 @@ function StockNotifyModal({
       <button
         type="button"
         aria-label="סגור חלון"
-        className="absolute inset-0 bg-ink/55 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-ink/65 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
@@ -192,18 +192,18 @@ function StockNotifyModal({
         aria-modal="true"
         aria-labelledby={titleId}
         className="
-          relative z-[101] w-full bg-cream
-          rounded-t-3xl shadow-[0_-20px_80px_-24px_rgba(31,58,82,0.35)] ring-1 ring-black/10
-          sm:max-w-[26rem] sm:rounded-3xl sm:shadow-[0_40px_80px_-30px_rgba(31,58,82,0.45)]
+          stock-notify-modal relative z-[101] w-full bg-cream
+          rounded-t-[2rem] shadow-[0_-24px_90px_-20px_rgba(31,58,82,0.45)] ring-1 ring-black/10
+          sm:max-w-[34rem] sm:rounded-[2rem] sm:shadow-[0_48px_96px_-32px_rgba(31,58,82,0.5)]
         "
       >
-        <div className="flex justify-center pt-3 pb-1 sm:hidden">
-          <span className="h-1 w-10 rounded-full bg-line" aria-hidden />
+        <div className="flex justify-center pt-4 pb-2 sm:hidden">
+          <span className="h-1.5 w-12 rounded-full bg-line" aria-hidden />
         </div>
 
         <div
           dir="rtl"
-          className="px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3 sm:px-7 sm:pb-7 sm:pt-7"
+          className="px-7 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-4 sm:px-10 sm:pb-10 sm:pt-10"
         >
           {!done ? (
             <>
@@ -211,25 +211,25 @@ function StockNotifyModal({
                 type="button"
                 onClick={onClose}
                 aria-label="סגור"
-                className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-full text-ink/60 transition hover:bg-soft hover:text-ink sm:left-4 sm:top-4"
+                className="absolute left-4 top-4 grid h-11 w-11 place-items-center rounded-full text-ink/60 transition hover:bg-soft hover:text-ink sm:left-5 sm:top-5"
               >
-                <span aria-hidden className="relative block h-3 w-3">
+                <span aria-hidden className="relative block h-3.5 w-3.5">
                   <span className="absolute inset-x-0 top-1/2 h-px rotate-45 bg-current" />
                   <span className="absolute inset-x-0 top-1/2 h-px -rotate-45 bg-current" />
                 </span>
               </button>
 
               <div className="text-center">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-stone sm:text-sm">
                   אזל המלאי
                 </p>
                 <h2
                   id={titleId}
-                  className="font-display mt-3 text-[1.45rem] font-medium leading-[1.15] tracking-tight text-ink sm:text-[1.6rem]"
+                  className="font-display mt-4 text-[clamp(1.85rem,6.5vw,2.35rem)] font-bold leading-[1.1] tracking-tight text-ink sm:mt-5 sm:text-[2.5rem]"
                 >
                   נודיע לכם כשזה חוזר
                 </h2>
-                <p className="mx-auto mt-3 max-w-xs text-[13.5px] leading-relaxed text-ink/70">
+                <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink/72 sm:mt-5 sm:text-[17px] sm:leading-[1.7]">
                   {product.category}{" "}
                   <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>
                     MESUDAR
@@ -239,11 +239,11 @@ function StockNotifyModal({
               </div>
 
               <form
-                className="mt-5 flex flex-col gap-4 sm:mt-6"
+                className="mt-7 flex flex-col gap-5 sm:mt-9 sm:gap-6"
                 onSubmit={handleSubmit}
               >
                 <label className="block">
-                  <span className="mb-1.5 block text-[12.5px] font-semibold text-ink/80">
+                  <span className="mb-2 block text-sm font-bold text-ink/85 sm:text-base">
                     טלפון / וואטסאפ
                   </span>
                   <input
@@ -256,14 +256,14 @@ function StockNotifyModal({
                     pattern="[0-9\-\s+]{9,}"
                     required
                     dir="ltr"
-                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
+                    className="w-full rounded-2xl border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
                   />
                 </label>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-clay group mt-1 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                  className="btn-clay group mt-1 min-h-[3.75rem] w-full text-base font-bold sm:min-h-[4rem] sm:text-lg disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? (
                     <span className="inline-flex items-center gap-2">
@@ -279,20 +279,20 @@ function StockNotifyModal({
                 </button>
 
                 {error ? (
-                  <p role="alert" className="text-center text-[12px] font-medium text-red-600">
+                  <p role="alert" className="text-center text-sm font-semibold text-red-600 sm:text-base">
                     {error}
                   </p>
                 ) : null}
 
-                <p className="text-center text-[11px] leading-relaxed text-stone">
+                <p className="text-center text-xs leading-relaxed text-stone sm:text-sm">
                   נשלח עדכון בוואטסאפ כשהמלאי חוזר · ללא ספאם
                 </p>
               </form>
             </>
           ) : (
-            <div className="py-6 text-center sm:py-10">
-              <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30">
-                <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden>
+            <div className="py-8 text-center sm:py-12">
+              <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30 sm:h-[4.5rem] sm:w-[4.5rem]">
+                <svg viewBox="0 0 24 24" className="h-8 w-8 sm:h-9 sm:w-9" fill="none" aria-hidden>
                   <path
                     d="M6 12.5 10 16.5 18 8.5"
                     stroke="currentColor"
@@ -302,16 +302,16 @@ function StockNotifyModal({
                   />
                 </svg>
               </div>
-              <p className="font-display mt-5 text-[1.6rem] font-medium text-ink">
+              <p className="font-display mt-6 text-[clamp(1.75rem,5vw,2.15rem)] font-bold text-ink sm:text-[2.25rem]">
                 רשמנו אתכם
               </p>
-              <p className="mx-auto mt-3 max-w-xs text-[13.5px] leading-relaxed text-ink/70">
+              <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ink/72 sm:text-[17px]">
                 ברגע שהמלאי חוזר — נשלח לכם הודעה עם קישור ישיר להזמנה
               </p>
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-ink px-7 text-[14px] font-semibold text-cream transition hover:bg-ink/90"
+                className="mt-8 inline-flex min-h-[3.25rem] items-center justify-center rounded-full bg-ink px-9 text-[15px] font-bold text-cream transition hover:bg-ink/90 sm:min-h-[3.5rem] sm:px-10 sm:text-base"
               >
                 חזרה למוצר
               </button>
@@ -319,6 +319,7 @@ function StockNotifyModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
