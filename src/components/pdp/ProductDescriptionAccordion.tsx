@@ -101,12 +101,12 @@ export default function ProductDescriptionAccordion({
       open={defaultOpen}
     >
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
-        <span className={`font-display text-xl font-bold leading-snug tracking-tight ${isDark ? "text-cream" : "text-ink"} sm:text-2xl`}>
+        <span className={`font-display font-bold leading-snug tracking-tight ${isDark ? "text-cream" : "text-ink"}`}>
           תיאור
         </span>
         <svg
           viewBox="0 0 20 20"
-          className={`h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180 ${isDark ? "text-cream/40 group-open:text-clay" : "text-stone group-open:text-clay"}`}
+          className={`shrink-0 transition-transform duration-300 group-open:rotate-180 ${isDark ? "text-cream/40 group-open:text-clay" : "text-stone group-open:text-clay"}`}
           fill="none"
           aria-hidden
         >
@@ -132,7 +132,7 @@ export default function ProductDescriptionAccordion({
               return (
                 <li key={item} className="flex items-start gap-3">
                   <HighlightIcon text={item} />
-                  <span className={`text-[15px] leading-snug sm:text-[16px] ${isDark ? "text-cream/90" : "text-ink"}`}>
+                  <span className={`text-[17px] leading-snug sm:text-[18px] ${isDark ? "text-cream/90" : "text-ink"}`}>
                     <strong className="font-bold">{lead}</strong>
                     {rest ? <span className={` font-normal ${textMuted}`}> — {rest}</span> : null}
                   </span>
@@ -153,7 +153,7 @@ export default function ProductDescriptionAccordion({
         <div className={`space-y-5 border-t pt-6 ${borderColor}`}>
           {aboutParagraphs.map((block, index) => (
             <div key={index}>
-              <p className={`text-[15px] leading-[1.75] sm:text-[16px] sm:leading-[1.8] ${textMuted} ${centeredOnDesktop ? "lg:text-[17px]" : ""}`}>
+              <p className={`text-[16px] leading-[1.75] sm:text-[17px] sm:leading-[1.8] ${textMuted} ${centeredOnDesktop ? "lg:text-[18px]" : ""}`}>
                 {renderTextWithMesudar(block)}
               </p>
               {product.aboutCallout && calloutAfter === index ? (

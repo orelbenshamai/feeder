@@ -171,22 +171,9 @@ export default function AboutSection() {
       </div>
 
       {/* ── Block 3: Founder story + image ── */}
-      {/* Mobile: text on top + image below, both in one viewport */}
+      {/* Mobile: image on top (full-width, clear), text below on ink */}
       <div className="flex min-h-below-header flex-col lg:hidden">
-        {/* Text */}
-        <div className="flex flex-col justify-center gap-5 bg-ink px-8 py-8 sm:px-10 sm:py-10" style={{ flex: "0 0 42%" }}>
-          <FadeIn delay={0.05}>
-            <StoryHeadline className="text-[1.35rem] sm:text-2xl" />
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <StoryBody className="text-[1.05rem] sm:text-lg sm:leading-[1.9]" />
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <StoryCTA className="mt-1" />
-          </FadeIn>
-        </div>
-        {/* Image — focus on dog + product */}
-        <FadeIn className="relative min-h-[calc(var(--screen-h)*0.45)] flex-1 overflow-hidden">
+        <div className="relative w-full overflow-hidden bg-ink" style={{ flex: "0 0 52%" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={media("before_mesudar_mobile.png")}
@@ -194,7 +181,20 @@ export default function AboutSection() {
             className="h-full w-full object-cover object-[center_38%]"
             draggable={false}
           />
-        </FadeIn>
+          {/* fade into ink below */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-ink" />
+        </div>
+        <div className="flex flex-1 flex-col justify-center gap-5 bg-ink px-8 py-8 sm:px-10">
+          <FadeIn delay={0.05}>
+            <StoryHeadline className="text-[1.4rem] sm:text-2xl" />
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <StoryBody className="text-[1rem] sm:text-lg sm:leading-[1.9]" />
+          </FadeIn>
+          <FadeIn delay={0.2}>
+            <StoryCTA className="mt-1" />
+          </FadeIn>
+        </div>
       </div>
 
       {/* Desktop: side-by-side with breathing room */}
@@ -223,19 +223,10 @@ export default function AboutSection() {
         </div>
       </div>
 
-      {/* ── Block 4: Closing statement + after image (mirror of story block) ── */}
-      {/* Mobile: image on top, text below */}
+      {/* ── Block 4: Closing statement + after image ── */}
+      {/* Mobile: text on top, then image below (flipped so image gets focus) */}
       <div className="flex min-h-below-header flex-col lg:hidden">
-        <FadeIn className="relative min-h-[calc(var(--screen-h)*0.45)] flex-1 overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("after_mesudar_mobile.png")}
-            alt="האצ׳י אחרי מסודר"
-            className="h-full w-full object-cover object-[center_38%]"
-            draggable={false}
-          />
-        </FadeIn>
-        <div className="flex flex-col items-center justify-center bg-ink px-8 py-10 text-center sm:px-10" style={{ flex: "0 0 42%" }}>
+        <div className="flex flex-col items-center justify-center bg-ink px-8 py-10 text-center sm:px-10" style={{ flex: "0 0 40%" }}>
           <FadeIn delay={0.1}>
             <p className="font-display text-4xl font-bold text-cream leading-[1.15] tracking-[-0.025em] sm:text-5xl">
               כי כל ארוחה היא רגע של
@@ -247,6 +238,17 @@ export default function AboutSection() {
               <span className="text-clay">נוחה ונקייה</span>
             </p>
           </FadeIn>
+        </div>
+        <div className="relative flex-1 overflow-hidden bg-ink">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={media("after_mesudar_mobile.png")}
+            alt="האצ׳י אחרי מסודר"
+            className="h-full w-full object-cover object-[center_38%]"
+            draggable={false}
+          />
+          {/* tall top fade from ink to cover the seam fully */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink to-transparent" />
         </div>
       </div>
 

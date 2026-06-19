@@ -478,30 +478,36 @@ body {
   padding-block: clamp(1.25rem, 3.5vw, 2rem);
 }
 
-/* Summary: left-aligned, clean, no centering override for the description */
 .pdp-info-accordions details summary {
   position: relative;
   justify-content: space-between;
   text-align: start;
   padding-inline: 0;
   font-family: var(--font-heebo), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(1.25rem, 4vw, 1.625rem);
+  font-size: clamp(1.625rem, 6vw, 2.25rem);
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 @media (min-width: 1024px) {
   .pdp-info-accordions details summary {
-    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-size: clamp(2.25rem, 2.8vw, 3rem);
   }
 }
 
 .pdp-info-accordions details summary svg {
   flex-shrink: 0;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), color 250ms ease;
+}
+
+@media (min-width: 1024px) {
+  .pdp-info-accordions details summary svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 }
 
 .pdp-info-accordions details[open] summary svg {
