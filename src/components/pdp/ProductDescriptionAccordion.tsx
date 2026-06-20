@@ -1,7 +1,20 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { Product } from "@/types/product";
 import { renderTextWithMesudar } from "@/components/MesudarWordmark";
+
+/** Renders **bold** markdown spans inline, then processes MESUDAR wordmarks. */
+function renderWithBold(text: string, mutedClass: string): ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.flatMap((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      const inner = part.slice(2, -2);
+      return [<strong key={`bold-${i}`} className="font-bold text-inherit">{renderTextWithMesudar(inner)}</strong>];
+    }
+    return renderTextWithMesudar(part) as ReactNode[];
+  });
+}
 
 type ProductDescriptionAccordionProps = {
   product: Product;
@@ -15,7 +28,7 @@ function HighlightIcon({ text }: { text: string }) {
   const t = text;
 
   // Water / floor dry
-  if (/רצפה|מים|יבש|נשפכ|אגן|ניקוז/.test(t))
+  if (/רצפה|מים|יבש|נשפכ|מיכל|ניקוז/.test(t))
     return (
       <svg viewBox="0 0 20 20" fill="none" aria-hidden className="h-5 w-5 shrink-0 text-clay">
         <path d="M10 3C10 3 4.5 9.5 4.5 13a5.5 5.5 0 0011 0C15.5 9.5 10 3 10 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -150,19 +163,50 @@ export default function ProductDescriptionAccordion({
         ) : null}
 
         {/* ── About paragraphs — condensed ── */}
-        <div className={`space-y-5 border-t pt-6 ${borderColor}`}>
-          {aboutParagraphs.map((block, index) => (
-            <div key={index}>
-              <p className={`text-[16px] leading-[1.75] sm:text-[17px] sm:leading-[1.8] ${textMuted} ${centeredOnDesktop ? "lg:text-[18px]" : ""}`}>
-                {renderTextWithMesudar(block)}
-              </p>
-              {product.aboutCallout && calloutAfter === index ? (
-                <p className={`mt-5 border-s-2 border-clay ps-4 font-display text-base font-bold leading-snug tracking-tight sm:text-lg ${isDark ? "text-cream" : "text-ink"}`}>
-                  {renderTextWithMesudar(product.aboutCallout)}
+        <div className={`border-t pt-6 ${borderColor}`}>
+          {aboutParagraphs.map((block, index) => {
+            const isSection = block.startsWith("## ");
+            if (isSection) {
+              const title = block.slice(3);
+              const isHook = title === "hook";
+              // "hook" is a placeholder — the actual hook text is the next paragraph
+              if (isHook) return null;
+              return (
+                <p
+                  key={index}
+                  className={`mb-3 mt-8 first:mt-0 font-display text-[1.1rem] font-bold leading-snug tracking-tight sm:text-[1.2rem] ${isDark ? "text-cream" : "text-ink"}`}
+                >
+                  {title}
                 </p>
-              ) : null}
-            </div>
-          ))}
+              );
+            }
+
+            // Paragraph immediately after "## hook" is the hook line
+            const prevBlock = aboutParagraphs[index - 1];
+            const isHookParagraph = prevBlock === "## hook";
+            if (isHookParagraph) {
+              return (
+                <p
+                  key={index}
+                  className={`mb-6 font-display text-[1.35rem] font-bold leading-snug tracking-tight sm:text-[1.5rem] ${isDark ? "text-cream" : "text-ink"}`}
+                >
+                  {block}
+                </p>
+              );
+            }
+            return (
+              <div key={index} className="mb-5 last:mb-0">
+                <p className={`text-[16px] leading-[1.75] sm:text-[17px] sm:leading-[1.8] ${textMuted} ${centeredOnDesktop ? "lg:text-[18px]" : ""}`}>
+                  {renderWithBold(block, textMuted)}
+                </p>
+                {product.aboutCallout && calloutAfter === index ? (
+                  <p className={`mt-5 border-s-2 border-clay ps-4 font-display text-base font-bold leading-snug tracking-tight sm:text-lg ${isDark ? "text-cream" : "text-ink"}`}>
+                    {renderTextWithMesudar(product.aboutCallout)}
+                  </p>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       </div>
     </details>

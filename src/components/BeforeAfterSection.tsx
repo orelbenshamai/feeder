@@ -38,7 +38,7 @@ function StickyReveal() {
         return header ? Math.round(header.getBoundingClientRect().height) : 44;
       };
 
-      ctx = gsap.context(() => {
+        ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
 
         const tl = gsap.timeline({
@@ -46,19 +46,22 @@ function StickyReveal() {
             trigger: section,
             // Pin exactly when section reaches the visible viewport below header.
             start: () => `top top+=${getHeaderH()}`,
-            end: () => `+=${getStableViewportHeight() * 2.5}`,
+            // 4× viewport: before holds ~40%, transition ~25%, after holds ~35%
+            end: () => `+=${getStableViewportHeight() * 4}`,
             pin: true,
             pinSpacing: true,
-            scrub: 1.4,
+            scrub: 1.8,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        // After fades IN from 0% — large overlap with before fading OUT at 10%
-        // ensures there's always at least one image visible; never a blank gap.
-        tl.to(after,  { opacity: 1, duration: 0.30, ease: "none" }, 0);
-        tl.to(before, { opacity: 0, duration: 0.30, ease: "none" }, 0.10);
+        // 0.00 – 0.40: "before" is fully visible — user reads the "before" state
+        // 0.40 – 0.65: cross-fade transition (after in, before out)
+        // 0.65 – 1.00: "after" is fully visible — padded with addLabel so pin holds
+        tl.to(after,  { opacity: 1, duration: 0.25, ease: "power2.inOut" }, 0.40);
+        tl.to(before, { opacity: 0, duration: 0.25, ease: "power2.inOut" }, 0.43);
+        tl.addLabel("end", 1.00); // extends timeline so "after" holds until pin releases
       });
     })();
 

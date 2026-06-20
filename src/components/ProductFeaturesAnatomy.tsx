@@ -28,10 +28,10 @@ const features = [
     ),
   },
   {
-    title: "מערכת ניקוז ואגן תחתון",
+    title: "מערכת ניקוז ומיכל תחתון",
     subtitle: "Drainage & Bottom Basin",
     description:
-      "המים מתנקזים לאגן נפרד בתחתית — המזון היבש נשאר יבש, בלי שלוליות מתחת לקערה.",
+      "המים מתנקזים למיכל נפרד בתחתית — המזון היבש נשאר יבש, בלי שלוליות מתחת לקערה.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
         <path
@@ -145,7 +145,7 @@ export default function ProductFeaturesAnatomy() {
                 </span>
                 <span className="absolute bottom-[20%] start-[12%] flex items-center gap-2 rounded-full border border-line/80 bg-cream/95 px-3 py-1.5 text-[11px] font-medium text-ink shadow-md backdrop-blur-sm">
                   <span className="h-1.5 w-1.5 rounded-full bg-clay" />
-                  אגן ניקוז
+                  מיכל ניקוז
                 </span>
                 <span className="absolute bottom-[8%] end-[16%] flex items-center gap-2 rounded-full border border-line/80 bg-cream/95 px-3 py-1.5 text-[11px] font-medium text-ink shadow-md backdrop-blur-sm">
                   <span className="h-1.5 w-1.5 rounded-full bg-clay" />

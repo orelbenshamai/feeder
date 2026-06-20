@@ -62,7 +62,7 @@ const features = [
   },
   {
     title: "קל לניקוי",
-    desc: "קערות נירוסטה שנשלפות למדיח. הבסיס — ניגוב קצר וסיימתם.",
+    desc: "קערות נירוסטה שנשלפות בקלות מהעמדה ישר למדיח.",
     icon: (
       <svg viewBox="0 0 48 48" fill="none" aria-hidden className="h-6 w-6">
         <rect
