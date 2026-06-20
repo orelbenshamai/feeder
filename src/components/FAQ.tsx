@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { whatsAppHref } from "@/lib/whatsapp";
 import { media } from "@/lib/media";
 
@@ -64,6 +64,13 @@ const faqs = [
 
 const CATEGORIES = ["הזמנה ומשלוח", "המוצר", "שימוש וניקיון", "חבילות ואביזרים"];
 
+const CATEGORY_SLUGS: Record<string, string> = {
+  "הזמנה ומשלוח": "shipping",
+  "המוצר": "product",
+  "שימוש וניקיון": "care",
+  "חבילות ואביזרים": "bundles",
+};
+
 function FaqItem({ f, i, open, setOpen }: {
   f: typeof faqs[0];
   i: number;
@@ -122,6 +129,27 @@ function FaqItem({ f, i, open, setOpen }: {
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
+  // On mount: if URL hash matches a category slug, scroll to it and open
+  // the most relevant question in that category.
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const cat = Object.entries(CATEGORY_SLUGS).find(([, slug]) => slug === hash)?.[0];
+    if (!cat) return;
+
+    const el = document.getElementById(hash);
+    if (el) {
+      // Small delay so the page has painted before scrolling
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 120);
+    }
+
+    // Auto-open the first question in that category
+    const firstIndex = faqs.findIndex((f) => f.category === cat);
+    if (firstIndex !== -1) setOpen(firstIndex);
+  }, []);
+
   return (
     <section id="faq" dir="rtl" className="relative isolate overflow-hidden bg-cream">
 
@@ -172,7 +200,7 @@ export default function FAQ() {
             const items = faqs.filter((f) => f.category === cat);
             const startIndex = faqs.findIndex((f) => f.category === cat);
             return (
-              <div key={cat}>
+              <div key={cat} id={CATEGORY_SLUGS[cat]} style={{ scrollMarginTop: "calc(var(--site-header-h) + 1.5rem)" }}>
                 <h2 className="mb-4 flex items-center gap-3 text-base font-bold uppercase tracking-[0.18em] text-stone sm:text-lg">
                   <span className="h-px flex-1 bg-line/60" />
                   {cat}

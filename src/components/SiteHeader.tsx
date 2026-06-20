@@ -106,7 +106,7 @@ export default function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`group flex items-center gap-2 rounded-full border px-4 py-1.5 text-[15px] font-semibold transition-all ${
+                className={`group flex items-center gap-2 rounded-full border px-4 py-1.5 text-[16px] font-semibold transition-all ${
                   isActive
                     ? "border-clay/60 bg-clay/15 text-clay"
                     : "border-cream/20 bg-cream/5 text-cream hover:border-clay/50 hover:bg-clay/12 hover:text-clay"
@@ -133,8 +133,8 @@ export default function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`text-[14px] transition-colors ${
-                  isActive ? "text-cream/80" : "text-cream/40 hover:text-cream/70"
+                className={`text-[16px] font-medium transition-colors ${
+                  isActive ? "text-cream/80" : "text-cream/50 hover:text-cream/80"
                 }`}
               >
                 {label}

@@ -251,23 +251,23 @@ export default function ProductDetail({
         {/* Purchase panel — 40% */}
         <div
           ref={desktopPanelRef}
-          className="pdp-desktop-panel sticky top-[var(--site-header-h)] flex h-below-header w-2/5 shrink-0 flex-col border-e border-line/50 bg-cream px-8 py-6 xl:px-10 xl:py-8"
+          className="pdp-desktop-panel sticky top-[var(--site-header-h)] flex h-below-header w-2/5 shrink-0 flex-col border-e border-line/50 bg-cream"
         >
           {/* Header — title + price */}
-          <div className="shrink-0">
-            <h1 className="font-display text-2xl font-bold leading-snug tracking-tight text-ink xl:text-3xl">
+          <div className="pdp-d-header shrink-0">
+            <h1 className="pdp-d-title font-display font-bold leading-snug tracking-tight text-ink">
               {product.category}{" "}
               <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
             </h1>
 
-            <div className="mt-2 flex items-baseline gap-3">
-              <p className="font-display text-2xl font-bold text-ink xl:text-3xl">{formatILS(totalPrice)}</p>
+            <div className="pdp-d-price-row flex items-baseline gap-3">
+              <p className="pdp-d-price font-display font-bold text-ink">{formatILS(totalPrice)}</p>
             </div>
           </div>
 
           {/* Selectors */}
-          <div className="mt-5 shrink-0 border-t border-line/40 pt-5">
-            <div className="flex flex-col gap-4">
+          <div className="pdp-d-selectors shrink-0 border-t border-line/40">
+            <div className="flex flex-col">
               <VariantSizeSelector
                 variants={product.variants}
                 selectedId={selectedSizeId}
@@ -286,7 +286,7 @@ export default function ProductDetail({
 
           {/* Bundle — flexible, grows into remaining space */}
           {bundleUpsell ? (
-            <div className="mt-4 min-h-0 flex-1">
+            <div className="pdp-d-bundle min-h-0 flex-1">
               <BundleUpsell
                 bundle={bundleUpsell}
                 sizeId={selectedSizeId}
@@ -297,7 +297,7 @@ export default function ProductDetail({
           ) : null}
 
           {companionLink ? (
-            <div className="mt-3 shrink-0">
+            <div className="pdp-d-companion shrink-0">
               <ProductCompanionLink
                 href={companionLink.href}
                 label={companionLink.label}
@@ -306,7 +306,7 @@ export default function ProductDetail({
           ) : null}
 
           {/* CTA — always at the bottom */}
-          <div className="mt-auto shrink-0 border-t border-line/40 pt-4">
+          <div className="pdp-d-cta mt-auto shrink-0 border-t border-line/40">
             <AddToCartButton
               product={product}
               variant={selectedVariant}
@@ -315,7 +315,7 @@ export default function ProductDetail({
               totalPrice={totalPrice}
               bundleEnabled={bundleEnabled}
               bundleUpsell={bundleUpsell}
-              className="w-full !py-4 !text-base"
+              className="w-full"
             />
           </div>
         </div>

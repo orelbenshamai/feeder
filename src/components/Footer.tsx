@@ -50,7 +50,7 @@ export default function Footer() {
                 <Link href="/about" className="text-ink transition-colors hover:text-clay">אודות</Link>
               </li>
               <li>
-                <a href="#" className="text-ink transition-colors hover:text-clay">משלוחים והחזרות</a>
+                <Link href="/faq#shipping" className="text-ink transition-colors hover:text-clay">משלוחים והחזרות</Link>
               </li>
             </ul>
           </div>
