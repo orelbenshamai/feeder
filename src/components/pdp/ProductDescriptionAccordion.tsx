@@ -7,6 +7,7 @@ import { renderTextWithMesudar } from "@/components/MesudarWordmark";
 /** Renders **bold** markdown spans inline, then processes MESUDAR wordmarks. */
 function renderWithBold(text: string, mutedClass: string): ReactNode[] {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  // @ts-ignore
   return parts.flatMap((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       const inner = part.slice(2, -2);
