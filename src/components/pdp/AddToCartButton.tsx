@@ -85,6 +85,7 @@ export default function AddToCartButton({
       trackAddToCartBundle({
         bundleSku,
         componentSkus: [variant.sku, matSku],
+        productName: `${product.name} + Bundle`,
         value: totalPrice,
       });
     } else {
@@ -103,6 +104,7 @@ export default function AddToCartButton({
       trackAddToCart({
         sku: variant.sku,
         productId: product.id,
+        productName: product.name,
         value: variant.price,
       });
     }

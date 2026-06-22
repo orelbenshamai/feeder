@@ -2,11 +2,11 @@ import { media } from "@/lib/media";
 import type { Metadata } from "next";
 import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
-import { FacebookPixel } from "@/components/FacebookPixel";
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
+import { GoogleTagManager } from '@next/third-parties/google'
 
 const heebo = Heebo({
   variable: "--font-heebo",
@@ -52,6 +52,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${heebo.variable} ${nunito.variable} antialiased font-sans`}
     >
+      <GoogleTagManager gtmId="GTM-MC36BKQK" />
       <head>
         {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
         <script
@@ -60,7 +61,6 @@ export default function RootLayout({
               "(function(){var root=document.documentElement;var locked=Infinity;function readH(){var vv=window.visualViewport;var ih=window.innerHeight||0;var vh=vv&&vv.height?vv.height:ih;return Math.min(ih,vh);}function snap(){var h=readH();if(!(h>0))return;locked=Math.min(locked,h);root.style.setProperty('--ios-vh',locked+'px');}function init(){locked=Infinity;snap();setTimeout(snap,120);setTimeout(snap,380);}init();window.addEventListener('orientationchange',function(){setTimeout(init,350);});})();",
           }}
         />
-        <FacebookPixel />
       </head>
       <body className="flex min-h-screen-stable flex-col bg-cream text-ink selection:bg-ink selection:text-cream">
         <CartProvider>
