@@ -7,7 +7,6 @@ import { useCart } from "@/context/CartContext";
 import { formatILS } from "@/lib/pricing";
 import { media } from "@/lib/media";
 import type { ContactData } from "@/app/api/checkout/contact/route";
-import CheckoutPaymentModal from "@/components/CheckoutPaymentModal";
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
   prod_mesudar_feeder_001: media("medium_gray_1.png"),
@@ -36,7 +35,6 @@ export default function CheckoutPage() {
   });
 
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
-  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
 
   if (hydrated && items.length === 0) {
@@ -79,8 +77,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      setPaymentUrl(payData.paymentUrl);
-      setSubmitState({ status: "idle" });
+      window.location.href = payData.paymentUrl;
     } catch {
       setSubmitState({ status: "error", message: "שגיאה בחיבור לשרת" });
     }
@@ -409,13 +406,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* Payment modal — mounts on top when paymentUrl is set */}
-      {paymentUrl && (
-        <CheckoutPaymentModal
-          paymentUrl={paymentUrl}
-          onClose={() => setPaymentUrl(null)}
-        />
-      )}
     </>
   );
 }
