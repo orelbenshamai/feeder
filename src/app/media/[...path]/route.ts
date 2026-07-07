@@ -97,13 +97,14 @@ export async function GET(
   const { path: segments } = await params;
 
   // ── Production: proxy from R2 ─────────────────────────────────────────────
-  const r2Base = process.env.NEXT_PUBLIC_MEDIA_BASE_URL;
-  if (r2Base) {
+  // R2_SOURCE_URL is server-only (no NEXT_PUBLIC_ prefix) to avoid self-loops.
+  const r2Source = process.env.R2_SOURCE_URL;
+  if (r2Source) {
     const filename = segments.join("/");
     if (!filename || filename.includes("..")) {
       return new NextResponse(null, { status: 400 });
     }
-    const r2Url = `${r2Base.replace(/\/$/, "")}/${filename}`;
+    const r2Url = `${r2Source.replace(/\/$/, "")}/media/${filename}`;
     const upstream = await fetch(r2Url, {
       headers: { Range: req.headers.get("range") ?? "" },
     });
