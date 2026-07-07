@@ -94,11 +94,36 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
+  const { path: segments } = await params;
+
+  // ── Production: proxy from R2 ─────────────────────────────────────────────
+  const r2Base = process.env.NEXT_PUBLIC_MEDIA_BASE_URL;
+  if (r2Base) {
+    const filename = segments.join("/");
+    if (!filename || filename.includes("..")) {
+      return new NextResponse(null, { status: 400 });
+    }
+    const r2Url = `${r2Base.replace(/\/$/, "")}/${filename}`;
+    const upstream = await fetch(r2Url, {
+      headers: { Range: req.headers.get("range") ?? "" },
+    });
+    if (!upstream.ok && upstream.status !== 206) {
+      return new NextResponse(null, { status: upstream.status });
+    }
+    const headers = new Headers();
+    for (const key of ["content-type", "content-length", "content-range", "accept-ranges", "etag", "last-modified"]) {
+      const val = upstream.headers.get(key);
+      if (val) headers.set(key, val);
+    }
+    headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    return new NextResponse(upstream.body, { status: upstream.status, headers });
+  }
+
+  // ── Development: serve from LOCAL_MEDIA_DIR ───────────────────────────────
   if (process.env.NODE_ENV !== "development" || !LOCAL_MEDIA_DIR) {
     return new NextResponse(null, { status: 404 });
   }
 
-  const { path: segments } = await params;
   const resolved = await resolveLocalFile(segments);
 
   if (!resolved) {

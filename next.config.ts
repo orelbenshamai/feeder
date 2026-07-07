@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-src https://pay.hyp.co.il https://icom.yaad.net;",
+            value: "frame-src https://pay.hyp.co.il https://icom.yaad.net https://player.vimeo.com https://www.youtube.com https://www.youtube-nocookie.com;",
           },
         ],
       },
