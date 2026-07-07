@@ -63,6 +63,7 @@ function CheckoutSuccessInner() {
   const [status, setStatus] = useState<Status>("verifying");
   const [order, setOrder] = useState<Order | null>(null);
   const [paidAmount, setPaidAmount] = useState<string | null>(null);
+  const [debugCcode, setDebugCcode] = useState<string | null>(null);
 
   // Break out of iframe if loaded inside Hyp's modal
   useEffect(() => {
@@ -129,8 +130,9 @@ function CheckoutSuccessInner() {
       body: JSON.stringify(payload),
     })
       .then(r => r.json())
-      .then(async (data: { valid?: boolean; error?: string }) => {
+      .then(async (data: { valid?: boolean; error?: string; ccode?: string }) => {
         if (data.error || !data.valid) {
+          if (data.ccode) setDebugCcode(data.ccode);
           setStatus(data.valid === false ? "failed" : "error");
           return;
         }
@@ -263,6 +265,7 @@ function CheckoutSuccessInner() {
           <div>
             <h1 className="font-display text-2xl font-bold text-ink">התשלום נכשל</h1>
             <p className="mt-2 text-base text-stone">לא הצלחנו לעבד את התשלום. ניתן לנסות שוב.</p>
+            {debugCcode && <p className="mt-1 text-xs text-stone/50">CCode: {debugCcode}</p>}
           </div>
           <Link href="/checkout" className="mt-2 text-sm font-semibold text-clay hover:underline">
             חזרה לתשלום
