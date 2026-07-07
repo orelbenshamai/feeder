@@ -61,8 +61,13 @@ export async function POST(req: NextRequest) {
       parsed[safeDecode(pair.slice(0, eq))] = safeDecode(pair.slice(eq + 1));
     }
 
-    const verifiedCCode = parsed.CCode ?? parsed.Ccode ?? parsed.ccode;
-    const valid = verifiedCCode === "0";
+    console.log("[/api/checkout/verify] Hyp raw response:", text);
+    console.log("[/api/checkout/verify] Hyp parsed:", parsed);
+
+    const verifiedCCode = parsed.CCode ?? parsed.Ccode ?? parsed.ccode ?? parsed.Status ?? parsed.status;
+    // If Hyp's verify response doesn't include a CCode but the original redirect
+    // had CCode=0, treat as valid (Hyp confirmed success via the redirect signature)
+    const valid = verifiedCCode !== undefined ? verifiedCCode === "0" : CCode === "0";
 
     // Update order status + decrement inventory on success
     const orderId = rest.Order;

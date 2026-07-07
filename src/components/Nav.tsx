@@ -40,7 +40,7 @@ export default function Nav() {
           />
         </a>
 
-        <nav className="hidden md:flex items-center gap-10 text-sm text-stone">
+        <nav className="hidden lg:flex items-center gap-10 text-sm text-stone">
           {links.map((l) => (
             <a
               key={l.href}
@@ -77,7 +77,7 @@ export default function Nav() {
             aria-label="פתיחת תפריט"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden h-10 w-10 -ms-2 grid place-items-center"
+            className="lg:hidden h-10 w-10 -ms-2 grid place-items-center"
           >
             <span className="relative block h-3 w-5">
               <span
@@ -96,7 +96,7 @@ export default function Nav() {
       </div>
 
       <div
-        className={`md:hidden overflow-hidden transition-[max-height] duration-500 ${
+        className={`lg:hidden overflow-hidden transition-[max-height] duration-500 ${
           open ? "max-h-96" : "max-h-0"
         }`}
       >
