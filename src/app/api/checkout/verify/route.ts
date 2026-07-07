@@ -65,9 +65,11 @@ export async function POST(req: NextRequest) {
     console.log("[/api/checkout/verify] Hyp parsed:", parsed);
 
     const verifiedCCode = parsed.CCode ?? parsed.Ccode ?? parsed.ccode ?? parsed.Status ?? parsed.status;
-    // If Hyp's verify response doesn't include a CCode but the original redirect
-    // had CCode=0, treat as valid (Hyp confirmed success via the redirect signature)
-    const valid = verifiedCCode !== undefined ? verifiedCCode === "0" : CCode === "0";
+    console.log("[/api/checkout/verify] verifiedCCode:", verifiedCCode, "original CCode:", CCode);
+
+    // Trust Hyp's redirect CCode when their verify API doesn't return one
+    const effectiveCCode = verifiedCCode ?? CCode;
+    const valid = effectiveCCode === "0";
 
     // Update order status + decrement inventory on success
     const orderId = rest.Order;
@@ -116,7 +118,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ valid, ccode: verifiedCCode ?? CCode });
+    return NextResponse.json({ valid, ccode: effectiveCCode });
   } catch (err) {
     console.error("[/api/checkout/verify]", err);
     return NextResponse.json({ error: "Verification failed" }, { status: 500 });
