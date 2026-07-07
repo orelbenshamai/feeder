@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ProductDetail from "@/components/pdp/ProductDetail";
 import { getProductBySlug } from "@/lib/products";
 import { MAT_FEEDER_BUNDLE } from "@/lib/bundles/mat-feeder-bundle";
+import { hydrateBundleOffer } from "@/lib/bundles/db";
 
 const SLUG = "mesudar-mat";
 
@@ -23,16 +24,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MatPage() {
-  const product = await getProductBySlug(SLUG);
+  const [product, bundle] = await Promise.all([
+    getProductBySlug(SLUG),
+    hydrateBundleOffer(MAT_FEEDER_BUNDLE),
+  ]);
   if (!product) notFound();
 
   return (
     <main id="main" className="min-h-screen-stable bg-cream text-ink">
-      <ProductDetail
-        product={product}
-        bundleUpsell={MAT_FEEDER_BUNDLE}
-        scaleGalleryBySize
-      />
+      <ProductDetail product={product} bundleUpsell={bundle} scaleGalleryBySize />
     </main>
   );
 }

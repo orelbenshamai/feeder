@@ -13,6 +13,7 @@ type BundleUpsellProps = {
   sizeId: ProductSizeId;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  mainInStock?: boolean;
   labelClassName?: string;
   showSectionLabel?: boolean;
 };
@@ -22,48 +23,75 @@ export default function BundleUpsell({
   sizeId,
   checked,
   onChange,
+  mainInStock = true,
 }: BundleUpsellProps) {
   const addonPrice = getBundleAddonPrice(bundle, sizeId);
   const retailPrice = bundle.matRetailPriceBySize[sizeId];
   const savings = getBundleMatSavings(bundle, sizeId);
   const inputId = `bundle-upsell-${bundle.id}`;
   const bundleImageUrl = bundle.matImageBySize[sizeId];
+  const addonAvailable = mainInStock && (bundle.addonInStockBySize?.[sizeId] ?? false);
 
   return (
-    <div className="pdp-bundle-upsell">
+    <div className="pdp-bundle-upsell relative">
       <input
         id={inputId}
         type="checkbox"
         checked={checked}
+        disabled={!addonAvailable}
         onChange={(event) => onChange(event.target.checked)}
         className="peer sr-only"
       />
 
       <label
         htmlFor={inputId}
-        className={`
-          pdp-bundle-upsell__card group block cursor-pointer overflow-hidden rounded-2xl border-2 transition-all duration-300
-          ${
-            checked
-              ? "border-clay bg-cream shadow-[0_12px_40px_-14px_rgba(255,159,10,0.5)] ring-2 ring-clay/25"
-              : "border-ink/12 bg-cream shadow-[0_8px_32px_-16px_rgba(31,58,82,0.22)] hover:border-clay/70 hover:shadow-[0_14px_36px_-14px_rgba(255,159,10,0.35)]"
-          }
-        `}
+        className={[
+          "pdp-bundle-upsell__card group block overflow-hidden rounded-2xl border-2 transition-all duration-300",
+          !addonAvailable
+            ? "pointer-events-none cursor-not-allowed border-ink/10"
+            : checked
+              ? "cursor-pointer border-clay bg-cream shadow-[0_12px_40px_-14px_rgba(255,159,10,0.5)] ring-2 ring-clay/25"
+              : "cursor-pointer border-ink/12 bg-cream shadow-[0_8px_32px_-16px_rgba(31,58,82,0.22)] hover:border-clay/70 hover:shadow-[0_14px_36px_-14px_rgba(255,159,10,0.35)]",
+        ].join(" ")}
       >
-        {/* Banner */}
+        {/* ── Banner ─────────────────────────────────────────────────────── */}
         <div
-          className={`pdp-bundle-upsell__banner flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5 ${
+          className={`pdp-bundle-upsell__banner flex items-center gap-3 px-4 py-2.5 sm:px-5 ${
             checked ? "bg-clay" : "bg-ink"
           }`}
         >
+          {/* Custom checkbox bubble */}
+          <span
+            aria-hidden
+            className={[
+              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200",
+              checked
+                ? "border-ink bg-ink"
+                : "border-cream/60 bg-transparent group-hover:border-cream",
+            ].join(" ")}
+          >
+            {checked && (
+              <svg viewBox="0 0 10 10" className="h-3 w-3 text-clay" fill="none">
+                <path
+                  d="M1.5 5 4 7.5 8.5 2.5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </span>
+
           <p
-            className={`pdp-bundle-upsell__banner-title text-[15px] font-bold leading-snug sm:text-base ${
+            className={`pdp-bundle-upsell__banner-title flex-1 text-[15px] font-bold leading-snug sm:text-base ${
               checked ? "text-ink" : "text-cream"
             }`}
           >
-            {checked ? `✓ ${bundle.bannerCheckedLabel}` : bundle.bannerLabel}
+            {checked ? bundle.bannerCheckedLabel : bundle.bannerLabel}
           </p>
-          {savings > 0 ? (
+
+          {savings > 0 && (
             <span
               className={`pdp-bundle-upsell__savings shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold leading-none sm:text-xs ${
                 checked
@@ -73,12 +101,13 @@ export default function BundleUpsell({
             >
               חסכו {formatILS(savings)}
             </span>
-          ) : null}
+          )}
         </div>
 
-        <div className="pdp-bundle-upsell__body p-4 sm:p-5">
+        {/* ── Body ───────────────────────────────────────────────────────── */}
+        <div className="pdp-bundle-upsell__body relative p-4 sm:p-5">
           <div className="flex items-start gap-4">
-            {bundleImageUrl ? (
+            {bundleImageUrl && (
               <div className="pdp-bundle-upsell__media relative h-20 w-20 shrink-0 sm:h-24 sm:w-24">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -88,7 +117,7 @@ export default function BundleUpsell({
                   draggable={false}
                 />
               </div>
-            ) : null}
+            )}
 
             <div className="min-w-0 flex-1">
               <h3 className="pdp-bundle-upsell__title font-display text-[1.05rem] font-bold leading-snug text-ink sm:text-lg">
@@ -125,13 +154,14 @@ export default function BundleUpsell({
             </div>
           </div>
 
+          {/* ── Pricing ──────────────────────────────────────────────────── */}
           <div className="pdp-bundle-upsell__pricing mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line/50 pt-4">
-            <div className="pdp-bundle-upsell__pricing-bundle text-start">
+            <div className="text-start">
               <p className="pdp-bundle-upsell__price font-display text-[1.35rem] font-bold leading-none tabular-nums text-clay sm:text-2xl">
                 +{formatILS(addonPrice)}
               </p>
             </div>
-            <div className="pdp-bundle-upsell__pricing-retail text-start">
+            <div className="text-start">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-stone">
                 קנייה נפרדת
               </p>
@@ -141,19 +171,31 @@ export default function BundleUpsell({
             </div>
           </div>
 
-          <div
-            className={`pdp-bundle-upsell__cta mt-4 rounded-xl py-3 text-center text-[14px] font-bold tracking-wide transition-colors sm:text-[15px] ${
-              checked
-                ? "bg-clay/15 text-ink ring-1 ring-clay/35"
-                : "bg-ink text-cream group-hover:bg-ink/92"
-            }`}
-          >
-            {checked
-              ? "לחצו לביטול"
-              : bundle.ctaLabel}
-          </div>
+          {/* ── CTA ──────────────────────────────────────────────────────── */}
+          {addonAvailable && (
+            <div
+              className={`pdp-bundle-upsell__cta mt-4 rounded-xl py-3 text-center text-[14px] font-bold tracking-wide transition-colors sm:text-[15px] ${
+                checked
+                  ? "bg-clay/15 text-ink ring-1 ring-clay/35"
+                  : "bg-ink text-cream group-hover:bg-ink/92"
+              }`}
+            >
+              {checked ? "לחצו לביטול" : bundle.ctaLabel}
+            </div>
+          )}
+
+          {/* OOS overlay — scoped to body only, banner above is untouched */}
+          {!addonAvailable && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-b-2xl bg-cream/55 backdrop-blur-[1.5px]">
+              <span className="rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-cream shadow-lg">
+                אזל במלאי — לא זמין כרגע
+              </span>
+            </div>
+          )}
         </div>
       </label>
+
+      
     </div>
   );
 }

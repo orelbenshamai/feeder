@@ -60,7 +60,7 @@ export const mesudarFeederStation: Product = {
       title: "טבלת גדלים",
       content:
         `קטן · ${formatSizeDimensions("33×22×14 ס״מ")}\nלחתולים וכלבים עד 8 ק"ג · גם לשותים הכי מבולגנים · אפור ובז'\n\n` +
-        `רגיל · ${formatSizeDimensions("42×28×16 ס״מ")}\nהכי פופולרי — לכלבים עד 18 ק"ג · מכיל כמות מים משמעותית\n\n` +
+        `בינוני · ${formatSizeDimensions("42×28×16 ס״מ")}\nהכי פופולרי — לכלבים עד 18 ק"ג · מכיל כמות מים משמעותית\n\n` +
         `גדול · ${formatSizeDimensions("50×34×18 ס״מ")}\nלכלבים בינוניים וגדולים עד 35 ק"ג · לבלגן הגדול בהתאם\n\n` +
         "כל הגדלים כוללים שתי קערות נירוסטה",
     },
@@ -90,11 +90,11 @@ export const mesudarFeederStation: Product = {
       id: "small",
       sizeLabel: "קטן",
       sizeDimensions: "33×22×14 ס״מ",
-      price: 179,
-      compareAtPrice: 249,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("small_gray_1.png"),
       sku: "MSD-FEED-S",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray", "beige"],
       galleryByColor: {
         gray: [media("small_gray_1.png"), media("small_gray_2.png")],
@@ -103,13 +103,13 @@ export const mesudarFeederStation: Product = {
     },
     {
       id: "medium",
-      sizeLabel: "רגיל",
+      sizeLabel: "בינוני",
       sizeDimensions: "42×28×16 ס״מ",
-      price: 219,
-      compareAtPrice: 289,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("medium_gray_1.png"),
       sku: "MSD-FEED-M",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: [
@@ -123,11 +123,11 @@ export const mesudarFeederStation: Product = {
       id: "large",
       sizeLabel: "גדול",
       sizeDimensions: "50×34×18 ס״מ",
-      price: 249,
-      compareAtPrice: 339,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("medium_gray_1.png"),
       sku: "MSD-FEED-L",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: [media("medium_gray_1.png")],

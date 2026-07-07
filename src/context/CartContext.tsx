@@ -12,6 +12,7 @@ import type { CartLineItem } from "@/types/product";
 
 type CartContextValue = {
   items: CartLineItem[];
+  hydrated: boolean;
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -25,12 +26,14 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartLineItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const sync = useCallback(() => setItems(readCart()), []);
 
   useEffect(() => {
     sync();
+    setHydrated(true);
     window.addEventListener("mesudar:cart-updated", sync);
     window.addEventListener("storage", sync);
     return () => {
@@ -65,7 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, isOpen, openCart, closeCart, removeItem, updateQty, totalPrice, totalCount }}
+      value={{ items, hydrated, isOpen, openCart, closeCart, removeItem, updateQty, totalPrice, totalCount }}
     >
       {children}
     </CartContext.Provider>

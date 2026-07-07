@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ProductDetail from "@/components/pdp/ProductDetail";
 import { FEEDER_MAT_BUNDLE } from "@/lib/bundles/feeder-mat-bundle";
+import { hydrateBundleOffer } from "@/lib/bundles/db";
 import { getDefaultProduct } from "@/lib/products";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,11 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FeederPage() {
-  const product = await getDefaultProduct();
+  const [product, bundle] = await Promise.all([
+    getDefaultProduct(),
+    hydrateBundleOffer(FEEDER_MAT_BUNDLE),
+  ]);
 
   return (
     <main id="main" className="min-h-screen-stable bg-cream text-ink">
-      <ProductDetail product={product} bundleUpsell={FEEDER_MAT_BUNDLE} scaleGalleryBySize />
+      <ProductDetail product={product} bundleUpsell={bundle} scaleGalleryBySize />
     </main>
   );
 }

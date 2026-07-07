@@ -74,6 +74,7 @@ export interface Product {
 
 export interface CartBundleComponent {
   productId: string;
+  productName: string;
   sku: string;
   sizeId: ProductSizeId;
   sizeLabel: string;
@@ -84,6 +85,7 @@ export interface CartBundleComponent {
 
 export interface CartLineItem {
   productId: string;
+  productName: string;
   sku: string;
   sizeId: ProductSizeId;
   sizeLabel: string;
@@ -119,6 +121,10 @@ export interface BundleUpsellOffer {
   ctaLabel: string;
   /** Benefit bullets shown in the card body. */
   benefits: string[];
+  /** Replaces the product's category in the h1 title when the bundle is enabled. */
+  bundleProductCategory?: string;
+  /** Whether the addon is in stock per size (hydrated from inventory). */
+  addonInStockBySize?: Record<ProductSizeId, boolean>;
   addonPriceBySize: Record<ProductSizeId, number>;
   matRetailPriceBySize: Record<ProductSizeId, number>;
   matSkuBySize: Record<ProductSizeId, string>;

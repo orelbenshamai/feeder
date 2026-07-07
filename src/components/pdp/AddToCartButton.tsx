@@ -13,6 +13,7 @@ import { addLineItem } from "@/lib/cart";
 import { getBundleAddonPrice } from "@/lib/bundles/pricing";
 import { trackAddToCart, trackAddToCartBundle } from "@/lib/pixel";
 import StockNotifyAction from "./StockNotifyAction";
+import { STOCK_MODE } from "@/lib/flags";
 
 type AddToCartButtonProps = {
   product: Product;
@@ -20,6 +21,7 @@ type AddToCartButtonProps = {
   colorId: ProductColorId;
   colorLabel: string;
   totalPrice: number;
+  quantity?: number;
   bundleEnabled?: boolean;
   bundleUpsell?: BundleUpsellOffer;
   className?: string;
@@ -31,12 +33,13 @@ export default function AddToCartButton({
   colorId,
   colorLabel,
   totalPrice,
+  quantity = 1,
   bundleEnabled = false,
   bundleUpsell,
   className = "",
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
-  const outOfStock = !variant.inStock;
+  const outOfStock = STOCK_MODE === "notify" ? true : !variant.inStock;
   const isBundle = bundleEnabled && bundleUpsell;
 
   const handleClick = () => {
@@ -49,6 +52,7 @@ export default function AddToCartButton({
       const bundleComponents: CartBundleComponent[] = [
         {
           productId: product.id,
+          productName: product.name,
           sku: variant.sku,
           sizeId: variant.id,
           sizeLabel: variant.sizeLabel,
@@ -58,6 +62,7 @@ export default function AddToCartButton({
         },
         {
           productId: bundleUpsell.matProductId,
+          productName: bundleUpsell.addonName,
           sku: matSku,
           sizeId: variant.id,
           sizeLabel: variant.sizeLabel,
@@ -69,13 +74,14 @@ export default function AddToCartButton({
 
       addLineItem({
         productId: product.id,
+        productName: product.name,
         sku: bundleSku,
         sizeId: variant.id,
         sizeLabel: variant.sizeLabel,
         colorId,
         colorLabel,
         price: totalPrice,
-        quantity: 1,
+        quantity,
         imageUrl: bundleUpsell.bundleImageBySize[variant.id] ?? variant.imageUrl,
         bundleSku,
         bundleLabel: bundleUpsell.bundleLabel,
@@ -91,13 +97,14 @@ export default function AddToCartButton({
     } else {
       addLineItem({
         productId: product.id,
+        productName: product.name,
         sku: variant.sku,
         sizeId: variant.id,
         sizeLabel: variant.sizeLabel,
         colorId,
         colorLabel,
         price: variant.price,
-        quantity: 1,
+        quantity,
         imageUrl: variant.imageUrl,
       });
 
@@ -132,33 +139,31 @@ export default function AddToCartButton({
       type="button"
       onClick={handleClick}
       className={`
-        inline-flex w-full items-center justify-between gap-3
-        border-2 px-6 py-3.5
-        font-bold tracking-widest uppercase text-sm rounded-sm
-        transition-all duration-300 ease-in-out
+        group relative inline-flex w-full items-center justify-center gap-4
+        overflow-hidden rounded-2xl px-6 py-4
+        font-bold text-base transition-all duration-300
         ${added
-          ? "border-clay bg-clay/10 text-clay"
-          : "border-ink/70 bg-transparent text-ink hover:border-ink hover:bg-ink/[0.06] shadow-[0_8px_32px_rgba(31,58,82,0.18)]"
+          ? "bg-clay/15 text-clay ring-2 ring-clay/40"
+          : "bg-ink text-cream shadow-[0_8px_32px_-8px_rgba(31,58,82,0.55)] hover:shadow-[0_12px_40px_-8px_rgba(31,58,82,0.7)] hover:scale-[1.015] active:scale-[0.985]"
         }
         ${className}
       `}
     >
-      <span>
+      {/* Shine sweep on hover */}
+      {!added && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.07] transition-transform duration-500 group-hover:translate-x-full"
+        />
+      )}
+
+      <span className="relative w-full text-center">
         {added
-          ? "✓ נוסף לעגלה"
+          ? "✓ נוסף לעגלה!"
           : isBundle
-            ? "הוסף חבילה לעגלה"
-            : "הוסף לעגלה"}
+            ? "הוסיפו חבילה לעגלה"
+            : "הוסיפו לעגלה"}
       </span>
-      {!added ? (
-        <span className="inline-flex items-center gap-2 shrink-0">
-          <span>{formatILS(totalPrice)}</span>
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden>
-            <path d="M6 7h15l-2 10H8L6 7Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-            <path d="M6 7 5 3H2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        </span>
-      ) : null}
     </button>
   );
 }

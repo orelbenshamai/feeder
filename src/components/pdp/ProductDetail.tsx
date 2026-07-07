@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type {
   BundleUpsellOffer,
   Product,
@@ -13,7 +14,7 @@ import {
   getProductDisplayImage,
   getVariantBySize,
   resolveColorForSize,
-} from "@/lib/products";
+} from "@/lib/products/helpers";
 import {
   getBundleCompareAtPrice,
   getBundleTotalPrice,
@@ -61,27 +62,33 @@ export default function ProductDetail({
   const [selectedColorId, setSelectedColorId] =
     useState<ProductColorId>(defaultColor);
   const [bundleEnabled, setBundleEnabled] = useState(false);
+  const [bundleOutOfStock, setBundleOutOfStock] = useState(false);
+  const [qty, setQty] = useState(1);
 
-  // Desktop: track whether the sticky details panel is in the viewport.
-  // When visible → show inline CTA; when out of view → show the fixed sticky bar.
+  const handleBundleToggle = (next: boolean) => {
+    if (next && bundleUpsell) {
+      const mainInStock = selectedVariant.inStock;
+      const addonInStock = bundleUpsell.addonInStockBySize?.[selectedSizeId] ?? false;
+      if (!mainInStock || !addonInStock) {
+        setBundleOutOfStock(true);
+        setTimeout(() => setBundleOutOfStock(false), 3500);
+        return;
+      }
+    }
+    setBundleEnabled(next);
+  };
+
   const desktopPanelRef = useRef<HTMLDivElement>(null);
-  // Start true so the sticky is hidden on desktop until the panel actually leaves view.
-  const [desktopPanelVisible, setDesktopPanelVisible] = useState(true);
-
-  useEffect(() => {
-    const el = desktopPanelRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setDesktopPanelVisible(entry.isIntersecting),
-      { threshold: 0.1 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   const handleSelectSize = (sizeId: ProductSizeId) => {
     setSelectedSizeId(sizeId);
     setSelectedColorId((current) => resolveColorForSize(product, sizeId, current));
+    setQty(1);
+    setBundleOutOfStock(false);
+    if (bundleEnabled && bundleUpsell) {
+      const inStock = bundleUpsell.addonInStockBySize?.[sizeId] ?? true;
+      if (!inStock) setBundleEnabled(false);
+    }
   };
 
   const selectedVariant = useMemo(
@@ -129,6 +136,26 @@ export default function ProductDetail({
 
   return (
     <div>
+      {/* ── BUNDLE OUT-OF-STOCK TOAST ────────────────────────────────────── */}
+      <AnimatePresence>
+        {bundleOutOfStock && bundleUpsell && (
+          <motion.div
+            key="bundle-oos-toast"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            style={{ left: "50%", transform: "translateX(-50%)" }}
+            className="fixed top-5 z-[9999] w-fit flex items-center gap-3 rounded-2xl bg-ink px-5 py-3.5 shadow-2xl"
+          >
+            <span className="text-xl">⚠️</span>
+            <p className="text-sm font-semibold text-cream whitespace-nowrap">
+              {bundleUpsell.addonName} אזל במלאי לגודל זה
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── MOBILE ─────────────────────────────────────────────────────── */}
       <div className="lg:hidden">
         <ProductGallery
@@ -144,7 +171,9 @@ export default function ProductDetail({
           <div className="pdp-mobile-section">
             {/* H1 */}
             <h1 className="font-display text-2xl font-bold leading-snug tracking-tight text-ink sm:text-3xl">
-              {product.category}{" "}
+              {bundleEnabled && bundleUpsell?.bundleProductCategory
+                ? bundleUpsell.bundleProductCategory
+                : product.category}{" "}
               <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
             </h1>
 
@@ -179,7 +208,8 @@ export default function ProductDetail({
                 bundle={bundleUpsell}
                 sizeId={selectedSizeId}
                 checked={bundleEnabled}
-                onChange={setBundleEnabled}
+                onChange={handleBundleToggle}
+                mainInStock={selectedVariant.inStock}
               />
             </div>
           ) : null}
@@ -192,41 +222,64 @@ export default function ProductDetail({
               />
             </div>
           ) : null}
+
+          {/* Space so last section clears the floating bar */}
+          <div className="h-28" />
         </div>
       </div>
 
-      {/* ── STICKY CTA — always on mobile, only when panel is off-screen on desktop ── */}
-      <div className={`fixed bottom-0 inset-x-0 z-40 border-t border-line/60 bg-cream/95 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${desktopPanelVisible ? "lg:translate-y-full lg:opacity-0 lg:pointer-events-none" : "translate-y-0 opacity-100"}`}>
-        <div className="mx-auto max-w-7xl px-4 pt-2.5 pb-[calc(0.6rem+env(safe-area-inset-bottom))] lg:px-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-stone">
-              {selectedVariant.sizeLabel}
-              {selectedColorLabel ? ` / ${selectedColorLabel}` : ""}
-              {bundleEnabled && bundleUpsell ? " / חבילה" : ""}
+      {/* ── FLOATING BUY BAR ── */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-cream/95 backdrop-blur-md shadow-[0_-8px_40px_-8px_rgba(31,58,82,0.22)]">
+        <div className="mx-auto max-w-2xl px-4 pt-3 pb-[calc(0.65rem+env(safe-area-inset-bottom))] flex items-center gap-2.5">
+
+          {/* Quantity stepper */}
+          <div className="flex items-center rounded-2xl border-2 border-ink/15 overflow-hidden shrink-0">
+            <button
+              type="button"
+              onClick={() => setQty(q => Math.max(1, q - 1))}
+              className="px-3.5 py-3.5 text-lg font-bold text-ink/50 hover:text-ink hover:bg-ink/5 transition-colors leading-none"
+              aria-label="הפחת כמות"
+            >
+              −
+            </button>
+            <span className="w-8 text-center text-base font-bold text-ink select-none tabular-nums">
+              {qty}
             </span>
             <button
               type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-sm font-semibold text-clay hover:text-clay/80 transition-colors underline underline-offset-2"
+              onClick={() => setQty(q => q + 1)}
+              className="px-3.5 py-3.5 text-lg font-bold text-ink/50 hover:text-ink hover:bg-ink/5 transition-colors leading-none"
+              aria-label="הוסף כמות"
             >
-              שנה אפשרויות
+              +
             </button>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex flex-col shrink-0">
-              <span className="font-display text-xl font-bold text-ink leading-none">{formatILS(totalPrice)}</span>
-            </div>
-            <AddToCartButton
-              product={product}
-              variant={selectedVariant}
-              colorId={selectedColorId}
-              colorLabel={selectedColorLabel}
-              totalPrice={totalPrice}
-              bundleEnabled={bundleEnabled}
-              bundleUpsell={bundleUpsell}
-              className="flex-1"
-            />
-          </div>
+
+          {/* CTA */}
+          <AddToCartButton
+            product={product}
+            variant={selectedVariant}
+            colorId={selectedColorId}
+            colorLabel={selectedColorLabel}
+            totalPrice={totalPrice * qty}
+            quantity={qty}
+            bundleEnabled={bundleEnabled}
+            bundleUpsell={bundleUpsell}
+            className="flex-1 py-3.5"
+          />
+
+          {/* Edit options pill */}
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-2xl border-2 border-ink/15 bg-cream px-3.5 py-3.5 text-[13px] font-bold text-ink hover:border-ink/30 hover:bg-ink/5 transition-all"
+            aria-label="ערוך אפשרויות"
+          >
+            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden>
+              <path d="M10 15V5M6 9l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            ערוך
+          </button>
         </div>
       </div>
 
@@ -256,7 +309,9 @@ export default function ProductDetail({
           {/* Header — title + price */}
           <div className="pdp-d-header shrink-0">
             <h1 className="pdp-d-title font-display font-bold leading-snug tracking-tight text-ink">
-              {product.category}{" "}
+              {bundleEnabled && bundleUpsell?.bundleProductCategory
+                ? bundleUpsell.bundleProductCategory
+                : product.category}{" "}
               <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
             </h1>
 
@@ -291,7 +346,8 @@ export default function ProductDetail({
                 bundle={bundleUpsell}
                 sizeId={selectedSizeId}
                 checked={bundleEnabled}
-                onChange={setBundleEnabled}
+                onChange={handleBundleToggle}
+                mainInStock={selectedVariant.inStock}
               />
             </div>
           ) : null}
@@ -305,19 +361,8 @@ export default function ProductDetail({
             </div>
           ) : null}
 
-          {/* CTA — always at the bottom */}
-          <div className="pdp-d-cta mt-auto shrink-0 border-t border-line/40">
-            <AddToCartButton
-              product={product}
-              variant={selectedVariant}
-              colorId={selectedColorId}
-              colorLabel={selectedColorLabel}
-              totalPrice={totalPrice}
-              bundleEnabled={bundleEnabled}
-              bundleUpsell={bundleUpsell}
-              className="w-full"
-            />
-          </div>
+          {/* bottom padding so content doesn't hide behind the floating bar */}
+          <div className="pdp-d-cta mt-auto shrink-0 pb-24" />
         </div>
       </div>
 

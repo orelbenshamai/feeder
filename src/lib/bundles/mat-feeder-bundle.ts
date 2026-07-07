@@ -3,7 +3,7 @@ import type { BundleUpsellOffer } from "@/types/product";
 
 /** Mat PDP → feeder station upsell configuration. */
 export const MAT_FEEDER_BUNDLE: BundleUpsellOffer = {
-  id: "mat-feeder-bundle",
+  id: "feeder-mat",
   matProductId: "prod_mesudar_feeder_001",
   matColorId: "gray",
   matColorLabel: "אפור",
@@ -15,21 +15,15 @@ export const MAT_FEEDER_BUNDLE: BundleUpsellOffer = {
   bannerLabel: "ההגנה המלאה — עמדה + משטח",
   bannerCheckedLabel: "ההגנה המלאה על הרצפה בהזמנה",
   ctaLabel: "הוסיפו את העמדה",
+  bundleProductCategory: "משטח האכלה ועמדת האכלה",
   benefits: [
     "העמדה עוצרת 90% מהבלגן — המשטח לוכד את השאר",
     "מים שנשפכים נשארים בפנים — לא מגיעים כלל למשטח",
     "חיסכון בחבילה — פחות ממחיר קנייה נפרדת",
   ],
-  addonPriceBySize: {
-    small: 149,
-    medium: 179,
-    large: 209,
-  },
-  matRetailPriceBySize: {
-    small: 179,
-    medium: 219,
-    large: 249,
-  },
+  // Prices are hydrated from MongoDB at runtime via hydrateBundleOffer()
+  addonPriceBySize:    { small: 0, medium: 0, large: 0 },
+  matRetailPriceBySize: { small: 0, medium: 0, large: 0 },
   matSkuBySize: {
     small: "MSD-FEED-S",
     medium: "MSD-FEED-M",

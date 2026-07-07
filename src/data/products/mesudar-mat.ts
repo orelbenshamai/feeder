@@ -70,7 +70,7 @@ export const mesudarMat: Product = {
       title: "טבלת גדלים",
       content:
         `קטן · ${formatSizeDimensions("41×26×1.3 ס״מ")}\nמתאים לפינת האכלה קומפקטית, קערות קטנות, חתולים וכלבים קטנים.\n\n` +
-        `רגיל · ${formatSizeDimensions("49×31×1.3 ס״מ")}\nהכי פופולרי — מתאים לרוב קערות ביתיות סטנדרטיות.\n\n` +
+        `בינוני · ${formatSizeDimensions("49×31×1.3 ס״מ")}\nהכי פופולרי — מתאים לרוב קערות ביתיות סטנדרטיות.\n\n` +
         `גדול · ${formatSizeDimensions("61×41×1.3 ס״מ")}\nלקערות גדולות, כלבים בינוניים וגדולים, או לעמדת ההאכלה MESUDAR.`,
     },
     {
@@ -93,11 +93,11 @@ export const mesudarMat: Product = {
       id: "small",
       sizeLabel: "קטן",
       sizeDimensions: "41×26×1.3 ס״מ",
-      price: 99,
-      compareAtPrice: 139,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("mat_gray_1.png"),
       sku: "MSD-MAT-S",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: MAT_GRAY_GALLERY,
@@ -105,13 +105,13 @@ export const mesudarMat: Product = {
     },
     {
       id: "medium",
-      sizeLabel: "רגיל",
+      sizeLabel: "בינוני",
       sizeDimensions: "49×31×1.3 ס״מ",
-      price: 119,
-      compareAtPrice: 169,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("mat_gray_1.png"),
       sku: "MSD-MAT-M",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: MAT_GRAY_GALLERY,
@@ -121,11 +121,11 @@ export const mesudarMat: Product = {
       id: "large",
       sizeLabel: "גדול",
       sizeDimensions: "61×41×1.3 ס״מ",
-      price: 139,
-      compareAtPrice: 189,
+      price: 0, // overridden by inventory
+      compareAtPrice: 0,
       imageUrl: media("mat_gray_1.png"),
       sku: "MSD-MAT-L",
-      inStock: false,
+      inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: MAT_GRAY_GALLERY,

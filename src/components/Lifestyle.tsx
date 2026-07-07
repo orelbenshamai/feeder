@@ -131,7 +131,7 @@ export default function Lifestyle() {
                 className="absolute inset-0 h-full w-full p-10 sm:p-16"
               />
               <figcaption className="absolute bottom-5 inset-x-5 flex items-center justify-between text-cream/80 text-xs">
-                <span>פחם · גודל רגיל</span>
+                <span>פחם · גודל בינוני</span>
                 <span>מסודר · 01</span>
               </figcaption>
             </figure>

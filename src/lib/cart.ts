@@ -57,3 +57,8 @@ export function updateLineItemQty(sku: string, quantity: number) {
   window.dispatchEvent(new Event("mesudar:cart-updated"));
   return cart;
 }
+
+export function clearCart() {
+  writeCart([]);
+  window.dispatchEvent(new Event("mesudar:cart-updated"));
+}

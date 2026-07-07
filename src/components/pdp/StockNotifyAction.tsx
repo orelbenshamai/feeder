@@ -43,24 +43,32 @@ export default function StockNotifyAction({
         type="button"
         onClick={() => setOpen(true)}
         className={`
-          inline-flex w-full items-center justify-center gap-2
-          border-2 border-clay bg-clay px-6 py-3.5
-          font-bold tracking-widest uppercase text-sm rounded-sm
-          text-cream transition-all duration-300 ease-in-out
-          hover:bg-clay/90 shadow-[0_8px_32px_rgba(255,159,10,0.25)]
+          group relative inline-flex w-full items-center justify-between gap-4
+          overflow-hidden rounded-2xl px-6 py-4
+          bg-ink text-cream font-bold text-base
+          shadow-[0_8px_32px_-8px_rgba(31,58,82,0.55)]
+          hover:shadow-[0_12px_40px_-8px_rgba(31,58,82,0.7)] hover:scale-[1.015] active:scale-[0.985]
+          transition-all duration-300
           ${className}
         `}
       >
-        <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="none" aria-hidden>
-          <path
-            d="M10 3a5 5 0 00-5 5v2.5L4 12.5h12l-1-2.5V8a5 5 0 00-5-5Z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-          />
-          <path d="M8.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-        <span>הודיעו לי כשחוזר למלאי</span>
+        {/* Shine sweep */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.07] transition-transform duration-500 group-hover:translate-x-full"
+        />
+        <span className="relative inline-flex items-center justify-center gap-2 w-full">
+          <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="none" aria-hidden>
+            <path
+              d="M10 3a5 5 0 00-5 5v2.5L4 12.5h12l-1-2.5V8a5 5 0 00-5-5Z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path d="M8.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          הודיעו לי כשחוזר למלאי
+        </span>
       </button>
 
       {open ? (

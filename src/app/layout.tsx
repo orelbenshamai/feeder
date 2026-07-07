@@ -2,10 +2,7 @@ import { media } from "@/lib/media";
 import type { Metadata } from "next";
 import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
-import SiteHeader from "@/components/SiteHeader";
-import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
-import CartDrawer from "@/components/CartDrawer";
 import { GoogleTagManager } from '@next/third-parties/google'
 
 const heebo = Heebo({
@@ -64,12 +61,7 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-screen-stable flex-col bg-cream text-ink selection:bg-ink selection:text-cream">
         <CartProvider>
-          <SiteHeader />
-          {/* Spacer so fixed header doesn't overlap page content */}
-          <div className="h-11 shrink-0 sm:h-12 md:h-14" aria-hidden />
-          <CartDrawer />
-          <div className="flex flex-1 flex-col">{children}</div>
-          <Footer />
+          {children}
         </CartProvider>
       </body>
     </html>
