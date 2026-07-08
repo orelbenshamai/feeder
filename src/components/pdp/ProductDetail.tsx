@@ -31,7 +31,7 @@ import BundleUpsell from "./BundleUpsell";
 import AddToCartButton from "./AddToCartButton";
 import ProductCompanionLink from "./ProductCompanionLink";
 import { formatILS } from "@/lib/pricing";
-import { useVisualViewportBottomOffset } from "@/lib/use-visual-viewport-bottom";
+import { usePinToVisualViewportBottom } from "@/lib/use-pin-to-visual-viewport-bottom";
 
 type ProductCompanionLinkConfig = {
   href: string;
@@ -127,8 +127,8 @@ export default function ProductDetail({
     product.colors[0]?.label ??
     "";
 
-  const { offset: viewportBottomOffset, insetSafeArea } =
-    useVisualViewportBottomOffset();
+  const floatingBarRef = useRef<HTMLDivElement>(null);
+  usePinToVisualViewportBottom(floatingBarRef);
 
   const totalPrice = bundleUpsell
     ? getBundleTotalPrice(selectedVariant, bundleUpsell, bundleEnabled)
@@ -237,18 +237,10 @@ export default function ProductDetail({
 
       {/* ── FLOATING BUY BAR ── */}
       <div
-        className="fixed inset-x-0 bottom-0 z-40 bg-ink shadow-[0_-8px_40px_-8px_rgba(0,0,0,0.4)] will-change-transform lg:translate-y-0"
-        style={{
-          transform:
-            viewportBottomOffset > 0
-              ? `translateY(-${viewportBottomOffset}px)`
-              : undefined,
-          paddingBottom: insetSafeArea
-            ? "env(safe-area-inset-bottom, 0px)"
-            : undefined,
-        }}
+        ref={floatingBarRef}
+        className="fixed inset-x-0 bottom-0 z-40 bg-ink shadow-[0_-8px_40px_-8px_rgba(0,0,0,0.4)] lg:bottom-0"
       >
-        <div className="mx-auto max-w-2xl px-4 pt-3 pb-3 flex items-center gap-2.5">
+        <div className="mx-auto flex max-w-2xl items-center gap-2.5 px-4 py-3">
 
           {/* Quantity stepper */}
           <div className="flex items-center rounded-sm border-2 border-cream/20 overflow-hidden shrink-0">
