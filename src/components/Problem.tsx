@@ -134,7 +134,7 @@ export default function Problem() {
         <ul className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {pains.map((p, i) => (
             <Reveal as="li" delay={i * 80} key={p.title}>
-              <article className="group relative h-full rounded-3xl bg-soft/80 hover:bg-soft transition-colors border border-line/60 p-5 sm:p-7 overflow-hidden">
+              <article className="group relative h-full rounded-sm bg-soft/80 hover:bg-soft transition-colors border border-line/60 p-5 sm:p-7 overflow-hidden">
                 <div className="text-ink/70 group-hover:text-ink transition-colors">
                   {p.icon}
                 </div>

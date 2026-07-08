@@ -39,7 +39,7 @@ export default function CheckoutPaymentModal({ paymentUrl, onClose }: Props) {
       />
 
       {/* Modal card */}
-      <div className="relative z-10 flex h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:h-[85dvh]">
+      <div className="relative z-10 flex h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-sm bg-white shadow-2xl sm:h-[85dvh]">
 
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-stone/10 px-5 py-3.5">

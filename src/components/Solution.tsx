@@ -60,7 +60,7 @@ export default function Solution() {
           <div className="lg:col-span-7 order-1 lg:order-2">
             <div className="grid grid-cols-2 gap-3 sm:gap-5">
               <Reveal>
-                <figure className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden aspect-[3/4] bg-gradient-to-br from-[#1F3A52] to-[#0D2438] border border-cream/10">
+                <figure className="relative rounded-sm overflow-hidden aspect-[3/4] bg-gradient-to-br from-[#1F3A52] to-[#0D2438] border border-cream/10">
                   <div className="absolute inset-0 noise opacity-20" />
                   <svg
                     viewBox="0 0 200 260"
@@ -111,7 +111,7 @@ export default function Solution() {
                       <circle key={i} cx={x} cy={y} r="2.5" fill="#C99668" />
                     ))}
                   </svg>
-                  <figcaption className="absolute top-4 start-4 inline-flex items-center gap-2 rounded-full bg-cream/10 backdrop-blur px-3 py-1.5 text-xs text-cream/80">
+                  <figcaption className="absolute top-4 start-4 inline-flex items-center gap-2 rounded-sm bg-cream/10 backdrop-blur px-3 py-1.5 text-xs text-cream/80">
                     <span className="h-1.5 w-1.5 rounded-full bg-clay" />
                     לפני
                   </figcaption>
@@ -119,10 +119,10 @@ export default function Solution() {
               </Reveal>
 
               <Reveal delay={150}>
-                <figure className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden aspect-[3/4] bg-gradient-to-br from-cream to-sand border border-cream/10">
+                <figure className="relative rounded-sm overflow-hidden aspect-[3/4] bg-gradient-to-br from-cream to-sand border border-cream/10">
                   <div className="absolute inset-0 noise opacity-25" />
                   <ProductIllustration className="absolute inset-x-0 bottom-0 h-[78%] w-full" />
-                  <figcaption className="absolute top-4 start-4 inline-flex items-center gap-2 rounded-full bg-ink/85 text-cream backdrop-blur px-3 py-1.5 text-xs">
+                  <figcaption className="absolute top-4 start-4 inline-flex items-center gap-2 rounded-sm bg-ink/85 text-cream backdrop-blur px-3 py-1.5 text-xs">
                     <span className="h-1.5 w-1.5 rounded-full bg-clay" />
                     אחרי
                   </figcaption>

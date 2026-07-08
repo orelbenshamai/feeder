@@ -104,7 +104,7 @@ export default function CheckoutPage() {
                 <circle cx="14" cy="17" r="1" fill="currentColor"/>
               </svg>
               סיכום הזמנה
-              <span className="rounded-full bg-clay px-2 py-0.5 text-[11px] font-bold text-white">
+              <span className="rounded-sm bg-clay px-2 py-0.5 text-[11px] font-bold text-white">
                 {items.reduce((s, i) => s + i.quantity, 0)}
               </span>
             </span>
@@ -124,7 +124,7 @@ export default function CheckoutPage() {
                 {items.map((item, i) => (
                   <li key={item.sku} className={`flex items-center gap-3 py-4 ${i > 0 ? "border-t border-white/10" : ""}`}>
                     <div className="relative shrink-0">
-                      <div className="h-14 w-14 overflow-hidden rounded-xl bg-cream/10">
+                      <div className="h-14 w-14 overflow-hidden rounded-sm bg-cream/10">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
@@ -285,7 +285,7 @@ export default function CheckoutPage() {
               </div>
 
               {submitState.status === "error" && (
-                <p className="mt-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <p className="mt-4 flex items-center gap-2 rounded-sm border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                   <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" fill="none" aria-hidden>
                     <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.4" />
                     <path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-ink px-6 py-4 text-base font-semibold tracking-wide text-cream shadow transition hover:bg-ink/85 active:scale-[0.98] disabled:opacity-50"
+                className="mt-6 flex w-full items-center justify-center gap-3 rounded-sm bg-ink px-6 py-4 text-base font-semibold tracking-wide text-cream shadow transition hover:bg-ink/85 active:scale-[0.98] disabled:opacity-50"
               >
                 {isLoading ? (
                   <>
@@ -350,7 +350,7 @@ export default function CheckoutPage() {
                 >
                   {/* Image tile — outer div unclipped so badge is always visible */}
                   <div className="relative shrink-0">
-                    <div className="h-[72px] w-[72px] overflow-hidden rounded-2xl bg-cream">
+                    <div className="h-[72px] w-[72px] overflow-hidden rounded-sm bg-cream">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
@@ -415,7 +415,7 @@ export default function CheckoutPage() {
  * Input must have placeholder=" " so :placeholder-shown works for the label animation.
  */
 const floatInputCls = [
-  "peer w-full rounded-xl border border-stone/20 bg-white",
+  "peer w-full rounded-sm border border-stone/20 bg-white",
   "px-4 pb-2.5 pt-7",                      // room for the floating label above the value
   "text-[15px] text-ink outline-none",
   "transition-[border-color,box-shadow]",

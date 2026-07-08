@@ -13,7 +13,7 @@ type VariantSizeSelectorProps = {
 
 function OutOfStockBadge() {
   return (
-    <span className="shrink-0 rounded-full bg-clay/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-clay">
+    <span className="shrink-0 rounded-sm bg-clay/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-clay">
       אזל המלאי
     </span>
   );
@@ -40,7 +40,7 @@ function DimensionRow({
       aria-checked={selected}
       onClick={() => onSelect(variant.id)}
       className={`
-        pdp-size-option group relative w-full rounded-xl border px-4 py-3 text-start transition-all duration-200
+        pdp-size-option group relative w-full rounded-sm border px-4 py-3 text-start transition-all duration-200
         ${
           selected
             ? "border-ink bg-ink text-cream shadow-[0_6px_20px_-8px_rgba(31,58,82,0.45)]"
@@ -135,7 +135,7 @@ export default function VariantSizeSelector({
               aria-checked={selected}
               onClick={() => onSelect(variant.id)}
               className={`
-                relative rounded-xl border transition-all duration-200 font-semibold tracking-wide
+                relative rounded-sm border transition-all duration-200 font-semibold tracking-wide
                 min-h-[48px] px-3 py-2 text-center ${compact ? "text-[15px]" : "text-[16px]"}
                 ${
                   selected

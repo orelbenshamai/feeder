@@ -185,7 +185,7 @@ function CardInner({
     return (
       <div
         dir="rtl"
-        className="flex h-full min-h-full w-full flex-col justify-center rounded-xl bg-cream px-4 py-3 text-center ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]"
+        className="flex h-full min-h-full w-full flex-col justify-center rounded-sm bg-cream px-4 py-3 text-center ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)]"
       >
         <p className="mobile-card-tag text-[clamp(0.95rem,4.2vw,1.1rem)] font-semibold uppercase tracking-[0.1em] text-stone/85">
           {label.tag}
@@ -203,12 +203,12 @@ function CardInner({
   return (
     <div
       dir="rtl"
-      className="group relative flex rounded-2xl text-right ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)] breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"
+      className="group relative flex rounded-sm text-right ring-1 ring-black/[0.06] shadow-[0_10px_36px_-14px_rgba(31,58,82,0.28)] breakdown-card-shell gap-4 bg-cream/95 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-cream hover:ring-clay/40 hover:shadow-[0_18px_44px_-14px_rgba(255,159,10,0.35)]"
     >
       <div className="relative flex shrink-0 flex-col items-center justify-center gap-1.5">
         <span
           aria-hidden
-          className="breakdown-card-icon grid place-items-center rounded-xl bg-clay/12 text-clay ring-1 ring-clay/20 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"
+          className="breakdown-card-icon grid place-items-center rounded-sm bg-clay/12 text-clay ring-1 ring-clay/20 transition group-hover:bg-clay group-hover:text-cream group-hover:shadow-[0_8px_18px_-6px_rgba(255,159,10,0.55)]"
         >
           {label.icon}
         </span>
@@ -621,7 +621,7 @@ function MobileHotspotOverlay({
 /* ─── Scroll hint (phases 1–4) / tap hint (phase 5) ───────────────────────── */
 
 const HINT_PILL_CLASS =
-  "inline-flex items-center gap-2 rounded-full border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/55 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-4 sm:py-2 sm:text-[13px]";
+  "inline-flex items-center gap-2 rounded-sm border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/55 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-4 sm:py-2 sm:text-[13px]";
 
 function ScrollHintPill() {
   return (

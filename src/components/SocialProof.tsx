@@ -119,7 +119,7 @@ export default function SocialProof() {
         <ul className="mt-12 sm:mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {reviews.map((r, i) => (
             <Reveal as="li" key={r.name} delay={(i % 3) * 80}>
-              <article className="h-full rounded-3xl border border-line/70 bg-cream p-6 sm:p-7 flex flex-col">
+              <article className="h-full rounded-sm border border-line/70 bg-cream p-6 sm:p-7 flex flex-col">
                 <Stars count={r.rating} />
                 <p className="mt-5 text-[15px] leading-relaxed text-ink/85">
                   ״{r.body}״

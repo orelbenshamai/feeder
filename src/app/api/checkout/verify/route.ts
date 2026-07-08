@@ -61,12 +61,7 @@ export async function POST(req: NextRequest) {
       parsed[safeDecode(pair.slice(0, eq))] = safeDecode(pair.slice(eq + 1));
     }
 
-    console.log("[/api/checkout/verify] Hyp raw response:", text);
-    console.log("[/api/checkout/verify] Hyp parsed:", parsed);
-
     const verifiedCCode = parsed.CCode ?? parsed.Ccode ?? parsed.ccode ?? parsed.Status ?? parsed.status;
-    console.log("[/api/checkout/verify] Hyp verify parsed:", JSON.stringify(parsed));
-    console.log("[/api/checkout/verify] verifiedCCode:", verifiedCCode, "| original CCode:", CCode, "| typeof:", typeof CCode);
 
     // CCode=0 in Hyp's redirect URL is the authoritative success signal.
     // Their verify API inconsistently omits CCode in the response, so we trust the redirect.
@@ -92,14 +87,26 @@ export async function POST(req: NextRequest) {
           { returnDocument: "after" }
         );
 
-        // 2. Decrement inventory for each purchased SKU
+        // 2. Decrement inventory for each purchased SKU (including bundle components)
         if (valid && orderDoc?.items?.length) {
-          await decrementInventory(
-            orderDoc.items.map((item: { sku: string; quantity: number }) => ({
-              sku: item.sku,
-              quantity: item.quantity,
-            }))
-          );
+          type OrderItem = {
+            sku: string;
+            quantity: number;
+            bundleComponents?: Array<{ sku: string }>;
+          };
+          const skusToDecrement: Array<{ sku: string; quantity: number }> = [];
+          for (const item of orderDoc.items as OrderItem[]) {
+            if (item.bundleComponents?.length) {
+              // Bundle: the main sku is a composite key not in inventory.
+              // Decrement each individual component instead.
+              for (const component of item.bundleComponents) {
+                skusToDecrement.push({ sku: component.sku, quantity: item.quantity });
+              }
+            } else {
+              skusToDecrement.push({ sku: item.sku, quantity: item.quantity });
+            }
+          }
+          await decrementInventory(skusToDecrement);
         }
 
         // 3. Send WhatsApp invoice to customer
@@ -119,7 +126,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log("[/api/checkout/verify] returning valid:", valid);
     return NextResponse.json({ valid, ccode: verifiedCCode ?? CCode });
   } catch (err) {
     console.error("[/api/checkout/verify]", err);

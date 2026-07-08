@@ -273,7 +273,7 @@ export default function ProductIntroduction() {
                   key={f.title}
                   variants={cardV}
                   className="
-                    group flex items-start gap-3 rounded-2xl border px-3.5 py-3
+                    group flex items-start gap-3 rounded-sm border px-3.5 py-3
                     transition-all duration-300
                     max-lg:w-full max-lg:border-r-[3px] max-lg:border-r-clay/45 max-lg:text-start
                     sm:gap-4 sm:px-4 sm:py-4
@@ -286,7 +286,7 @@ export default function ProductIntroduction() {
                   <span
                     className="
                       mt-0.5 grid h-9 w-9 shrink-0 place-items-center
-                      rounded-xl bg-clay/15 text-clay ring-1 ring-clay/25
+                      rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25
                       shadow-[0_4px_12px_-4px_rgba(255,159,10,0.30)]
                       transition-transform duration-300 group-hover:scale-105
                       sm:h-11 sm:w-11 lg:h-10 lg:w-10

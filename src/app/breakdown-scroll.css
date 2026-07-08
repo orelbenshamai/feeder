@@ -292,14 +292,14 @@
 }
 
 #product-breakdown .desktop-card .breakdown-card-shell {
-  border-radius: 1rem;
+  border-radius: 0.125rem;
   padding: 1em 1.05em;
 }
 
 #product-breakdown .desktop-card .breakdown-card-icon {
   width: 3.1em;
   height: 3.1em;
-  border-radius: 0.75rem;
+  border-radius: 0.125rem;
 }
 
 #product-breakdown .desktop-card .breakdown-card-icon svg {

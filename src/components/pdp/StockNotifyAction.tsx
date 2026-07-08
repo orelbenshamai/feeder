@@ -43,19 +43,19 @@ export default function StockNotifyAction({
         type="button"
         onClick={() => setOpen(true)}
         className={`
-          group relative inline-flex w-full items-center justify-between gap-4
-          overflow-hidden rounded-2xl px-6 py-4
-          bg-ink text-cream font-bold text-base
-          shadow-[0_8px_32px_-8px_rgba(31,58,82,0.55)]
-          hover:shadow-[0_12px_40px_-8px_rgba(31,58,82,0.7)] hover:scale-[1.015] active:scale-[0.985]
-          transition-all duration-300
+          group relative inline-flex w-full items-center justify-center gap-4
+          overflow-hidden rounded-sm px-6 py-4
+          border-2 border-cream/70 bg-transparent text-cream font-bold text-base
+          shadow-[0_16px_56px_rgba(0,0,0,0.4)]
+          hover:border-cream hover:bg-cream/[0.08] hover:shadow-[0_20px_64px_rgba(0,0,0,0.5)]
+          active:scale-[0.985] transition-all duration-300
           ${className}
         `}
       >
         {/* Shine sweep */}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.07] transition-transform duration-500 group-hover:translate-x-full"
+          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.06] transition-transform duration-500 group-hover:translate-x-full"
         />
         <span className="relative inline-flex items-center justify-center gap-2 w-full">
           <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="none" aria-hidden>
@@ -204,8 +204,8 @@ function StockNotifyModal({
         aria-labelledby={titleId}
         className="
           stock-notify-modal relative z-[101] w-full bg-cream
-          rounded-t-[2rem] shadow-[0_-24px_90px_-20px_rgba(31,58,82,0.45)] ring-1 ring-black/10
-          sm:max-w-[34rem] sm:rounded-[2rem] sm:shadow-[0_48px_96px_-32px_rgba(31,58,82,0.5)]
+          rounded-t-sm shadow-[0_-24px_90px_-20px_rgba(31,58,82,0.45)] ring-1 ring-black/10
+          sm:max-w-[34rem] sm:rounded-sm sm:shadow-[0_48px_96px_-32px_rgba(31,58,82,0.5)]
         "
       >
         <div className="flex justify-center pt-4 pb-2 sm:hidden">
@@ -260,7 +260,7 @@ function StockNotifyModal({
                     autoComplete="given-name"
                     placeholder="השם שלך"
                     dir="rtl"
-                    className="w-full rounded-2xl border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
+                    className="w-full rounded-sm border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
                   />
                 </label>
 
@@ -278,7 +278,7 @@ function StockNotifyModal({
                     pattern="[0-9\-\s+]{9,}"
                     required
                     dir="ltr"
-                    className="w-full rounded-2xl border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
+                    className="w-full rounded-sm border-2 border-line bg-cream px-5 py-4 text-start text-[17px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-4 focus:ring-clay/20 sm:py-[1.125rem] sm:text-[18px]"
                   />
                 </label>
 
@@ -313,7 +313,7 @@ function StockNotifyModal({
             </>
           ) : (
             <div className="py-8 text-center sm:py-12">
-              <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30 sm:h-[4.5rem] sm:w-[4.5rem]">
+              <div className="mx-auto grid h-16 w-16 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/30 sm:h-[4.5rem] sm:w-[4.5rem]">
                 <svg viewBox="0 0 24 24" className="h-8 w-8 sm:h-9 sm:w-9" fill="none" aria-hidden>
                   <path
                     d="M6 12.5 10 16.5 18 8.5"
@@ -333,7 +333,7 @@ function StockNotifyModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-8 inline-flex min-h-[3.25rem] items-center justify-center rounded-full bg-ink px-9 text-[15px] font-bold text-cream transition hover:bg-ink/90 sm:min-h-[3.5rem] sm:px-10 sm:text-base"
+                className="mt-8 inline-flex min-h-[3.25rem] items-center justify-center rounded-sm bg-ink px-9 text-[15px] font-bold text-cream transition hover:bg-ink/90 sm:min-h-[3.5rem] sm:px-10 sm:text-base"
               >
                 חזרה למוצר
               </button>

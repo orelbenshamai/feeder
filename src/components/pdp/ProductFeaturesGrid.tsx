@@ -64,7 +64,7 @@ function MobileFeaturesCarousel({ features }: { features: Product["features"] })
         }`}
         aria-hidden={!showScrollHint}
       >
-        <span className="pdp-features-scroll-hint inline-flex items-center gap-2 rounded-full border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/60 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm">
+        <span className="pdp-features-scroll-hint inline-flex items-center gap-2 rounded-sm border border-cream/12 bg-[#0D2438]/75 px-3.5 py-1.5 text-[12.5px] font-medium tracking-wide text-cream/60 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm">
           <span>החליקו לראות עוד תכונות</span>
           <svg
             viewBox="0 0 20 12"

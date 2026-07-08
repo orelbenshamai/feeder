@@ -166,7 +166,7 @@ export default function Features() {
             </Reveal>
           </div>
 
-          <ul className="lg:col-span-7 grid sm:grid-cols-2 gap-px bg-line/70 rounded-3xl overflow-hidden border border-line/70">
+          <ul className="lg:col-span-7 grid sm:grid-cols-2 gap-px bg-line/70 rounded-sm overflow-hidden border border-line/70">
             {features.map((f, i) => (
               <Reveal
                 as="li"

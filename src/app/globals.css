@@ -135,7 +135,7 @@ section[id]:not(#hero):not(#bundle) {
 .bundle-stage {
   position: relative;
   overflow: hidden;
-  border-radius: 1.5rem;
+  border-radius: 0.125rem;
   border: 1px solid rgba(247, 245, 240, 0.12);
   background: linear-gradient(
     165deg,
@@ -149,7 +149,7 @@ section[id]:not(#hero):not(#bundle) {
 .bundle-offer-card {
   border: 1px solid rgba(247, 245, 240, 0.14);
   border-top: 3px solid var(--color-clay);
-  border-radius: 1.5rem;
+  border-radius: 0.125rem;
   background: rgba(247, 245, 240, 0.06);
   box-shadow: 0 24px 70px -36px rgba(0, 0, 0, 0.55);
 }
@@ -247,7 +247,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border-radius: 9999px;
+  border-radius: 0.125rem;
   border: 1px solid rgba(255, 159, 10, 0.3);
   background-color: rgba(255, 159, 10, 0.08);
   padding: 0.375rem 0.875rem;
@@ -620,7 +620,7 @@ body {
   justify-content: center;
   gap: 0.5rem;
   min-height: 3.375rem;
-  border-radius: 9999px;
+  border-radius: 0.125rem;
   background: var(--color-clay);
   color: var(--color-ink);
   font-size: 15px;

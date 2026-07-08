@@ -46,7 +46,7 @@ export default function BundleUpsell({
       <label
         htmlFor={inputId}
         className={[
-          "pdp-bundle-upsell__card group block overflow-hidden rounded-2xl border-2 transition-all duration-300",
+          "pdp-bundle-upsell__card group block overflow-hidden rounded-sm border-2 transition-all duration-300",
           !addonAvailable
             ? "pointer-events-none cursor-not-allowed border-ink/10"
             : checked
@@ -93,7 +93,7 @@ export default function BundleUpsell({
 
           {savings > 0 && (
             <span
-              className={`pdp-bundle-upsell__savings shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold leading-none sm:text-xs ${
+              className={`pdp-bundle-upsell__savings shrink-0 rounded-sm px-2.5 py-1 text-[11px] font-bold leading-none sm:text-xs ${
                 checked
                   ? "bg-ink text-cream"
                   : "bg-clay text-ink shadow-[0_2px_10px_-2px_rgba(255,159,10,0.45)]"
@@ -174,7 +174,7 @@ export default function BundleUpsell({
           {/* ── CTA ──────────────────────────────────────────────────────── */}
           {addonAvailable && (
             <div
-              className={`pdp-bundle-upsell__cta mt-4 rounded-xl py-3 text-center text-[14px] font-bold tracking-wide transition-colors sm:text-[15px] ${
+              className={`pdp-bundle-upsell__cta mt-4 rounded-sm py-3 text-center text-[14px] font-bold tracking-wide transition-colors sm:text-[15px] ${
                 checked
                   ? "bg-clay/15 text-ink ring-1 ring-clay/35"
                   : "bg-ink text-cream group-hover:bg-ink/92"
@@ -186,8 +186,8 @@ export default function BundleUpsell({
 
           {/* OOS overlay — scoped to body only, banner above is untouched */}
           {!addonAvailable && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-b-2xl bg-cream/55 backdrop-blur-[1.5px]">
-              <span className="rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-cream shadow-lg">
+            <div className="absolute inset-0 flex items-center justify-center rounded-b-sm bg-cream/55 backdrop-blur-[1.5px]">
+              <span className="rounded-sm bg-ink px-5 py-2.5 text-sm font-bold text-cream shadow-lg">
                 אזל במלאי — לא זמין כרגע
               </span>
             </div>

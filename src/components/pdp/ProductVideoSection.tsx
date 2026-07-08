@@ -30,7 +30,7 @@ export default function ProductVideoSection({
         בפעולה
       </h2>
       <div className="mt-6 flex justify-center sm:mt-8">
-        <div className="w-full max-w-4xl overflow-hidden rounded-2xl ring-1 ring-cream/10 lg:max-w-5xl">
+        <div className="w-full max-w-4xl overflow-hidden rounded-sm ring-1 ring-cream/10 lg:max-w-5xl">
           <VimeoEmbed
             videoId={video.vimeoId}
             title={accessibleTitle}

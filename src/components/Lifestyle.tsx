@@ -82,12 +82,12 @@ export default function Lifestyle() {
 
         <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
           <Reveal className="md:col-span-7">
-            <figure className="relative aspect-[5/4] sm:aspect-[16/11] rounded-[28px] sm:rounded-[36px] overflow-hidden border border-line/70 bg-soft">
+            <figure className="relative aspect-[5/4] sm:aspect-[16/11] rounded-sm overflow-hidden border border-line/70 bg-soft">
               <KitchenScene />
               <div className="absolute inset-x-0 bottom-0 h-[42%]">
                 <ProductIllustration className="absolute inset-x-0 bottom-2 mx-auto h-full w-[60%]" />
               </div>
-              <figcaption className="absolute top-5 start-5 inline-flex items-center gap-2 rounded-full bg-cream/85 backdrop-blur px-3 py-1.5 text-xs text-ink/80 border border-line/70">
+              <figcaption className="absolute top-5 start-5 inline-flex items-center gap-2 rounded-sm bg-cream/85 backdrop-blur px-3 py-1.5 text-xs text-ink/80 border border-line/70">
                 <span className="h-1.5 w-1.5 rounded-full bg-clay" />
                 במטבח
               </figcaption>
@@ -95,7 +95,7 @@ export default function Lifestyle() {
           </Reveal>
 
           <Reveal className="md:col-span-5" delay={100}>
-            <figure className="relative aspect-[5/4] sm:aspect-[16/22] md:h-full rounded-[28px] sm:rounded-[36px] overflow-hidden border border-line/70 bg-sand">
+            <figure className="relative aspect-[5/4] sm:aspect-[16/22] md:h-full rounded-sm overflow-hidden border border-line/70 bg-sand">
               <LivingScene />
               <div className="absolute inset-x-0 bottom-0 h-[36%]">
                 <ProductIllustration
@@ -103,7 +103,7 @@ export default function Lifestyle() {
                   className="absolute inset-x-0 bottom-2 mx-auto h-full w-[55%]"
                 />
               </div>
-              <figcaption className="absolute top-5 start-5 inline-flex items-center gap-2 rounded-full bg-ink/85 text-cream backdrop-blur px-3 py-1.5 text-xs">
+              <figcaption className="absolute top-5 start-5 inline-flex items-center gap-2 rounded-sm bg-ink/85 text-cream backdrop-blur px-3 py-1.5 text-xs">
                 <span className="h-1.5 w-1.5 rounded-full bg-clay" />
                 בסלון
               </figcaption>
@@ -111,7 +111,7 @@ export default function Lifestyle() {
           </Reveal>
 
           <Reveal className="md:col-span-5" delay={50}>
-            <figure className="relative aspect-[5/4] rounded-[28px] sm:rounded-[36px] overflow-hidden border border-line/70 bg-gradient-to-br from-soft to-sand">
+            <figure className="relative aspect-[5/4] rounded-sm overflow-hidden border border-line/70 bg-gradient-to-br from-soft to-sand">
               <div className="absolute inset-0 noise opacity-25" />
               <div className="absolute inset-0 grid place-items-center p-10">
                 <p className="font-display text-3xl sm:text-4xl leading-tight tracking-tight text-ink/85 text-center">
@@ -124,7 +124,7 @@ export default function Lifestyle() {
           </Reveal>
 
           <Reveal className="md:col-span-7" delay={120}>
-            <figure className="relative aspect-[5/4] sm:aspect-[16/11] rounded-[28px] sm:rounded-[36px] overflow-hidden border border-line/70 bg-ink">
+            <figure className="relative aspect-[5/4] sm:aspect-[16/11] rounded-sm overflow-hidden border border-line/70 bg-ink">
               <div className="absolute inset-0 noise opacity-15" />
               <ProductIllustration
                 variant="dark"

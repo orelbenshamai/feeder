@@ -146,7 +146,7 @@ export default function ProductDetail({
             exit={{ opacity: 0, y: -20 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             style={{ left: "50%", transform: "translateX(-50%)" }}
-            className="fixed top-5 z-[9999] w-fit flex items-center gap-3 rounded-2xl bg-ink px-5 py-3.5 shadow-2xl"
+            className="fixed top-5 z-[9999] w-fit flex items-center gap-3 rounded-sm bg-ink px-5 py-3.5 shadow-2xl"
           >
             <span className="text-xl">⚠️</span>
             <p className="text-sm font-semibold text-cream whitespace-nowrap">
@@ -180,6 +180,9 @@ export default function ProductDetail({
             {/* Price */}
             <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
               <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
+              {compareAtPrice && compareAtPrice > totalPrice && (
+                <p className="text-base text-stone/50 line-through">{formatILS(compareAtPrice)}</p>
+              )}
             </div>
           </div>
 
@@ -224,31 +227,31 @@ export default function ProductDetail({
           ) : null}
 
           {/* Space so last section clears the floating bar */}
-          <div className="h-28" />
+          <div className="h-40" />
         </div>
       </div>
 
       {/* ── FLOATING BUY BAR ── */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-cream/95 backdrop-blur-md shadow-[0_-8px_40px_-8px_rgba(31,58,82,0.22)]">
-        <div className="mx-auto max-w-2xl px-4 pt-3 pb-[calc(0.65rem+env(safe-area-inset-bottom))] flex items-center gap-2.5">
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-ink shadow-[0_-8px_40px_-8px_rgba(0,0,0,0.4)]">
+        <div className="mx-auto max-w-2xl px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center gap-2.5">
 
           {/* Quantity stepper */}
-          <div className="flex items-center rounded-2xl border-2 border-ink/15 overflow-hidden shrink-0">
+          <div className="flex items-center rounded-sm border-2 border-cream/20 overflow-hidden shrink-0">
             <button
               type="button"
               onClick={() => setQty(q => Math.max(1, q - 1))}
-              className="px-3.5 py-3.5 text-lg font-bold text-ink/50 hover:text-ink hover:bg-ink/5 transition-colors leading-none"
+              className="px-3.5 py-3.5 text-lg font-bold text-cream/40 hover:text-cream hover:bg-cream/10 transition-colors leading-none"
               aria-label="הפחת כמות"
             >
               −
             </button>
-            <span className="w-8 text-center text-base font-bold text-ink select-none tabular-nums">
+            <span className="w-8 text-center text-base font-bold text-cream select-none tabular-nums">
               {qty}
             </span>
             <button
               type="button"
               onClick={() => setQty(q => q + 1)}
-              className="px-3.5 py-3.5 text-lg font-bold text-ink/50 hover:text-ink hover:bg-ink/5 transition-colors leading-none"
+              className="px-3.5 py-3.5 text-lg font-bold text-cream/40 hover:text-cream hover:bg-cream/10 transition-colors leading-none"
               aria-label="הוסף כמות"
             >
               +
@@ -272,11 +275,11 @@ export default function ProductDetail({
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-2xl border-2 border-ink/15 bg-cream px-3.5 py-3.5 text-[13px] font-bold text-ink hover:border-ink/30 hover:bg-ink/5 transition-all"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-sm border-2 border-cream/20 bg-transparent px-3.5 py-3.5 text-[13px] font-bold text-cream/70 hover:border-cream/40 hover:text-cream transition-all"
             aria-label="ערוך אפשרויות"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden>
-              <path d="M10 15V5M6 9l4-4 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-8.5 8.5-3.5.672.672-3.5 8.5-8.5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             ערוך
           </button>
@@ -317,6 +320,9 @@ export default function ProductDetail({
 
             <div className="pdp-d-price-row flex items-baseline gap-3">
               <p className="pdp-d-price font-display font-bold text-ink">{formatILS(totalPrice)}</p>
+              {compareAtPrice && compareAtPrice > totalPrice && (
+                <p className="text-base text-stone/50 line-through">{formatILS(compareAtPrice)}</p>
+              )}
             </div>
           </div>
 

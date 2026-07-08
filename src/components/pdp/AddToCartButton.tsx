@@ -14,6 +14,7 @@ import { getBundleAddonPrice } from "@/lib/bundles/pricing";
 import { trackAddToCart, trackAddToCartBundle } from "@/lib/pixel";
 import StockNotifyAction from "./StockNotifyAction";
 import { STOCK_MODE } from "@/lib/flags";
+import { useCart } from "@/context/CartContext";
 
 type AddToCartButtonProps = {
   product: Product;
@@ -39,6 +40,7 @@ export default function AddToCartButton({
   className = "",
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
+  const { openCart } = useCart();
   const outOfStock = STOCK_MODE === "notify" ? true : !variant.inStock;
   const isBundle = bundleEnabled && bundleUpsell;
 
@@ -117,6 +119,7 @@ export default function AddToCartButton({
     }
 
     setAdded(true);
+    openCart();
     window.setTimeout(() => setAdded(false), 2000);
   };
 
@@ -140,11 +143,11 @@ export default function AddToCartButton({
       onClick={handleClick}
       className={`
         group relative inline-flex w-full items-center justify-center gap-4
-        overflow-hidden rounded-2xl px-6 py-4
+        overflow-hidden rounded-sm px-6 py-4
         font-bold text-base transition-all duration-300
         ${added
-          ? "bg-clay/15 text-clay ring-2 ring-clay/40"
-          : "bg-ink text-cream shadow-[0_8px_32px_-8px_rgba(31,58,82,0.55)] hover:shadow-[0_12px_40px_-8px_rgba(31,58,82,0.7)] hover:scale-[1.015] active:scale-[0.985]"
+          ? "border-cream/40 bg-cream/10 text-cream/60 scale-[0.99]"
+          : "border-2 border-cream/70 bg-transparent text-cream shadow-[0_16px_56px_rgba(0,0,0,0.4)] hover:border-cream hover:bg-cream/[0.08] hover:shadow-[0_20px_64px_rgba(0,0,0,0.5)] active:scale-[0.985]"
         }
         ${className}
       `}
@@ -153,7 +156,7 @@ export default function AddToCartButton({
       {!added && (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.07] transition-transform duration-500 group-hover:translate-x-full"
+          className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.06] transition-transform duration-500 group-hover:translate-x-full"
         />
       )}
 

@@ -63,7 +63,6 @@ function CheckoutSuccessInner() {
   const [status, setStatus] = useState<Status>("verifying");
   const [order, setOrder] = useState<Order | null>(null);
   const [paidAmount, setPaidAmount] = useState<string | null>(null);
-  const [debugCcode, setDebugCcode] = useState<string | null>(null);
 
   // Break out of iframe if loaded inside Hyp's modal
   useEffect(() => {
@@ -130,9 +129,8 @@ function CheckoutSuccessInner() {
       body: JSON.stringify(payload),
     })
       .then(r => r.json())
-      .then(async (data: { valid?: boolean; error?: string; ccode?: string }) => {
+      .then(async (data: { valid?: boolean; error?: string }) => {
         if (data.error || !data.valid) {
-          if (data.ccode) setDebugCcode(data.ccode);
           setStatus(data.valid === false ? "failed" : "error");
           return;
         }
@@ -168,7 +166,7 @@ function CheckoutSuccessInner() {
 
           {/* Header */}
           <div className="mb-10 flex flex-col items-center text-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-clay/12 ring-1 ring-clay/25">
+            <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-clay/12 ring-1 ring-clay/25">
               <svg viewBox="0 0 24 24" className="h-8 w-8 text-clay" fill="none" aria-hidden>
                 <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -188,14 +186,14 @@ function CheckoutSuccessInner() {
             <div className="flex flex-col gap-5">
 
               {/* Items */}
-              <section className="rounded-2xl border border-line/60 bg-white overflow-hidden">
+              <section className="rounded-sm border border-line/60 bg-white overflow-hidden">
                 <div className="border-b border-line/60 px-5 py-3.5">
                   <h2 className="text-sm font-bold text-ink">פרטי ההזמנה</h2>
                 </div>
                 <ul className="divide-y divide-line/40">
                   {order.items.map((item, i) => (
                     <li key={i} className="flex items-center gap-4 px-5 py-4">
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-cream">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-cream">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
@@ -227,7 +225,7 @@ function CheckoutSuccessInner() {
               </section>
 
               {/* Delivery details */}
-              <section className="rounded-2xl border border-line/60 bg-white overflow-hidden">
+              <section className="rounded-sm border border-line/60 bg-white overflow-hidden">
                 <div className="border-b border-line/60 px-5 py-3.5">
                   <h2 className="text-sm font-bold text-ink">פרטי משלוח</h2>
                 </div>
@@ -241,14 +239,14 @@ function CheckoutSuccessInner() {
 
             </div>
           ) : (
-            <div className="rounded-2xl border border-line/60 bg-white px-6 py-8 text-center text-sm text-stone">
+            <div className="rounded-sm border border-line/60 bg-white px-6 py-8 text-center text-sm text-stone">
               טוען פרטי הזמנה…
             </div>
           )}
 
           <Link
             href="/"
-            className="mt-8 flex w-full items-center justify-center rounded-2xl bg-ink py-3.5 text-sm font-bold text-cream transition hover:bg-ink/90"
+            className="mt-8 flex w-full items-center justify-center rounded-sm bg-ink py-3.5 text-sm font-bold text-cream transition hover:bg-ink/90"
           >
             חזרה לחנות
           </Link>
@@ -257,7 +255,7 @@ function CheckoutSuccessInner() {
 
       {status === "failed" && (
         <div className="flex min-h-screen flex-col items-center justify-center gap-5 px-6 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+          <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-red-50">
             <svg viewBox="0 0 24 24" className="h-8 w-8 text-red-500" fill="none" aria-hidden>
               <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
@@ -265,7 +263,6 @@ function CheckoutSuccessInner() {
           <div>
             <h1 className="font-display text-2xl font-bold text-ink">התשלום נכשל</h1>
             <p className="mt-2 text-base text-stone">לא הצלחנו לעבד את התשלום. ניתן לנסות שוב.</p>
-            {debugCcode && <p className="mt-1 text-xs text-stone/50">CCode: {debugCcode}</p>}
           </div>
           <Link href="/checkout" className="mt-2 text-sm font-semibold text-clay hover:underline">
             חזרה לתשלום
@@ -275,7 +272,7 @@ function CheckoutSuccessInner() {
 
       {status === "error" && (
         <div className="flex min-h-screen flex-col items-center justify-center gap-5 px-6 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-stone/10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-stone/10">
             <svg viewBox="0 0 24 24" className="h-8 w-8 text-stone" fill="none" aria-hidden>
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/>
               <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>

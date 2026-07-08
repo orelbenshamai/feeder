@@ -137,7 +137,7 @@ export default function MatLandingSection() {
                 variants={cardV}
                 className="group flex items-start gap-3 border border-r-[3px] border-r-clay/45 border-cream/10 bg-cream/[0.06] px-3.5 py-3 transition-all duration-300 hover:border-clay/40"
               >
-                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
                   {f.icon}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -180,7 +180,7 @@ export default function MatLandingSection() {
                   variants={cardV}
                   className="group flex items-start gap-4 border border-cream/10 bg-cream/[0.06] px-5 py-4 transition-all duration-300 hover:border-clay/40 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.25)]"
                 >
-                  <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
+                  <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
                     {f.icon}
                   </span>
                   <div className="min-w-0 flex-1">

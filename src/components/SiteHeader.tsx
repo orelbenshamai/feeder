@@ -106,7 +106,7 @@ export default function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`group flex items-center gap-2 rounded-full border px-4 py-1.5 text-[16px] font-semibold transition-all ${
+                className={`group flex items-center gap-2 rounded-sm border px-4 py-1.5 text-[16px] font-semibold transition-all ${
                   isActive
                     ? "border-clay/60 bg-clay/15 text-clay"
                     : "border-cream/20 bg-cream/5 text-cream hover:border-clay/50 hover:bg-clay/12 hover:text-clay"
@@ -216,7 +216,7 @@ export default function SiteHeader() {
                         <Link
                           href={href}
                           onClick={() => setMenuOpen(false)}
-                          className={`group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all ${
+                          className={`group flex items-center gap-4 rounded-sm px-5 py-4 transition-all ${
                             isActive
                               ? "bg-clay/12 ring-1 ring-clay/30"
                               : "bg-cream/5 hover:bg-cream/8"
@@ -230,7 +230,7 @@ export default function SiteHeader() {
                               {price}
                             </span>
                           </span>
-                          <span className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-bold ${isActive ? "bg-clay text-ink" : "bg-clay/20 text-clay"}`}>
+                          <span className={`shrink-0 rounded-sm px-3 py-1.5 text-[12px] font-bold ${isActive ? "bg-clay text-ink" : "bg-clay/20 text-clay"}`}>
                             {action}
                           </span>
                         </Link>
@@ -253,7 +253,7 @@ export default function SiteHeader() {
                         <Link
                           href={href}
                           onClick={() => setMenuOpen(false)}
-                          className={`group flex items-center gap-3 rounded-xl px-3 py-3.5 transition-colors ${isActive ? "text-clay" : "text-cream/60 hover:text-cream"}`}
+                          className={`group flex items-center gap-3 rounded-sm px-3 py-3.5 transition-colors ${isActive ? "text-clay" : "text-cream/60 hover:text-cream"}`}
                         >
                           {icon}
                           <span className="font-semibold">{label}</span>
@@ -272,7 +272,7 @@ export default function SiteHeader() {
                 <button
                   type="button"
                   onClick={() => { openCart(); setMenuOpen(false); }}
-                  className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-clay px-6 py-4 text-base font-bold text-ink transition-opacity active:opacity-80"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-sm bg-clay px-6 py-4 text-base font-bold text-ink transition-opacity active:opacity-80"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
                     <path d="M6 7h15l-2 10H8L6 7Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
@@ -282,7 +282,7 @@ export default function SiteHeader() {
                   </svg>
                   עגלת הקניות
                   {cartCount > 0 ? (
-                    <span className="rounded-full bg-ink/20 px-2 py-0.5 text-sm">{cartCount}</span>
+                    <span className="rounded-sm bg-ink/20 px-2 py-0.5 text-sm">{cartCount}</span>
                   ) : null}
                 </button>
               </div>

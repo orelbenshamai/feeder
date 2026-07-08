@@ -180,8 +180,8 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
         aria-labelledby={titleId}
         className="
           relative z-[101] w-full bg-cream
-          rounded-t-3xl shadow-[0_-20px_80px_-24px_rgba(31,58,82,0.35)] ring-1 ring-black/10
-          sm:max-w-[26rem] sm:rounded-3xl sm:shadow-[0_40px_80px_-30px_rgba(31,58,82,0.45)]
+          rounded-sm shadow-[0_-20px_80px_-24px_rgba(31,58,82,0.35)] ring-1 ring-black/10
+          sm:max-w-[26rem] sm:rounded-sm sm:shadow-[0_40px_80px_-30px_rgba(31,58,82,0.45)]
         "
       >
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
@@ -248,7 +248,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                         />
                         <span
                           className="
-                            block rounded-xl border border-line bg-cream
+                            block rounded-sm border border-line bg-cream
                             px-2 py-2.5 text-center transition
                             hover:border-clay/50 hover:bg-clay/5
                             peer-checked:border-clay peer-checked:bg-clay/10
@@ -281,7 +281,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
                     pattern="[0-9\-\s+]{9,}"
                     required
                     dir="ltr"
-                    className="w-full rounded-xl border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
+                    className="w-full rounded-sm border border-line bg-cream px-4 py-3.5 text-start text-[15px] text-ink placeholder:text-stone/50 outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/25"
                   />
                 </label>
 
@@ -332,7 +332,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
             </>
           ) : (
             <div className="py-6 text-center sm:py-10">
-              <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-clay/15 text-clay ring-1 ring-clay/30">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/30">
                 <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden>
                   <path
                     d="M6 12.5 10 16.5 18 8.5"
@@ -352,7 +352,7 @@ function LeadCaptureModal({ onClose }: { onClose: () => void }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-full bg-ink px-7 text-[14px] font-semibold text-cream transition hover:bg-ink/90"
+                className="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-sm bg-ink px-7 text-[14px] font-semibold text-cream transition hover:bg-ink/90"
               >
                 חזרה לאתר
               </button>
