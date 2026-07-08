@@ -25,6 +25,7 @@ type AddToCartButtonProps = {
   quantity?: number;
   bundleEnabled?: boolean;
   bundleUpsell?: BundleUpsellOffer;
+  compact?: boolean;
   className?: string;
 };
 
@@ -37,6 +38,7 @@ export default function AddToCartButton({
   quantity = 1,
   bundleEnabled = false,
   bundleUpsell,
+  compact = false,
   className = "",
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
@@ -132,6 +134,7 @@ export default function AddToCartButton({
         colorLabel={colorLabel}
         bundleEnabled={bundleEnabled}
         bundleUpsell={bundleUpsell}
+        compact={compact}
         className={className}
       />
     );
@@ -142,9 +145,9 @@ export default function AddToCartButton({
       type="button"
       onClick={handleClick}
       className={`
-        group relative inline-flex w-full items-center justify-center gap-4
-        overflow-hidden rounded-sm px-6 py-4
-        font-bold text-base transition-all duration-300
+        group relative inline-flex w-full min-w-0 items-center justify-center
+        overflow-hidden rounded-sm font-bold transition-all duration-300
+        ${compact ? "px-3 text-[13px] whitespace-nowrap" : "gap-4 px-6 py-4 text-base"}
         ${added
           ? "border-cream/40 bg-cream/10 text-cream/60 scale-[0.99]"
           : "border-2 border-cream/70 bg-transparent text-cream shadow-[0_16px_56px_rgba(0,0,0,0.4)] hover:border-cream hover:bg-cream/[0.08] hover:shadow-[0_20px_64px_rgba(0,0,0,0.5)] active:scale-[0.985]"

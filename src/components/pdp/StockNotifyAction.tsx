@@ -23,6 +23,8 @@ type StockNotifyActionProps = {
   colorLabel: string;
   bundleEnabled?: boolean;
   bundleUpsell?: BundleUpsellOffer;
+  /** Tighter padding for the mobile floating bar — label stays full. */
+  compact?: boolean;
   className?: string;
 };
 
@@ -33,6 +35,7 @@ export default function StockNotifyAction({
   colorLabel,
   bundleEnabled = false,
   bundleUpsell,
+  compact = false,
   className = "",
 }: StockNotifyActionProps) {
   const [open, setOpen] = useState(false);
@@ -43,12 +46,15 @@ export default function StockNotifyAction({
         type="button"
         onClick={() => setOpen(true)}
         className={`
-          group relative inline-flex w-full items-center justify-center gap-4
-          overflow-hidden rounded-sm px-6 py-4
-          border-2 border-cream/70 bg-transparent text-cream font-bold text-base
-          shadow-[0_16px_56px_rgba(0,0,0,0.4)]
+          group relative inline-flex w-full min-w-0 items-center justify-center
+          overflow-hidden rounded-sm border-2 border-cream/70 bg-transparent
+          text-cream font-bold shadow-[0_16px_56px_rgba(0,0,0,0.4)]
           hover:border-cream hover:bg-cream/[0.08] hover:shadow-[0_20px_64px_rgba(0,0,0,0.5)]
           active:scale-[0.985] transition-all duration-300
+          ${compact
+            ? "gap-1.5 px-3 text-[13px] leading-tight whitespace-nowrap"
+            : "gap-4 px-6 py-4 text-base"
+          }
           ${className}
         `}
       >
@@ -57,16 +63,18 @@ export default function StockNotifyAction({
           aria-hidden
           className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/[0.06] transition-transform duration-500 group-hover:translate-x-full"
         />
-        <span className="relative inline-flex items-center justify-center gap-2 w-full">
-          <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0" fill="none" aria-hidden>
-            <path
-              d="M10 3a5 5 0 00-5 5v2.5L4 12.5h12l-1-2.5V8a5 5 0 00-5-5Z"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-            />
-            <path d="M8.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+        <span className="relative inline-flex min-w-0 items-center justify-center gap-1.5">
+          {!compact ? (
+            <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 fill-none" aria-hidden>
+              <path
+                d="M10 3a5 5 0 00-5 5v2.5L4 12.5h12l-1-2.5V8a5 5 0 00-5-5Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path d="M8.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          ) : null}
           הודיעו לי כשחוזר למלאי
         </span>
       </button>

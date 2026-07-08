@@ -24,10 +24,15 @@ export function usePinToVisualViewportBottom(
       if (!mq.matches) {
         node.style.top = "";
         node.style.bottom = "";
+        document.documentElement.style.removeProperty("--pdp-floating-bar-h");
         return;
       }
 
       const height = node.getBoundingClientRect().height;
+      document.documentElement.style.setProperty(
+        "--pdp-floating-bar-h",
+        `${height}px`,
+      );
       const top = vv.offsetTop + vv.height - height;
       node.style.top = `${Math.max(0, top)}px`;
       node.style.bottom = "auto";
@@ -51,6 +56,7 @@ export function usePinToVisualViewportBottom(
       ro.disconnect();
       node.style.top = "";
       node.style.bottom = "";
+      document.documentElement.style.removeProperty("--pdp-floating-bar-h");
     };
   }, [ref]);
 }

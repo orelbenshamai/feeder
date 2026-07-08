@@ -4,7 +4,7 @@ import { media } from "@/lib/media";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line/60 bg-cream text-stone">
+    <footer className="border-t border-line/60 bg-cream text-stone pb-[var(--pdp-floating-bar-h,0px)] lg:pb-0">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-10">
 

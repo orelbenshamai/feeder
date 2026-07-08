@@ -32,6 +32,7 @@ import AddToCartButton from "./AddToCartButton";
 import ProductCompanionLink from "./ProductCompanionLink";
 import { formatILS } from "@/lib/pricing";
 import { usePinToVisualViewportBottom } from "@/lib/use-pin-to-visual-viewport-bottom";
+import { STOCK_MODE } from "@/lib/flags";
 
 type ProductCompanionLinkConfig = {
   href: string;
@@ -129,6 +130,9 @@ export default function ProductDetail({
 
   const floatingBarRef = useRef<HTMLDivElement>(null);
   usePinToVisualViewportBottom(floatingBarRef);
+
+  const ctaOutOfStock =
+    STOCK_MODE === "notify" ? true : !selectedVariant.inStock;
 
   const totalPrice = bundleUpsell
     ? getBundleTotalPrice(selectedVariant, bundleUpsell, bundleEnabled)
@@ -230,8 +234,15 @@ export default function ProductDetail({
             </div>
           ) : null}
 
-          {/* Space so last section clears the floating bar */}
-          <div className="h-40" />
+          {/* Space so cream-section content clears the floating bar */}
+          <div
+            className="lg:hidden"
+            style={{
+              height:
+                "calc(var(--pdp-floating-bar-h, 5.5rem) + env(safe-area-inset-bottom, 0px))",
+            }}
+            aria-hidden
+          />
         </div>
       </div>
 
@@ -242,28 +253,30 @@ export default function ProductDetail({
       >
         <div className="mx-auto flex max-w-2xl items-center gap-2.5 px-4 py-3">
 
-          {/* Quantity stepper */}
-          <div className="flex items-center rounded-sm border-2 border-cream/20 overflow-hidden shrink-0">
-            <button
-              type="button"
-              onClick={() => setQty(q => Math.max(1, q - 1))}
-              className="px-3.5 py-3.5 text-lg font-bold text-cream/40 hover:text-cream hover:bg-cream/10 transition-colors leading-none"
-              aria-label="הפחת כמות"
-            >
-              −
-            </button>
-            <span className="w-8 text-center text-base font-bold text-cream select-none tabular-nums">
-              {qty}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQty(q => q + 1)}
-              className="px-3.5 py-3.5 text-lg font-bold text-cream/40 hover:text-cream hover:bg-cream/10 transition-colors leading-none"
-              aria-label="הוסף כמות"
-            >
-              +
-            </button>
-          </div>
+          {/* Quantity stepper — hidden when out of stock to keep the bar compact */}
+          {!ctaOutOfStock ? (
+            <div className="flex shrink-0 items-center overflow-hidden rounded-sm border-2 border-cream/20">
+              <button
+                type="button"
+                onClick={() => setQty(q => Math.max(1, q - 1))}
+                className="px-3.5 py-3.5 text-lg font-bold leading-none text-cream/40 transition-colors hover:bg-cream/10 hover:text-cream"
+                aria-label="הפחת כמות"
+              >
+                −
+              </button>
+              <span className="w-8 select-none text-center text-base font-bold tabular-nums text-cream">
+                {qty}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQty(q => q + 1)}
+                className="px-3.5 py-3.5 text-lg font-bold leading-none text-cream/40 transition-colors hover:bg-cream/10 hover:text-cream"
+                aria-label="הוסף כמות"
+              >
+                +
+              </button>
+            </div>
+          ) : null}
 
           {/* CTA */}
           <AddToCartButton
@@ -275,20 +288,25 @@ export default function ProductDetail({
             quantity={qty}
             bundleEnabled={bundleEnabled}
             bundleUpsell={bundleUpsell}
-            className="flex-1 py-3.5"
+            compact
+            className="min-w-0 flex-1 py-3.5"
           />
 
-          {/* Edit options pill */}
+          {/* Edit — icon only when out of stock to give the notify CTA full width */}
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="shrink-0 inline-flex items-center gap-1.5 rounded-sm border-2 border-cream/20 bg-transparent px-3.5 py-3.5 text-[13px] font-bold text-cream/70 hover:border-cream/40 hover:text-cream transition-all"
+            className={`shrink-0 inline-flex items-center justify-center rounded-sm border-2 border-cream/20 bg-transparent text-cream/70 transition-all hover:border-cream/40 hover:text-cream ${
+              ctaOutOfStock
+                ? "p-3.5"
+                : "gap-1.5 px-3.5 py-3.5 text-[13px] font-bold"
+            }`}
             aria-label="ערוך אפשרויות"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden>
               <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-8.5 8.5-3.5.672.672-3.5 8.5-8.5z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            ערוך
+            {!ctaOutOfStock ? "ערוך" : null}
           </button>
         </div>
       </div>
@@ -406,6 +424,16 @@ export default function ProductDetail({
           <ProductVideoSection video={product.video} category={product.category} />
         ) : null}
       </div>
+
+      {/* Clearance for fixed floating buy bar (mobile) */}
+      <div
+        className="shrink-0 lg:hidden"
+        style={{
+          height:
+            "calc(var(--pdp-floating-bar-h, 5.5rem) + env(safe-area-inset-bottom, 0px))",
+        }}
+        aria-hidden
+      />
     </div>
   );
 }
