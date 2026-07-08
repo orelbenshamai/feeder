@@ -38,6 +38,11 @@ function StickyReveal() {
         return header ? Math.round(header.getBoundingClientRect().height) : 44;
       };
 
+      const getScrollDistance = () => {
+        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+        return getStableViewportHeight() * (isMobile ? 2 : 4);
+      };
+
         ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
 
@@ -46,8 +51,8 @@ function StickyReveal() {
             trigger: section,
             // Pin exactly when section reaches the visible viewport below header.
             start: () => `top top+=${getHeaderH()}`,
-            // 4× viewport: before holds ~40%, transition ~25%, after holds ~35%
-            end: () => `+=${getStableViewportHeight() * 4}`,
+            // Mobile: 2× viewport; desktop: 4× viewport
+            end: () => `+=${getScrollDistance()}`,
             pin: true,
             pinSpacing: true,
             scrub: 1.8,
@@ -56,12 +61,13 @@ function StickyReveal() {
           },
         });
 
-        // 0.00 – 0.40: "before" is fully visible — user reads the "before" state
-        // 0.40 – 0.65: cross-fade transition (after in, before out)
-        // 0.65 – 1.00: "after" is fully visible — padded with addLabel so pin holds
-        tl.to(after,  { opacity: 1, duration: 0.25, ease: "power2.inOut" }, 0.40);
-        tl.to(before, { opacity: 0, duration: 0.25, ease: "power2.inOut" }, 0.43);
-        tl.addLabel("end", 1.00); // extends timeline so "after" holds until pin releases
+        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+        const revealAt = isMobile ? 0.25 : 0.40;
+
+        // Before holds, then cross-fade, then after holds until pin releases
+        tl.to(after,  { opacity: 1, duration: 0.25, ease: "power2.inOut" }, revealAt);
+        tl.to(before, { opacity: 0, duration: 0.25, ease: "power2.inOut" }, revealAt + 0.03);
+        tl.addLabel("end", 1.00);
       });
     })();
 
@@ -83,7 +89,7 @@ function StickyReveal() {
           <img
             src={media("messy-after_mobile.png")}
             alt="אחרי עמדת ההאכלה"
-            className="h-full w-full object-cover object-right lg:hidden"
+            className="h-full w-full object-cover object-[center_42%] lg:hidden"
             style={{ filter: "brightness(1.12) saturate(1.25) contrast(1.05)" }}
             draggable={false}
           />
@@ -110,7 +116,7 @@ function StickyReveal() {
           <img
             src={media("messy-before_mobile.png")}
             alt="לפני עמדת ההאכלה"
-            className="h-full w-full object-cover object-right lg:hidden"
+            className="h-full w-full object-cover object-[center_35%] lg:hidden"
             style={{ filter: "saturate(72%) brightness(0.92)" }}
             draggable={false}
           />

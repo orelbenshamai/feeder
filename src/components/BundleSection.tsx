@@ -82,12 +82,6 @@ export default function BundleSection() {
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-8 lg:hidden">
           {/* Titles */}
           <div className="flex w-full flex-col gap-3 text-center">
-            <motion.p
-              variants={headV}
-              className="mx-auto max-w-[20rem] text-balance text-[15px] font-semibold leading-[1.45] text-cream/85 sm:max-w-[22rem] sm:text-[16px]"
-            >
-              הפתרון המלא לפינת האכלה מסודרת ונקייה
-            </motion.p>
             <motion.h2 id="bundle-heading" variants={headV} className="section-h2 section-h2-on-dark text-[clamp(1.5rem,5.8vw,2.1rem)] leading-[1.1]">
               <strong className="font-bold">עמדת ההאכלה ומשטח ההאכלה</strong>{" "}
               של <MesudarWordmark />
@@ -131,17 +125,8 @@ export default function BundleSection() {
         {/* ── DESKTOP: eyebrow full-width, then two-column ── */}
         <div
           dir="ltr"
-          className="mx-auto hidden max-w-7xl lg:grid lg:grid-cols-[minmax(0,64%)_minmax(0,36%)] lg:items-center lg:gap-x-8 lg:gap-y-5 xl:gap-x-10"
+          className="mx-auto hidden max-w-7xl lg:grid lg:grid-cols-[minmax(0,64%)_minmax(0,36%)] lg:items-center lg:gap-x-8 xl:gap-x-10"
         >
-          <motion.div
-            variants={headV}
-            className="col-span-2 flex w-full justify-center"
-          >
-            <span className="section-eyebrow section-eyebrow-on-dark">
-              הפתרון המלא לפינת האכלה מסודרת ונקייה
-            </span>
-          </motion.div>
-
           {/* Image — left */}
           <motion.div variants={imgV} className="flex items-center justify-center self-center">
             <div className="flex w-full max-w-none items-center justify-center py-2">
