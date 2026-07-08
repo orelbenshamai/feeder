@@ -31,7 +31,6 @@ import BundleUpsell from "./BundleUpsell";
 import AddToCartButton from "./AddToCartButton";
 import ProductCompanionLink from "./ProductCompanionLink";
 import { formatILS } from "@/lib/pricing";
-import { usePinToVisualViewportBottom } from "@/lib/use-pin-to-visual-viewport-bottom";
 import { STOCK_MODE } from "@/lib/flags";
 
 type ProductCompanionLinkConfig = {
@@ -82,6 +81,13 @@ export default function ProductDetail({
 
   const desktopPanelRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    document.documentElement.dataset.pdp = "";
+    return () => {
+      delete document.documentElement.dataset.pdp;
+    };
+  }, []);
+
   const handleSelectSize = (sizeId: ProductSizeId) => {
     setSelectedSizeId(sizeId);
     setSelectedColorId((current) => resolveColorForSize(product, sizeId, current));
@@ -127,9 +133,6 @@ export default function ProductDetail({
     product.colors.find((color) => color.id === selectedColorId)?.label ??
     product.colors[0]?.label ??
     "";
-
-  const floatingBarRef = useRef<HTMLDivElement>(null);
-  usePinToVisualViewportBottom(floatingBarRef);
 
   const ctaOutOfStock =
     STOCK_MODE === "notify" ? true : !selectedVariant.inStock;
@@ -235,22 +238,12 @@ export default function ProductDetail({
           ) : null}
 
           {/* Space so cream-section content clears the floating bar */}
-          <div
-            className="lg:hidden"
-            style={{
-              height:
-                "calc(var(--pdp-floating-bar-h, 5.5rem) + env(safe-area-inset-bottom, 0px))",
-            }}
-            aria-hidden
-          />
+          <div className="h-pdp-floating-clearance lg:hidden" aria-hidden />
         </div>
       </div>
 
       {/* ── FLOATING BUY BAR ── */}
-      <div
-        ref={floatingBarRef}
-        className="fixed inset-x-0 bottom-0 z-40 bg-ink shadow-[0_-8px_40px_-8px_rgba(0,0,0,0.4)] lg:bottom-0"
-      >
+      <div className="fixed inset-x-0 bottom-0 z-40 bg-ink shadow-[0_-8px_40px_-8px_rgba(0,0,0,0.4)]">
         <div className="mx-auto flex max-w-2xl items-center gap-2.5 px-4 py-3">
 
           {/* Quantity stepper — hidden when out of stock to keep the bar compact */}
@@ -426,14 +419,7 @@ export default function ProductDetail({
       </div>
 
       {/* Clearance for fixed floating buy bar (mobile) */}
-      <div
-        className="shrink-0 lg:hidden"
-        style={{
-          height:
-            "calc(var(--pdp-floating-bar-h, 5.5rem) + env(safe-area-inset-bottom, 0px))",
-        }}
-        aria-hidden
-      />
+      <div className="h-pdp-floating-clearance shrink-0 lg:hidden" aria-hidden />
     </div>
   );
 }

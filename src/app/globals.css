@@ -26,6 +26,8 @@
   /* Fallback until layout head script runs; then --ios-vh becomes a fixed px height. */
   --ios-vh: 100svh;
   --screen-h: 100svh;
+  /* Fixed clearance for PDP floating buy bar — never tied to visualViewport. */
+  --pdp-floating-bar-clearance: 5.5rem;
 }
 
 @media (min-width: 640px) {
@@ -43,6 +45,10 @@
 @media (max-width: 1023px) {
   :root {
     --screen-h: var(--ios-vh);
+  }
+
+  html[data-pdp] footer {
+    padding-bottom: var(--pdp-floating-bar-clearance);
   }
 }
 
@@ -68,6 +74,10 @@ html.scroll-locked body {
 
   .max-h-screen-stable {
     max-height: var(--screen-h);
+  }
+
+  .h-pdp-floating-clearance {
+    height: var(--pdp-floating-bar-clearance);
   }
 
   .h-below-header {
