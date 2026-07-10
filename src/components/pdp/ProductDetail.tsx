@@ -145,6 +145,42 @@ export default function ProductDetail({
     ? getBundleCompareAtPrice(selectedVariant, bundleUpsell, bundleEnabled)
     : selectedVariant.compareAtPrice;
 
+  const titleText = (
+    <>
+      {bundleEnabled && bundleUpsell?.bundleProductCategory
+        ? bundleUpsell.bundleProductCategory
+        : product.category}{" "}
+      <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>
+        MESUDAR
+      </span>
+    </>
+  );
+
+  const priceBlock = (
+    <span className="shrink-0 text-start leading-none">
+      <span className="product-price pdp-d-price block text-2xl sm:text-[1.65rem]">
+        {formatILS(totalPrice)}
+      </span>
+      {compareAtPrice && compareAtPrice > totalPrice ? (
+        <span className="mt-0.5 block text-sm text-stone/50 line-through sm:text-base">
+          {formatILS(compareAtPrice)}
+        </span>
+      ) : null}
+    </span>
+  );
+
+  const titlePriceHeader = (className: string) => (
+    <h1
+      className={`flex w-full flex-wrap items-baseline justify-start gap-x-2.5 gap-y-1 font-display font-bold leading-snug tracking-tight text-ink ${className}`}
+    >
+      <span className="text-start">{titleText}</span>
+      <span aria-hidden className="text-base font-normal text-line/80">
+        |
+      </span>
+      {priceBlock}
+    </h1>
+  );
+
   return (
     <div>
       {/* ── BUNDLE OUT-OF-STOCK TOAST ────────────────────────────────────── */}
@@ -180,21 +216,7 @@ export default function ProductDetail({
         <div className="bg-cream -mt-px">
           {/* Above-the-fold hook */}
           <div className="pdp-mobile-section">
-            {/* H1 */}
-            <h1 className="font-display text-2xl font-bold leading-snug tracking-tight text-ink sm:text-3xl">
-              {bundleEnabled && bundleUpsell?.bundleProductCategory
-                ? bundleUpsell.bundleProductCategory
-                : product.category}{" "}
-              <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
-            </h1>
-
-            {/* Price */}
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-              <p className="font-display text-3xl font-bold text-ink">{formatILS(totalPrice)}</p>
-              {compareAtPrice && compareAtPrice > totalPrice && (
-                <p className="text-base text-stone/50 line-through">{formatILS(compareAtPrice)}</p>
-              )}
-            </div>
+            {titlePriceHeader("text-xl sm:text-2xl")}
           </div>
 
           {/* Selectors */}
@@ -330,19 +352,7 @@ export default function ProductDetail({
         >
           {/* Header — title + price */}
           <div className="pdp-d-header shrink-0">
-            <h1 className="pdp-d-title font-display font-bold leading-snug tracking-tight text-ink">
-              {bundleEnabled && bundleUpsell?.bundleProductCategory
-                ? bundleUpsell.bundleProductCategory
-                : product.category}{" "}
-              <span className="text-clay" style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span>
-            </h1>
-
-            <div className="pdp-d-price-row flex items-baseline gap-3">
-              <p className="pdp-d-price font-display font-bold text-ink">{formatILS(totalPrice)}</p>
-              {compareAtPrice && compareAtPrice > totalPrice && (
-                <p className="text-base text-stone/50 line-through">{formatILS(compareAtPrice)}</p>
-              )}
-            </div>
+            {titlePriceHeader("pdp-d-title")}
           </div>
 
           {/* Selectors */}

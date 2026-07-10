@@ -698,9 +698,6 @@ body {
   }
 
   /* Price row gap + price font */
-  .pdp-d-price-row {
-    margin-top: clamp(0.2rem, 0.6svh, 0.5rem);
-  }
   .pdp-d-price {
     font-size: clamp(1.125rem, 3svh, 1.875rem);
   }
