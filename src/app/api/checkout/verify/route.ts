@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import getClientPromise from "@/lib/mongodb";
 import { decrementInventory } from "@/lib/inventory";
+import { sendManagerOrderNotification } from "@/lib/email";
 import { sendWhatsApp, buildInvoiceMessage } from "@/lib/whatsapp";
 
 const HYP_HOST = "https://pay.hyp.co.il/p/";
@@ -119,6 +120,19 @@ export async function POST(req: NextRequest) {
           });
           sendWhatsApp(orderDoc.contact.phone, message).catch((e) =>
             console.error("[/api/checkout/verify] WhatsApp invoice failed:", e)
+          );
+        }
+
+        // 4. Email order notification to business manager
+        if (valid && orderDoc) {
+          sendManagerOrderNotification({
+            orderId: orderDoc.orderId,
+            items: orderDoc.items ?? [],
+            paidAmount: Number(Amount ?? orderDoc.totalPrice ?? 0),
+            contact: orderDoc.contact,
+            hypTransactionId: Id,
+          }).catch((e) =>
+            console.error("[/api/checkout/verify] Manager email failed:", e)
           );
         }
       } catch (dbErr) {

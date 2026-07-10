@@ -40,7 +40,8 @@ function StickyReveal() {
 
       const getScrollDistance = () => {
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        return getStableViewportHeight() * (isMobile ? 2 : 4);
+        // Extra scroll room on mobile so the "after" state stays visible long enough to land.
+        return getStableViewportHeight() * (isMobile ? 3.5 : 4);
       };
 
         ctx = gsap.context(() => {
@@ -51,23 +52,22 @@ function StickyReveal() {
             trigger: section,
             // Pin exactly when section reaches the visible viewport below header.
             start: () => `top top+=${getHeaderH()}`,
-            // Mobile: 2× viewport; desktop: 4× viewport
             end: () => `+=${getScrollDistance()}`,
             pin: true,
             pinSpacing: true,
-            scrub: 1.8,
+            scrub: 1.2,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        const revealAt = isMobile ? 0.25 : 0.40;
+        // Quick crossfade early in the timeline; ~70% of scroll stays on "after".
+        const revealAt = isMobile ? 0.15 : 0.30;
+        const fadeDuration = 0.15;
 
-        // Before holds, then cross-fade, then after holds until pin releases
-        tl.to(after,  { opacity: 1, duration: 0.25, ease: "power2.inOut" }, revealAt);
-        tl.to(before, { opacity: 0, duration: 0.25, ease: "power2.inOut" }, revealAt + 0.03);
-        tl.addLabel("end", 1.00);
+        tl.to(after,  { opacity: 1, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
+        tl.to(before, { opacity: 0, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
       });
     })();
 
