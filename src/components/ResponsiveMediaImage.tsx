@@ -24,18 +24,8 @@ export default function ResponsiveMediaImage({
   ...props
 }: ResponsiveMediaImageProps) {
   const isLgUp = useIsLgUp();
-
-  if (isLgUp === null) {
-    return (
-      <div
-        className={`bg-ink ${fill ? "absolute inset-0" : ""} ${className}`.trim()}
-        aria-hidden
-      />
-    );
-  }
-
-  const src = isLgUp ? desktopSrc : mobileSrc;
-  const variantClass = isLgUp ? desktopClassName : mobileClassName;
+  const src = isLgUp === true ? desktopSrc : mobileSrc;
+  const variantClass = isLgUp === true ? desktopClassName : mobileClassName;
 
   return (
     <MediaImage

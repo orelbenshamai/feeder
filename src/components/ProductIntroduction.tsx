@@ -3,6 +3,7 @@ import { media } from "@/lib/media";
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useIsLgUp } from "@/lib/use-media-query";
 
 /* ── Easing ──────────────────────────────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -169,6 +170,8 @@ const features: Feature[] = [
 export default function ProductIntroduction() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px 0px" });
+  const isLgUp = useIsLgUp();
+  const desktop = isLgUp === true;
 
   return (
     <section
@@ -198,7 +201,8 @@ export default function ProductIntroduction() {
           "
         >
           {/* Mobile: image first — scaled up inside a fixed layout slot */}
-          <motion.div variants={imgV} className="w-full lg:hidden">
+          {!desktop && (
+          <motion.div variants={imgV} className="w-full">
             <div className="mx-auto aspect-[1920/1088] max-h-[calc(var(--screen-h)*0.38)] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -209,11 +213,13 @@ export default function ProductIntroduction() {
               />
             </div>
           </motion.div>
+          )}
 
           {/* Product — LEFT on desktop */}
+          {desktop && (
           <motion.div
             variants={imgV}
-            className="hidden min-w-0 overflow-visible lg:col-start-1 lg:row-start-1 lg:flex lg:items-center lg:justify-start"
+            className="min-w-0 overflow-visible lg:col-start-1 lg:row-start-1 lg:flex lg:items-center lg:justify-start"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -227,6 +233,7 @@ export default function ProductIntroduction() {
               draggable={false}
             />
           </motion.div>
+          )}
 
           {/* Copy — RIGHT on desktop */}
           <div dir="rtl" className="flex min-w-0 flex-col gap-3 max-lg:items-stretch max-lg:text-start sm:gap-6 lg:col-start-2 lg:row-start-1 lg:gap-5 lg:items-stretch lg:text-start">

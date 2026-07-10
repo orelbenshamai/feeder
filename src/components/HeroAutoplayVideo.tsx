@@ -28,17 +28,26 @@ export default function HeroAutoplayVideo({ src, poster, className }: Props) {
       });
     };
 
-    kick();
+    const onPlaying = () => {
+      el.removeAttribute("poster");
+    };
 
     const onVis = () => {
       if (document.visibilityState === "visible") kick();
     };
 
-    el.addEventListener("canplay", kick, { once: true });
+    kick();
+    el.addEventListener("loadedmetadata", kick);
+    el.addEventListener("loadeddata", kick);
+    el.addEventListener("canplay", kick);
+    el.addEventListener("playing", onPlaying, { once: true });
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
+      el.removeEventListener("loadedmetadata", kick);
+      el.removeEventListener("loadeddata", kick);
       el.removeEventListener("canplay", kick);
+      el.removeEventListener("playing", onPlaying);
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [src]);
@@ -47,19 +56,18 @@ export default function HeroAutoplayVideo({ src, poster, className }: Props) {
     <video
       ref={ref}
       className={className}
+      src={src}
       autoPlay
       muted
       playsInline
       loop
-      preload="metadata"
+      preload="auto"
       poster={poster}
       width={1920}
       height={1080}
       disablePictureInPicture
       disableRemotePlayback
       aria-hidden
-    >
-      <source src={src} type="video/mp4" />
-    </video>
+    />
   );
 }

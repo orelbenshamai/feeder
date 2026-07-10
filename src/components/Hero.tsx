@@ -1,5 +1,5 @@
 import { media } from "@/lib/media";
-import HeroAutoplayVideo from "./HeroAutoplayVideo";
+import HeroVideos from "./HeroVideos";
 import GhostCTAButton from "./GhostCTAButton";
 
 const HERO_VIDEO_MOBILE = media("media_mesudar_main_video_compressed_mobile.mp4");
@@ -42,15 +42,11 @@ export default function Hero() {
         סרטון לולאה: כלב אוכל בעמדת ההאכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      <HeroAutoplayVideo
-        src={HERO_VIDEO_MOBILE}
-        poster={HERO_POSTER_MOBILE}
-        className="absolute inset-x-0 top-0 z-0 h-[calc(var(--screen-h)*0.52)] w-full object-cover object-[center_38%] md:hidden"
-      />
-      <HeroAutoplayVideo
-        src={HERO_VIDEO_DESKTOP}
-        poster={HERO_POSTER_DESKTOP}
-        className="absolute inset-0 z-0 hidden h-full w-full object-cover object-[center_50%] md:block"
+      <HeroVideos
+        mobileSrc={HERO_VIDEO_MOBILE}
+        desktopSrc={HERO_VIDEO_DESKTOP}
+        mobilePoster={HERO_POSTER_MOBILE}
+        desktopPoster={HERO_POSTER_DESKTOP}
       />
 
       {/* ── PHONE — copy panel below video band ─────────────────────────── */}

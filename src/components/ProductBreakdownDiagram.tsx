@@ -3,6 +3,7 @@ import { media } from "@/lib/media";
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import BreakdownScrollSync from "./BreakdownScrollSync";
+import { useIsLgUp } from "@/lib/use-media-query";
 
 /* ─── Data ────────────────────────────────────────────────────────────────── */
 
@@ -784,6 +785,8 @@ export default function ProductBreakdownDiagram() {
   const [mobilePhase, setMobilePhase] = useState(0);
   const [mobileSelected, setMobileSelected] = useState(4);
   const [showTapHint, setShowTapHint] = useState(true);
+  const isLgUp = useIsLgUp();
+  const desktop = isLgUp === true;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -851,7 +854,8 @@ export default function ProductBreakdownDiagram() {
 
       <div className="sticky top-[var(--site-header-h)] flex h-below-header flex-col overflow-hidden">
         <div className="relative mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-4 py-3 sm:px-8 max-lg:px-1 max-lg:py-0">
-          <div className="relative flex h-full min-h-0 flex-1 flex-col lg:hidden">
+          {!desktop && (
+          <div className="relative flex h-full min-h-0 flex-1 flex-col">
             <div className="mobile-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-4 text-center">
               <p className="text-center font-display text-[clamp(2rem,8vw,2.65rem)] font-bold leading-[1.05] tracking-tight text-cream">
                 איך עמדת ההאכלה של{" "}
@@ -949,8 +953,10 @@ export default function ProductBreakdownDiagram() {
               </div>
             </div>
           </div>
+          )}
 
-          <div className="relative hidden h-full min-h-0 flex-1 lg:block">
+          {desktop && (
+          <div className="relative h-full min-h-0 flex-1">
             <div className="desktop-intro breakdown-layer z-30 flex h-full flex-col items-center justify-center px-6 text-center">
               <p className="text-center font-display text-[clamp(1.9rem,3.6vw,3rem)] font-bold leading-tight tracking-tight text-cream">
                 איך עמדת ההאכלה של{" "}
@@ -983,8 +989,4 @@ export default function ProductBreakdownDiagram() {
               ? <DesktopScrollProgress step={mobilePhase} />
               : <DesktopScrollHint />}
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+          )}

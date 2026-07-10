@@ -4,6 +4,7 @@ import { media } from "@/lib/media";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const DURATION = 0.7;
@@ -83,6 +84,98 @@ const features: Feature[] = [
 const MAT_IMAGE = media("mat_gray_1.png");
 const MAT_ALT = "משטח ההאכלה מסודר — הגנה על הרצפה סביב קערות ההאכלה";
 
+function MatLandingMobile() {
+  return (
+    <div className="mx-auto flex max-w-xl flex-col items-center gap-10">
+      <div className="flex w-full flex-col gap-3 text-start">
+        <motion.h2
+          id="mat-landing-heading"
+          variants={headV}
+          className="section-h2 section-h2-on-dark text-[clamp(1.5rem,5.8vw,2.1rem)] leading-[1.1]"
+        >
+          משטח ההאכלה{" "}
+          <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>
+        </motion.h2>
+        <motion.p variants={headV} className="section-lead section-lead-on-dark text-[14px] leading-[1.6]">
+          סופג מים שנשפכים ורטיבות מתחת לעמדה — או לכל קערות בבית.
+        </motion.p>
+      </div>
+
+      <motion.div variants={imgV} className="flex w-full justify-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={MAT_IMAGE}
+          alt={MAT_ALT}
+          className="max-h-[calc(var(--screen-h)*0.4)] w-auto max-w-full select-none object-contain"
+          draggable={false}
+        />
+      </motion.div>
+
+      <motion.ul variants={containerV} className="w-full flex flex-col gap-2">
+        {features.map((f) => (
+          <motion.li
+            key={f.title}
+            variants={cardV}
+            className="group flex items-start gap-3 border border-r-[3px] border-r-clay/45 border-cream/10 bg-cream/[0.06] px-3.5 py-3 transition-all duration-300 hover:border-clay/40"
+          >
+            <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
+              {f.icon}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-[15px] font-semibold leading-snug text-cream">{f.title}</p>
+              <p className="mt-1 text-[13px] leading-snug text-cream/60">{f.shortDesc}</p>
+            </div>
+          </motion.li>
+        ))}
+      </motion.ul>
+    </div>
+  );
+}
+
+function MatLandingDesktop() {
+  return (
+    <div
+      dir="ltr"
+      className="mx-auto max-w-7xl lg:grid lg:grid-cols-[minmax(0,58%)_minmax(0,42%)] lg:items-center lg:gap-10 xl:gap-12"
+    >
+      <motion.div variants={imgV} className="flex items-center justify-center">
+        <div className="flex h-full w-full max-h-[min(72vh,calc(100svh-var(--site-header-h)-3rem))] items-center justify-center overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={MAT_IMAGE} alt={MAT_ALT} className="max-h-full max-w-full select-none object-contain object-center" draggable={false} />
+        </div>
+      </motion.div>
+
+      <div dir="rtl" className="relative z-10 flex min-w-0 flex-col gap-5 text-start">
+        <motion.h2 id="mat-landing-heading" variants={headV} className="section-h2 section-h2-on-dark text-[2.95rem] leading-[1.05]">
+          משטח ההאכלה{" "}
+          <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>
+        </motion.h2>
+        <motion.p variants={headV} className="section-lead section-lead-on-dark max-w-md text-[17px] leading-[1.7]">
+          מגש מסודר מונח מתחת לעמדה וסופג מים שנשפכים, התזות ורטיבות לפני שהן
+          מגיעות לרצפה — השלמה טבעית לערכה המלאה, או פתרון עצמאי לכל סוג קערות.
+        </motion.p>
+        <motion.ul variants={containerV} className="flex w-full flex-col gap-3">
+          {features.map((f) => (
+            <motion.li
+              key={f.title}
+              variants={cardV}
+              className="group flex items-start gap-4 border border-cream/10 bg-cream/[0.06] px-5 py-4 transition-all duration-300 hover:border-clay/40 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.25)]"
+            >
+              <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
+                {f.icon}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-[17px] font-semibold leading-snug text-cream">{f.title}</p>
+                <p className="mt-1 text-[14px] leading-[1.65] text-cream/60">{f.desc}</p>
+              </div>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </div>
+    </div>
+  );
+}
+
 export default function MatLandingSection() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px 0px" });
@@ -101,97 +194,7 @@ export default function MatLandingSection() {
         animate={inView ? "visible" : "hidden"}
         className="w-full px-4 sm:px-8 lg:px-[5vw]"
       >
-        {/* ── MOBILE: vertical stack ── */}
-        <div className="mx-auto flex max-w-xl flex-col items-center gap-10 lg:hidden">
-          {/* Titles */}
-          <div className="flex w-full flex-col gap-3 text-start">
-            <motion.h2
-              id="mat-landing-heading"
-              variants={headV}
-              className="section-h2 section-h2-on-dark text-[clamp(1.5rem,5.8vw,2.1rem)] leading-[1.1]"
-            >
-              משטח ההאכלה{" "}
-              <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>
-            </motion.h2>
-            <motion.p variants={headV} className="section-lead section-lead-on-dark text-[14px] leading-[1.6]">
-              סופג מים שנשפכים ורטיבות מתחת לעמדה — או לכל קערות בבית.
-            </motion.p>
-          </div>
-
-          {/* Image */}
-          <motion.div variants={imgV} className="flex w-full justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={MAT_IMAGE}
-              alt={MAT_ALT}
-              className="max-h-[calc(var(--screen-h)*0.4)] w-auto max-w-full select-none object-contain"
-              draggable={false}
-            />
-          </motion.div>
-
-          {/* Feature cards */}
-          <motion.ul variants={containerV} className="w-full flex flex-col gap-2">
-            {features.map((f) => (
-              <motion.li
-                key={f.title}
-                variants={cardV}
-                className="group flex items-start gap-3 border border-r-[3px] border-r-clay/45 border-cream/10 bg-cream/[0.06] px-3.5 py-3 transition-all duration-300 hover:border-clay/40"
-              >
-                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
-                  {f.icon}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-display text-[15px] font-semibold leading-snug text-cream">{f.title}</p>
-                  <p className="mt-1 text-[13px] leading-snug text-cream/60">{f.shortDesc}</p>
-                </div>
-              </motion.li>
-            ))}
-          </motion.ul>
-
-        </div>
-
-        {/* ── DESKTOP: two-column ── */}
-        <div
-          dir="ltr"
-          className="mx-auto hidden max-w-7xl lg:grid lg:grid-cols-[minmax(0,58%)_minmax(0,42%)] lg:items-center lg:gap-10 xl:gap-12"
-        >
-          {/* Image — left */}
-          <motion.div variants={imgV} className="flex items-center justify-center">
-            <div className="flex h-full w-full max-h-[min(72vh,calc(100svh-var(--site-header-h)-3rem))] items-center justify-center overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={MAT_IMAGE} alt={MAT_ALT} className="max-h-full max-w-full select-none object-contain object-center" draggable={false} />
-            </div>
-          </motion.div>
-
-          {/* Copy — right */}
-          <div dir="rtl" className="relative z-10 flex min-w-0 flex-col gap-5 text-start">
-            <motion.h2 id="mat-landing-heading" variants={headV} className="section-h2 section-h2-on-dark text-[2.95rem] leading-[1.05]">
-              משטח ההאכלה{" "}
-              <span style={{ fontFamily: "var(--font-nunito)", fontWeight: 800, color: "#FF9F0A" }}>MESUDAR</span>
-            </motion.h2>
-            <motion.p variants={headV} className="section-lead section-lead-on-dark max-w-md text-[17px] leading-[1.7]">
-              מגש מסודר מונח מתחת לעמדה וסופג מים שנשפכים, התזות ורטיבות לפני שהן
-              מגיעות לרצפה — השלמה טבעית לערכה המלאה, או פתרון עצמאי לכל סוג קערות.
-            </motion.p>
-            <motion.ul variants={containerV} className="flex w-full flex-col gap-3">
-              {features.map((f) => (
-                <motion.li
-                  key={f.title}
-                  variants={cardV}
-                  className="group flex items-start gap-4 border border-cream/10 bg-cream/[0.06] px-5 py-4 transition-all duration-300 hover:border-clay/40 hover:shadow-[0_8px_24px_-10px_rgba(255,159,10,0.25)]"
-                >
-                  <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-sm bg-clay/15 text-clay ring-1 ring-clay/25 transition-transform duration-300 group-hover:scale-105" aria-hidden>
-                    {f.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-display text-[17px] font-semibold leading-snug text-cream">{f.title}</p>
-                    <p className="mt-1 text-[14px] leading-[1.65] text-cream/60">{f.desc}</p>
-                  </div>
-                </motion.li>
-              ))}
-            </motion.ul>
-          </div>
-        </div>
+        <ResponsiveLayout mobile={<MatLandingMobile />} desktop={<MatLandingDesktop />} />
       </motion.div>
     </section>
   );
