@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import getClientPromise from "@/lib/mongodb";
-import { decrementInventory } from "@/lib/inventory";
+import { decrementInventory, resolveSkusToDecrement } from "@/lib/inventory";
 import { sendManagerOrderNotification } from "@/lib/email";
 import { sendWhatsApp, buildInvoiceMessage } from "@/lib/whatsapp";
 
@@ -74,9 +74,13 @@ export async function POST(req: NextRequest) {
       try {
         const client = await getClientPromise();
         const db = client.db();
+        const orders = db.collection("orders");
+
+        const existing = await orders.findOne({ orderId });
+        const alreadyPaid = existing?.status === "paid";
 
         // 1. Update order status
-        const orderDoc = await db.collection("orders").findOneAndUpdate(
+        await orders.updateOne(
           { orderId },
           {
             $set: {
@@ -85,29 +89,31 @@ export async function POST(req: NextRequest) {
               hypTransactionId: Id,
             },
           },
-          { returnDocument: "after" }
         );
 
-        // 2. Decrement inventory for each purchased SKU (including bundle components)
-        if (valid && orderDoc?.items?.length) {
-          type OrderItem = {
-            sku: string;
-            quantity: number;
-            bundleComponents?: Array<{ sku: string }>;
-          };
-          const skusToDecrement: Array<{ sku: string; quantity: number }> = [];
-          for (const item of orderDoc.items as OrderItem[]) {
-            if (item.bundleComponents?.length) {
-              // Bundle: the main sku is a composite key not in inventory.
-              // Decrement each individual component instead.
-              for (const component of item.bundleComponents) {
-                skusToDecrement.push({ sku: component.sku, quantity: item.quantity });
-              }
-            } else {
-              skusToDecrement.push({ sku: item.sku, quantity: item.quantity });
-            }
+        const orderDoc = (await orders.findOne({ orderId })) ?? existing;
+
+        // 2. Decrement inventory once per paid order (SKU = size + color in MongoDB)
+        if (valid && !alreadyPaid && orderDoc?.items?.length) {
+          const skusToDecrement = await resolveSkusToDecrement(
+            orderDoc.items as Array<{
+              productId: string;
+              sizeId: string;
+              colorId: string;
+              quantity: number;
+              sku?: string;
+              bundleComponents?: Array<{
+                productId: string;
+                sizeId: string;
+                colorId: string;
+                sku?: string;
+              }>;
+            }>,
+          );
+
+          if (skusToDecrement.length) {
+            await decrementInventory(skusToDecrement);
           }
-          await decrementInventory(skusToDecrement);
         }
 
         // 3. Send WhatsApp invoice to customer

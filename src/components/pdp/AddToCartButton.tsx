@@ -10,6 +10,7 @@ import type {
 } from "@/types/product";
 import { formatILS } from "@/lib/pricing";
 import { addLineItem } from "@/lib/cart";
+import { buildInventorySku } from "@/lib/inventory-sku";
 import { getBundleAddonPrice } from "@/lib/bundles/pricing";
 import { trackAddToCart, trackAddToCartBundle } from "@/lib/pixel";
 import StockNotifyAction from "./StockNotifyAction";
@@ -53,11 +54,13 @@ export default function AddToCartButton({
       const addonPrice = getBundleAddonPrice(bundleUpsell, variant.id);
       const matSku = bundleUpsell.matSkuBySize[variant.id];
       const bundleSku = bundleUpsell.bundleSkuBySize[variant.id];
+      const feederSku = buildInventorySku(variant.sku, colorId);
+      const matInventorySku = buildInventorySku(matSku, bundleUpsell.matColorId);
       const bundleComponents: CartBundleComponent[] = [
         {
           productId: product.id,
           productName: product.name,
-          sku: variant.sku,
+          sku: feederSku,
           sizeId: variant.id,
           sizeLabel: variant.sizeLabel,
           colorId,
@@ -67,7 +70,7 @@ export default function AddToCartButton({
         {
           productId: bundleUpsell.matProductId,
           productName: bundleUpsell.addonName,
-          sku: matSku,
+          sku: matInventorySku,
           sizeId: variant.id,
           sizeLabel: variant.sizeLabel,
           colorId: bundleUpsell.matColorId,
@@ -94,15 +97,16 @@ export default function AddToCartButton({
 
       trackAddToCartBundle({
         bundleSku,
-        componentSkus: [variant.sku, matSku],
+        componentSkus: [feederSku, matInventorySku],
         productName: `${product.name} + Bundle`,
         value: totalPrice,
       });
     } else {
+      const inventorySku = buildInventorySku(variant.sku, colorId);
       addLineItem({
         productId: product.id,
         productName: product.name,
-        sku: variant.sku,
+        sku: inventorySku,
         sizeId: variant.id,
         sizeLabel: variant.sizeLabel,
         colorId,
@@ -113,7 +117,7 @@ export default function AddToCartButton({
       });
 
       trackAddToCart({
-        sku: variant.sku,
+        sku: inventorySku,
         productId: product.id,
         productName: product.name,
         value: variant.price,
