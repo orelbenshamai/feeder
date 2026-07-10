@@ -464,7 +464,7 @@ export default function ProductGallery({
             }
             fillFrame
             videoTitle={`${productName} — סרטון`}
-            sizeId={scaleGalleryBySize && slideDisplayIndex === 0 ? variant.id : undefined}
+            sizeId={scaleGalleryBySize ? variant.id : undefined}
             imageBoost={1.1}
             priority={i === extendedIndex && !isGalleryVideoSlide(src)}
           />

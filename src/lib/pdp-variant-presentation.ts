@@ -2,7 +2,7 @@ import type { ProductSizeId } from "@/types/product";
 
 /** Visual scale applied to gallery images inside a fixed-size frame. Large = 100%. */
 const IMAGE_SCALE: Record<ProductSizeId, number> = {
-  small: 0.68,
+  small: 0.9,
   medium: 0.88,
   large: 1,
 };

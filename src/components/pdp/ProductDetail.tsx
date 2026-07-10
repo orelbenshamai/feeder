@@ -199,19 +199,19 @@ export default function ProductDetail({
 
           {/* Selectors */}
           <div className="pdp-mobile-section">
-            <VariantSizeSelector
-              variants={product.variants}
-              selectedId={selectedSizeId}
-              onSelect={handleSelectSize}
+            <VariantColorSelector
+              colors={availableColors}
+              selectedId={selectedColorId}
+              onSelect={setSelectedColorId}
               labelClassName="pdp-option-label"
-              compact
             />
             <div className="mt-3.5">
-              <VariantColorSelector
-                colors={availableColors}
-                selectedId={selectedColorId}
-                onSelect={setSelectedColorId}
+              <VariantSizeSelector
+                variants={product.variants}
+                selectedId={selectedSizeId}
+                onSelect={handleSelectSize}
                 labelClassName="pdp-option-label"
+                compact
               />
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function ProductDetail({
               imageClassName="w-full object-cover"
               active
               videoTitle={product.video?.title ?? `${product.name} — סרטון`}
-              sizeId={scaleGalleryBySize && i === 0 ? selectedSizeId : undefined}
+              sizeId={scaleGalleryBySize ? selectedSizeId : undefined}
               priority={i === 0}
             />
           ))}
@@ -348,18 +348,18 @@ export default function ProductDetail({
           {/* Selectors */}
           <div className="pdp-d-selectors shrink-0 border-t border-line/40">
             <div className="flex flex-col">
+              <VariantColorSelector
+                colors={availableColors}
+                selectedId={selectedColorId}
+                onSelect={setSelectedColorId}
+                labelClassName="purchase-label"
+              />
               <VariantSizeSelector
                 variants={product.variants}
                 selectedId={selectedSizeId}
                 onSelect={handleSelectSize}
                 labelClassName="purchase-label"
                 compact
-              />
-              <VariantColorSelector
-                colors={availableColors}
-                selectedId={selectedColorId}
-                onSelect={setSelectedColorId}
-                labelClassName="purchase-label"
               />
             </div>
           </div>
