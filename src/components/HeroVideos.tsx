@@ -32,6 +32,7 @@ export default function HeroVideos({
       <HeroAutoplayVideo
         src={mobileSrc}
         poster={mobilePoster}
+        posterObjectPosition="object-[center_50%]"
         className="absolute inset-x-0 top-0 z-0 h-[calc(var(--screen-h)*0.52)] w-full object-cover object-[center_38%] md:hidden"
       />
     );

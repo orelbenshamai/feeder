@@ -6,10 +6,15 @@ type Props = {
   src: string;
   poster?: string;
   className?: string;
+  /** Object-position for the poster overlay only (e.g. `object-[center_50%]`). */
+  posterObjectPosition?: string;
 };
 
-function splitVideoClasses(className: string) {
-  const objectPosition = className.match(/object-\[[^\]]+\]/)?.[0] ?? "";
+function splitVideoClasses(className: string, objectPositionOverride?: string) {
+  const objectPosition =
+    objectPositionOverride ??
+    className.match(/object-\[[^\]]+\]/)?.[0] ??
+    "";
   const layout = className
     .replace(/\bobject-\[[^\]]+\]/g, "")
     .replace(/\bobject-cover\b/g, "")
@@ -28,7 +33,12 @@ function splitVideoClasses(className: string) {
  * When a poster is provided, it is rendered as an overlay <img> (not the native
  * video poster) and stays visible until the browser paints an actual video frame.
  */
-export default function HeroAutoplayVideo({ src, poster, className = "" }: Props) {
+export default function HeroAutoplayVideo({
+  src,
+  poster,
+  className = "",
+  posterObjectPosition,
+}: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [showPoster, setShowPoster] = useState(Boolean(poster));
   const usePosterOverlay = Boolean(poster);
@@ -125,7 +135,8 @@ export default function HeroAutoplayVideo({ src, poster, className = "" }: Props
 
   if (!usePosterOverlay) return video;
 
-  const { layout, media } = splitVideoClasses(className);
+  const { layout, media: videoMedia } = splitVideoClasses(className);
+  const posterMedia = splitVideoClasses(className, posterObjectPosition).media;
 
   return (
     <div className={`overflow-hidden ${layout}`}>
@@ -135,7 +146,7 @@ export default function HeroAutoplayVideo({ src, poster, className = "" }: Props
           src={poster}
           alt=""
           aria-hidden
-          className={`${media} z-[1]`}
+          className={`${posterMedia} z-[1]`}
           fetchPriority="high"
           decoding="sync"
           draggable={false}
