@@ -318,6 +318,7 @@ export default function ProductDetail({
               active
               videoTitle={product.video?.title ?? `${product.name} — סרטון`}
               sizeId={scaleGalleryBySize && i === 0 ? selectedSizeId : undefined}
+              priority={i === 0}
             />
           ))}
         </div>

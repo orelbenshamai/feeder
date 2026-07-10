@@ -84,7 +84,10 @@ export async function POST(req: NextRequest) {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    const totalILS = process.env.HYP_TEST_AMOUNT === "true" ? 1 : realTotal;
+    const testAmount =
+      process.env.NODE_ENV === "development" &&
+      process.env.HYP_TEST_AMOUNT === "true";
+    const totalILS = testAmount ? 1 : realTotal;
 
     const orderId = existingOrderId ?? `ORD-${Date.now()}`;
     const info = items

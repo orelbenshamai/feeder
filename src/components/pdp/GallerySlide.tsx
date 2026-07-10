@@ -1,4 +1,7 @@
+"use client";
+
 import VimeoEmbed from "@/components/VimeoEmbed";
+import MediaImage from "@/components/MediaImage";
 import {
   GALLERY_FRAME_ASPECT,
   getEffectiveGalleryScale,
@@ -20,6 +23,8 @@ type GallerySlideProps = {
   imageBoost?: number;
   /** Fill a fixed-height carousel frame (ProductGallery). */
   fillFrame?: boolean;
+  /** LCP / current slide — eager optimized load. */
+  priority?: boolean;
 };
 
 function PlayIcon({ className = "h-3 w-3" }: { className?: string }) {
@@ -52,6 +57,50 @@ function PlayPlaceholder({
   );
 }
 
+function ScaledGalleryImage({
+  src,
+  alt,
+  imageClassName,
+  imageScale,
+  fillFrame,
+  priority,
+}: {
+  src: string;
+  alt: string;
+  imageClassName: string;
+  imageScale: number;
+  fillFrame: boolean;
+  priority: boolean;
+}) {
+  const frameClass = fillFrame
+    ? "relative h-full w-full overflow-hidden bg-cream"
+    : "relative w-full overflow-hidden bg-cream";
+
+  return (
+    <div
+      className={frameClass}
+      style={fillFrame ? undefined : { aspectRatio: GALLERY_FRAME_ASPECT }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="relative h-full w-full transition-transform duration-300 ease-out"
+          style={{ transform: `scale(${imageScale})` }}
+        >
+          <MediaImage
+            src={src}
+            alt={alt}
+            fill
+            className={`object-contain${fillFrame ? "" : ` ${imageClassName}`}`}
+            sizes="(max-width: 1023px) 100vw, 60vw"
+            priority={priority}
+            draggable={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GallerySlide({
   src,
   alt,
@@ -61,6 +110,7 @@ export default function GallerySlide({
   sizeId,
   imageBoost = 1,
   fillFrame = false,
+  priority = false,
 }: GallerySlideProps) {
   const vimeoId = parseVimeoGalleryItem(src);
   const frameClass = fillFrame
@@ -82,66 +132,59 @@ export default function GallerySlide({
   }
 
   if (sizeId) {
-    const imageScale = getEffectiveGalleryScale(
-      getVariantImageScale(sizeId),
-      imageBoost,
-    );
-
     return (
-      <div
-        className={frameClass}
-        style={fillFrame ? undefined : { aspectRatio: GALLERY_FRAME_ASPECT }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={src}
-            alt={alt}
-            className="max-h-full max-w-full object-contain transition-transform duration-300 ease-out"
-            style={{ transform: `scale(${imageScale})` }}
-            draggable={false}
-            loading="eager"
-            decoding="sync"
-          />
-        </div>
-      </div>
+      <ScaledGalleryImage
+        src={src}
+        alt={alt}
+        imageClassName={imageClassName}
+        imageScale={getEffectiveGalleryScale(getVariantImageScale(sizeId), imageBoost)}
+        fillFrame={fillFrame}
+        priority={priority}
+      />
     );
   }
 
   if (imageBoost > 1) {
     return (
-      <div
-        className={frameClass}
-        style={fillFrame ? undefined : { aspectRatio: GALLERY_FRAME_ASPECT }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={src}
-            alt={alt}
-            className={`max-h-full max-w-full object-contain transition-transform duration-300 ease-out${
-              fillFrame ? "" : ` ${imageClassName}`
-            }`}
-            style={{ transform: `scale(${getEffectiveGalleryScale(1, imageBoost)})` }}
-            draggable={false}
-            loading="eager"
-            decoding="sync"
-          />
-        </div>
+      <ScaledGalleryImage
+        src={src}
+        alt={alt}
+        imageClassName={imageClassName}
+        imageScale={getEffectiveGalleryScale(1, imageBoost)}
+        fillFrame={fillFrame}
+        priority={priority}
+      />
+    );
+  }
+
+  if (fillFrame) {
+    return (
+      <div className={frameClass}>
+        <MediaImage
+          src={src}
+          alt={alt}
+          fill
+          className={imageClassName}
+          sizes="(max-width: 1023px) 100vw, 60vw"
+          priority={priority}
+          draggable={false}
+        />
       </div>
     );
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      className={imageClassName}
-      draggable={false}
-      loading="eager"
-      decoding="sync"
-    />
+    <div className={`${frameClass} aspect-[1376/768]`}>
+      <MediaImage
+        src={src}
+        alt={alt}
+        fill
+        className={imageClassName}
+        sizes="(max-width: 1023px) 100vw, 60vw"
+        priority={priority}
+        draggable={false}
+      />
+    </div>
   );
 }
 

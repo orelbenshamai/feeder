@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { media } from "@/lib/media";
+import ResponsiveMediaImage from "@/components/ResponsiveMediaImage";
 import { getStableViewportHeight } from "@/lib/stable-viewport";
 
 function StickyReveal() {
@@ -84,20 +85,16 @@ function StickyReveal() {
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
         <div ref={afterRef} className="absolute inset-0" style={{ opacity: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("messy-after_mobile.png")}
+          <ResponsiveMediaImage
+            mobileSrc={media("messy-after_mobile.png")}
+            desktopSrc={media("messy-after.png")}
             alt="אחרי עמדת ההאכלה"
-            className="h-full w-full object-cover object-[center_42%] lg:hidden"
+            fill
+            mobileClassName="object-cover object-[center_42%]"
+            desktopClassName="object-cover object-right"
             style={{ filter: "brightness(1.12) saturate(1.25) contrast(1.05)" }}
-            draggable={false}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("messy-after.png")}
-            alt="אחרי עמדת ההאכלה"
-            className="hidden h-full w-full object-cover object-right lg:block"
-            style={{ filter: "brightness(1.12) saturate(1.25) contrast(1.05)" }}
+            sizes="100vw"
+            quality={80}
             draggable={false}
           />
           <div className="pointer-events-none absolute inset-0 bg-ink/25" />
@@ -111,20 +108,16 @@ function StickyReveal() {
 
         {/* Before — on top, fades out on scroll. Hint lives here so it fades with it. */}
         <div ref={beforeRef} className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("messy-before_mobile.png")}
+          <ResponsiveMediaImage
+            mobileSrc={media("messy-before_mobile.png")}
+            desktopSrc={media("messy-before.png")}
             alt="לפני עמדת ההאכלה"
-            className="h-full w-full object-cover object-[center_35%] lg:hidden"
+            fill
+            mobileClassName="object-cover object-[center_35%]"
+            desktopClassName="object-cover object-right"
             style={{ filter: "saturate(72%) brightness(0.92)" }}
-            draggable={false}
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("messy-before.png")}
-            alt="לפני עמדת ההאכלה"
-            className="hidden h-full w-full object-cover object-right lg:block"
-            style={{ filter: "saturate(72%) brightness(0.92)" }}
+            sizes="100vw"
+            quality={80}
             draggable={false}
           />
           <div className="pointer-events-none absolute inset-0 bg-ink/25" />

@@ -1,5 +1,6 @@
 "use client";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
@@ -92,14 +93,17 @@ export default function BundleSection() {
           </div>
 
           {/* Image */}
-          <motion.div variants={imgV} className="flex w-full flex-col items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={BUNDLE_IMAGE}
-              alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
-              className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.4)] max-h-[min(calc(var(--screen-h)*0.7),32rem)] sm:max-h-[min(calc(var(--screen-h)*0.75),36rem)]"
-              draggable={false}
-            />
+          <motion.div variants={imgV} className="relative flex w-full flex-col items-center">
+            <div className="relative aspect-[4/3] w-full max-h-[min(calc(var(--screen-h)*0.7),32rem)] sm:max-h-[min(calc(var(--screen-h)*0.75),36rem)]">
+              <MediaImage
+                src={BUNDLE_IMAGE}
+                alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
+                fill
+                className="object-contain drop-shadow-[0_16px_36px_rgba(0,0,0,0.4)]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                draggable={false}
+              />
+            </div>
           </motion.div>
 
           {/* Feature cards */}
@@ -129,12 +133,13 @@ export default function BundleSection() {
         >
           {/* Image — left */}
           <motion.div variants={imgV} className="flex items-center justify-center self-center">
-            <div className="flex w-full max-w-none items-center justify-center py-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div className="relative aspect-[4/3] w-full max-h-[min(82vh,44rem)] xl:max-h-[min(88vh,50rem)]">
+              <MediaImage
                 src={BUNDLE_IMAGE}
                 alt="עמדת ההאכלה ומשטח ההאכלה MESUDAR"
-                className="h-auto w-full max-w-none select-none object-contain drop-shadow-[0_28px_56px_rgba(31,58,82,0.22)] max-h-[min(82vh,44rem)] xl:max-h-[min(88vh,50rem)]"
+                fill
+                className="object-contain drop-shadow-[0_28px_56px_rgba(31,58,82,0.22)]"
+                sizes="50vw"
                 draggable={false}
               />
             </div>

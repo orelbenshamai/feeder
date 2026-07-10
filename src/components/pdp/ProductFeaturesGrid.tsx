@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { renderTextWithMesudar } from "@/components/MesudarWordmark";
+import MediaImage from "@/components/MediaImage";
 import type { Product } from "@/types/product";
 
 type ProductFeaturesGridProps = {
@@ -108,12 +109,13 @@ function MobileFeaturesCarousel({ features }: { features: Product["features"] })
               style={{ scrollSnapAlign: "center" }}
             >
               <article className="flex h-full flex-col">
-                <div className="overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                <div className="relative aspect-[5/4] overflow-hidden">
+                  <MediaImage
                     src={feature.imageUrl}
                     alt={feature.title}
-                    className="aspect-[5/4] w-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="84vw"
                     draggable={false}
                   />
                 </div>
@@ -172,12 +174,13 @@ export default function ProductFeaturesGrid({ product }: ProductFeaturesGridProp
         {product.features.map((feature) => (
           <li key={feature.title} className="flex flex-col">
             <article dir="rtl" className="flex flex-1 flex-col">
-              <div className="overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <MediaImage
                   src={feature.imageUrl}
                   alt={feature.title}
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                  fill
+                  className="object-cover transition-transform duration-500 hover:scale-[1.03]"
+                  sizes="(max-width: 1024px) 50vw, 33vw"
                   draggable={false}
                 />
               </div>

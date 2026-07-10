@@ -34,12 +34,10 @@ export default function HeroAutoplayVideo({ src, poster, className }: Props) {
       if (document.visibilityState === "visible") kick();
     };
 
-    el.addEventListener("loadeddata", kick);
-    el.addEventListener("canplay", kick);
+    el.addEventListener("canplay", kick, { once: true });
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
-      el.removeEventListener("loadeddata", kick);
       el.removeEventListener("canplay", kick);
       document.removeEventListener("visibilitychange", onVis);
     };
@@ -53,7 +51,7 @@ export default function HeroAutoplayVideo({ src, poster, className }: Props) {
       muted
       playsInline
       loop
-      preload="auto"
+      preload="metadata"
       poster={poster}
       width={1920}
       height={1080}
