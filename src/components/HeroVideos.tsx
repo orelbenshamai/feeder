@@ -33,7 +33,6 @@ export default function HeroVideos({
         src={mobileSrc}
         poster={mobilePoster}
         className="absolute inset-x-0 top-0 z-0 h-[calc(var(--screen-h)*0.52)] w-full object-cover object-[center_38%] md:hidden"
-        posterClassName="object-[center_36%]"
       />
     );
   }
