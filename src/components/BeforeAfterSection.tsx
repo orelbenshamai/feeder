@@ -40,8 +40,7 @@ function StickyReveal() {
 
       const getScrollDistance = () => {
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        // Extra scroll room on mobile so the "after" state stays visible long enough to land.
-        return getStableViewportHeight() * (isMobile ? 3.5 : 4);
+        return getStableViewportHeight() * (isMobile ? 2.75 : 4);
       };
 
         ctx = gsap.context(() => {
@@ -55,16 +54,16 @@ function StickyReveal() {
             end: () => `+=${getScrollDistance()}`,
             pin: true,
             pinSpacing: true,
-            scrub: 1.2,
+            scrub: 0.9,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        // Quick crossfade early in the timeline; ~70% of scroll stays on "after".
-        const revealAt = isMobile ? 0.15 : 0.30;
-        const fadeDuration = 0.15;
+        // Brief "before" (~5% scroll), snappy fade, then long "after" hold (~85%).
+        const revealAt = isMobile ? 0.05 : 0.22;
+        const fadeDuration = 0.10;
 
         tl.to(after,  { opacity: 1, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
         tl.to(before, { opacity: 0, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
