@@ -8,9 +8,15 @@ type Props = {
   className?: string;
   /** Object-position for the poster overlay only (e.g. `object-[center_50%]`). */
   posterObjectPosition?: string;
+  /** Scale/translate inside the crop slot when object-position has no room to move. */
+  mediaNudge?: string;
 };
 
-function splitVideoClasses(className: string, objectPositionOverride?: string) {
+function splitVideoClasses(
+  className: string,
+  objectPositionOverride?: string,
+  mediaNudge?: string,
+) {
   const objectPosition =
     objectPositionOverride ??
     className.match(/object-\[[^\]]+\]/)?.[0] ??
@@ -20,7 +26,8 @@ function splitVideoClasses(className: string, objectPositionOverride?: string) {
     .replace(/\bobject-cover\b/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const media = `absolute inset-0 h-full w-full object-cover ${objectPosition}`.trim();
+  const media =
+    `absolute inset-0 h-full w-full origin-center object-cover ${objectPosition} ${mediaNudge ?? ""}`.trim();
 
   return { layout, media };
 }
@@ -38,6 +45,7 @@ export default function HeroAutoplayVideo({
   poster,
   className = "",
   posterObjectPosition,
+  mediaNudge,
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [showPoster, setShowPoster] = useState(Boolean(poster));
@@ -115,7 +123,7 @@ export default function HeroAutoplayVideo({
       ref={ref}
       className={
         usePosterOverlay
-          ? `${splitVideoClasses(className).media} z-0`
+          ? `${splitVideoClasses(className, undefined, mediaNudge).media} z-0`
           : className
       }
       src={src}
@@ -135,8 +143,12 @@ export default function HeroAutoplayVideo({
 
   if (!usePosterOverlay) return video;
 
-  const { layout, media: videoMedia } = splitVideoClasses(className);
-  const posterMedia = splitVideoClasses(className, posterObjectPosition).media;
+  const { layout, media: videoMedia } = splitVideoClasses(className, undefined, mediaNudge);
+  const posterMedia = splitVideoClasses(
+    className,
+    posterObjectPosition,
+    mediaNudge,
+  ).media;
 
   return (
     <div className={`overflow-hidden ${layout}`}>
