@@ -10,6 +10,9 @@ const HERO_POSTER_DESKTOP = media("mesudar_main_video_poster_desktop.png");
 const HERO_SCRIM =
   "linear-gradient(to top, rgba(31,58,82,0.92) 0%, rgba(31,58,82,0.62) 32%, rgba(31,58,82,0.18) 62%, transparent 78%)";
 
+const HERO_SCRIM_MOBILE =
+  "linear-gradient(to top, rgba(31,58,82,0.96) 0%, rgba(31,58,82,0.72) 38%, rgba(31,58,82,0.22) 68%, transparent 82%)";
+
 function HeroCopy({ headingId }: { headingId?: string }) {
   return (
     <div className="mx-auto w-full max-w-7xl md:mx-0 md:me-auto" dir="rtl">
@@ -49,15 +52,14 @@ export default function Hero() {
         desktopPoster={HERO_POSTER_DESKTOP}
       />
 
-      {/* ── PHONE — copy panel below video band ─────────────────────────── */}
-      <div className="relative z-10 grid h-full grid-rows-[minmax(0,calc(var(--screen-h)*0.52))_1fr] overflow-hidden md:hidden">
-        <div className="relative">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-ink via-ink/85 to-transparent"
-          />
-        </div>
-        <div className="grid h-full place-items-center bg-ink px-5 pt-8 pb-8 sm:px-8">
+      {/* ── PHONE — full-bleed 9:16 video with copy overlaid ──────────── */}
+      <div className="relative z-10 flex h-full flex-col justify-end md:hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ background: HERO_SCRIM_MOBILE }}
+        />
+        <div className="relative px-5 pb-8 pt-20 sm:px-8 sm:pb-10">
           <HeroCopy headingId="hero-heading" />
         </div>
       </div>
