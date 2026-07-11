@@ -32,7 +32,6 @@ export default function HeroVideos({
       <HeroAutoplayVideo
         src={mobileSrc}
         poster={mobilePoster}
-        mediaNudge="scale-[1.16] -translate-y-[12%]"
         className="absolute inset-0 z-0 h-full w-full object-cover object-center md:hidden"
       />
     );
