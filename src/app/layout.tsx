@@ -49,7 +49,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${heebo.variable} ${nunito.variable} antialiased font-sans`}
     >
-      <GoogleTagManager gtmId="G-9GHYC8J7RP" />
+      <GoogleTagManager gtmId="GTM-MC36BKQK" />
       <head>
         {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
         <script
