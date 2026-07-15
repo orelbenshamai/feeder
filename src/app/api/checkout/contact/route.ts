@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import getClientPromise from "@/lib/mongodb";
 import { getInventoryByProductId } from "@/lib/inventory";
+import { applyCoupon, cartSubtotal, lookupCoupon } from "@/lib/coupons";
 import type { CartLineItem } from "@/types/product";
 
 export type ContactData = {
@@ -15,10 +16,11 @@ export type ContactData = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { contact, items, totalPrice } = (await req.json()) as {
+    const { contact, items, couponCode } = (await req.json()) as {
       contact: ContactData;
       items: CartLineItem[];
-      totalPrice: number;
+      totalPrice?: number;
+      couponCode?: string;
     };
 
     if (!contact?.firstName || !contact?.phone || !items?.length) {
@@ -56,6 +58,15 @@ export async function POST(req: NextRequest) {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    const subtotal = cartSubtotal(items);
+    const coupon = lookupCoupon(couponCode);
+    if (couponCode?.trim() && !coupon) {
+      return NextResponse.json({ error: "קוד הקופון לא תקין" }, { status: 400 });
+    }
+
+    const applied = coupon ? applyCoupon(subtotal, coupon) : null;
+    const totalPrice = subtotal - (applied?.discountAmount ?? 0);
+
     const orderId = `ORD-${Date.now()}`;
 
     const client = await getClientPromise();
@@ -65,11 +76,26 @@ export async function POST(req: NextRequest) {
       status: "pending",
       contact,
       items,
+      subtotal,
+      ...(applied
+        ? {
+            couponCode: applied.code,
+            discountPercent: applied.percentOff,
+            discountAmount: applied.discountAmount,
+            couponLabel: applied.label,
+          }
+        : {}),
       totalPrice,
       createdAt: new Date(),
     });
 
-    return NextResponse.json({ orderId });
+    return NextResponse.json({
+      orderId,
+      subtotal,
+      totalPrice,
+      discountAmount: applied?.discountAmount ?? 0,
+      couponCode: applied?.code ?? null,
+    });
   } catch (err) {
     console.error("[/api/checkout/contact]", err);
     return NextResponse.json({ error: "Failed to save order" }, { status: 500 });

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import getClientPromise from "@/lib/mongodb";
 import type { CartLineItem } from "@/types/product";
 import type { ContactData } from "@/app/api/checkout/contact/route";
 
@@ -68,6 +69,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
+    if (!existingOrderId) {
+      return NextResponse.json({ error: "Missing orderId" }, { status: 400 });
+    }
+
     const key = process.env.HYP_KEY;
     const masof = process.env.HYP_MASOF;
     const passp = process.env.HYP_PASSP;
@@ -80,16 +85,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const realTotal = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    // Charge the order total stored at contact-save time (includes coupon discount)
+    const client = await getClientPromise();
+    const db = client.db();
+    const order = await db.collection("orders").findOne({ orderId: existingOrderId });
+
+    if (!order || order.status !== "pending") {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    const storedTotal = Number(order.totalPrice);
+    if (!Number.isFinite(storedTotal) || storedTotal <= 0) {
+      return NextResponse.json({ error: "Invalid order total" }, { status: 400 });
+    }
+
     const testAmount =
       process.env.NODE_ENV === "development" &&
       process.env.HYP_TEST_AMOUNT === "true";
-    const totalILS = testAmount ? 1 : realTotal;
+    const totalILS = testAmount ? 1 : storedTotal;
 
-    const orderId = existingOrderId ?? `ORD-${Date.now()}`;
+    const orderId = existingOrderId;
     const info = items
       .map((i) => `${i.bundleLabel ?? i.productName ?? i.sizeLabel} x${i.quantity}`)
       .join(", ");

@@ -22,7 +22,7 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: "מסודר — רצפה יבשה, האכלה נקייה",
   description:
-    "עמדת ההאכלה שמונעת רטיבות ופיזור מזון. שרינו הנחת השקה של 10%, משלוחים לכל הארץ ואחריות מלאה.",
+    "עמדת ההאכלה שמונעת רטיבות ופיזור מזון. משלוחים לכל הארץ ואחריות מלאה.",
   icons: {
     icon: [{ url: media("logo_sym.png"), type: "image/png" }],
     apple: [{ url: media("logo_sym.png"), type: "image/png" }],
@@ -49,7 +49,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${heebo.variable} ${nunito.variable} antialiased font-sans`}
     >
-      <GoogleTagManager gtmId="GTM-MC36BKQK" />
+      <GoogleTagManager gtmId="G-9GHYC8J7RP" />
       <head>
         {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
         <script

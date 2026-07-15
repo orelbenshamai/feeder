@@ -20,6 +20,12 @@ type SubmitState =
   | { status: "saving" }
   | { status: "error"; message: string };
 
+type AppliedCouponPreview = {
+  code: string;
+  percentOff: number;
+  label: string;
+};
+
 export default function CheckoutPage() {
   const { items, hydrated, totalPrice } = useCart();
   const router = useRouter();
@@ -36,14 +42,65 @@ export default function CheckoutPage() {
 
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCouponPreview | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   if (hydrated && items.length === 0) {
     router.replace("/");
     return null;
   }
 
+  const discountAmount = appliedCoupon
+    ? Math.round((totalPrice * appliedCoupon.percentOff) / 100)
+    : 0;
+  const payableTotal = totalPrice - discountAmount;
+
   function setField(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  async function handleApplyCoupon() {
+    setCouponError(null);
+    const code = couponInput.trim();
+    if (!code) {
+      setCouponError("נא להזין קוד קופון");
+      return;
+    }
+
+    setCouponLoading(true);
+    try {
+      const res = await fetch("/api/coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = (await res.json()) as AppliedCouponPreview & { error?: string };
+
+      if (!res.ok || !data.code) {
+        setAppliedCoupon(null);
+        setCouponError(data.error ?? "קוד הקופון לא תקין");
+        return;
+      }
+
+      setAppliedCoupon({
+        code: data.code,
+        percentOff: data.percentOff,
+        label: data.label,
+      });
+      setCouponInput(data.code);
+    } catch {
+      setCouponError("שגיאה בבדיקת הקופון");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError(null);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -51,11 +108,15 @@ export default function CheckoutPage() {
     setSubmitState({ status: "saving" });
 
     try {
-      // Step 1: Save order + contact to MongoDB
+      // Step 1: Save order + contact to MongoDB (server applies coupon)
       const contactRes = await fetch("/api/checkout/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contact: form, items, totalPrice }),
+        body: JSON.stringify({
+          contact: form,
+          items,
+          couponCode: appliedCoupon?.code,
+        }),
       });
       const contactData = await contactRes.json() as { orderId?: string; error?: string };
 
@@ -64,7 +125,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Step 2: Get signed Hyp Pay URL
+      // Step 2: Get signed Hyp Pay URL (charges order.totalPrice from DB)
       const payRes = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,10 +148,10 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <div dir="rtl" className="flex h-screen flex-col lg:flex-row">
+      <div className="flex h-screen flex-col lg:flex-row">
 
         {/* ── Mobile-only order summary accordion (shown above the form) ── */}
-        <div className="lg:hidden bg-ink">
+        <div dir="rtl" className="lg:hidden bg-ink">
           <button
             type="button"
             onClick={() => setSummaryOpen(o => !o)}
@@ -109,7 +170,7 @@ export default function CheckoutPage() {
               </span>
             </span>
             <span className="flex items-center gap-2.5">
-              <span className="text-sm font-bold text-cream">{formatILS(totalPrice)}</span>
+              <span className="text-sm font-bold text-cream">{formatILS(payableTotal)}</span>
               <span className={`flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-white/8 transition-transform duration-300 ${summaryOpen ? "rotate-180" : ""}`}>
                 <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 text-cream" fill="none" aria-hidden>
                   <path d="M3 6l5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -145,16 +206,19 @@ export default function CheckoutPage() {
                   </li>
                 ))}
               </ul>
-              <div className="border-t border-white/10 pt-4 flex items-center justify-between text-sm font-bold text-cream">
-                <span>סה&quot;כ</span>
-                <span className="text-base">{formatILS(totalPrice)}</span>
-              </div>
+              <OrderTotals
+                subtotal={totalPrice}
+                discountAmount={discountAmount}
+                appliedCoupon={appliedCoupon}
+                payableTotal={payableTotal}
+                compact
+              />
             </div>
           )}
         </div>
 
         {/* ── Left — address form (60%) ── */}
-        <div className="flex h-full flex-col bg-cream lg:w-[60%]">
+        <div dir="rtl" className="flex h-full flex-col bg-cream lg:w-[60%]">
 
           {/* Content wrapper — fixed width, right-anchored (near divider), internally centered */}
           <div className="flex h-full w-full max-w-[520px] flex-col self-end">
@@ -175,6 +239,19 @@ export default function CheckoutPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col px-12 pb-6 pt-4">
             <div className="mx-auto flex w-full max-w-[380px] flex-col">
+
+              {/* Coupon first — high-visibility on the form column */}
+              <CouponField
+                couponInput={couponInput}
+                setCouponInput={setCouponInput}
+                appliedCoupon={appliedCoupon}
+                couponError={couponError}
+                couponLoading={couponLoading}
+                onApply={handleApplyCoupon}
+                onRemove={handleRemoveCoupon}
+                tone="light"
+                className="mb-6"
+              />
 
               {/* Form title */}
               <h2 className="font-display mb-5 text-xl font-bold text-ink">פרטי משלוח</h2>
@@ -337,7 +414,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* ── Right — order summary (40%, desktop only) ── */}
-        <div className="hidden lg:block border-t border-white/10 bg-ink pe-16 ps-6 py-12 sm:pe-20 sm:ps-8 lg:h-full lg:w-[40%] lg:border-r lg:border-t-0 lg:overflow-y-auto">
+        <div dir="rtl" className="hidden lg:block border-t border-white/10 bg-ink pe-16 ps-6 py-12 sm:pe-20 sm:ps-8 lg:h-full lg:w-[40%] lg:border-l lg:border-t-0 lg:overflow-y-auto">
           <div className="w-[300px]">
 
             {/* Section label */}
@@ -389,6 +466,16 @@ export default function CheckoutPage() {
                 </span>
                 <span className="text-cream/80">{formatILS(totalPrice)}</span>
               </div>
+              {appliedCoupon && discountAmount > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-emerald-400/90">
+                    {appliedCoupon.label} ({appliedCoupon.code})
+                  </span>
+                  <span className="font-medium text-emerald-400">
+                    −{formatILS(discountAmount)}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <span className="text-cream/40">משלוח</span>
                 <span className="font-medium text-emerald-400">בחינם</span>
@@ -398,7 +485,7 @@ export default function CheckoutPage() {
             <div className="mt-4 flex items-center justify-between border-t border-white/8 pt-4">
               <span className="text-base font-bold text-cream">סה&quot;כ</span>
               <span className="font-display text-2xl font-bold text-cream">
-                {formatILS(totalPrice)}
+                {formatILS(payableTotal)}
               </span>
             </div>
 
@@ -407,6 +494,178 @@ export default function CheckoutPage() {
       </div>
 
     </>
+  );
+}
+
+function CouponField({
+  couponInput,
+  setCouponInput,
+  appliedCoupon,
+  couponError,
+  couponLoading,
+  onApply,
+  onRemove,
+  tone = "dark",
+  className = "",
+}: {
+  couponInput: string;
+  setCouponInput: (v: string) => void;
+  appliedCoupon: AppliedCouponPreview | null;
+  couponError: string | null;
+  couponLoading: boolean;
+  onApply: () => void;
+  onRemove: () => void;
+  tone?: "dark" | "light";
+  className?: string;
+}) {
+  const light = tone === "light";
+
+  if (light) {
+    return (
+      <div
+        className={`rounded-sm border-2 border-clay/40 bg-clay/8 p-4 ${className}`}
+      >
+        {appliedCoupon ? (
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-clay">
+                הקופון הוחל
+              </p>
+              <p className="mt-1 text-base font-bold text-ink">{appliedCoupon.label}</p>
+              <p className="mt-0.5 text-sm text-stone/60" dir="ltr">
+                {appliedCoupon.code}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="shrink-0 text-sm font-semibold text-stone/55 transition hover:text-ink"
+            >
+              הסר
+            </button>
+          </div>
+        ) : (
+          <>
+            <p className="font-display text-base font-bold text-ink">יש לכם קוד קופון?</p>
+            <p className="mt-1 text-sm text-stone/70">הזינו אותו כאן כדי לקבל הנחה</p>
+            <div className="mt-3 flex gap-2">
+              <input
+                type="text"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onApply();
+                  }
+                }}
+                placeholder=""
+                autoComplete="off"
+                dir="ltr"
+                className="min-w-0 flex-1 rounded-sm border-2 border-clay/30 bg-white px-4 py-3.5 text-base font-semibold tracking-wide text-ink outline-none focus:border-clay focus:ring-2 focus:ring-clay/20"
+              />
+              <button
+                type="button"
+                onClick={onApply}
+                disabled={couponLoading}
+                className="shrink-0 rounded-sm bg-clay px-5 py-3.5 text-base font-bold text-white transition hover:bg-clay/90 disabled:opacity-50"
+              >
+                {couponLoading ? "…" : "החל"}
+              </button>
+            </div>
+          </>
+        )}
+        {couponError && (
+          <p className="mt-2.5 text-sm font-medium text-red-600">{couponError}</p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={className}>
+      {appliedCoupon ? (
+        <div className="flex items-center justify-between gap-3 rounded-sm border border-emerald-400/30 bg-emerald-400/10 px-3 py-2.5">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-emerald-300">{appliedCoupon.label}</p>
+            <p className="text-xs text-cream/50" dir="ltr">
+              {appliedCoupon.code}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="shrink-0 text-xs font-semibold text-cream/55 transition hover:text-cream"
+          >
+            הסר
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={couponInput}
+            onChange={(e) => setCouponInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onApply();
+              }
+            }}
+            placeholder=""
+            autoComplete="off"
+            dir="ltr"
+            className="min-w-0 flex-1 rounded-sm border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-cream outline-none focus:border-clay/50 focus:ring-1 focus:ring-clay/30"
+          />
+          <button
+            type="button"
+            onClick={onApply}
+            disabled={couponLoading}
+            className="shrink-0 rounded-sm border border-white/15 bg-white/8 px-4 py-2.5 text-sm font-semibold text-cream transition hover:bg-white/12 disabled:opacity-50"
+          >
+            {couponLoading ? "…" : "החל"}
+          </button>
+        </div>
+      )}
+      {couponError && (
+        <p className="mt-2 text-xs font-medium text-red-300">{couponError}</p>
+      )}
+    </div>
+  );
+}
+
+function OrderTotals({
+  subtotal,
+  discountAmount,
+  appliedCoupon,
+  payableTotal,
+  compact = false,
+}: {
+  subtotal: number;
+  discountAmount: number;
+  appliedCoupon: AppliedCouponPreview | null;
+  payableTotal: number;
+  compact?: boolean;
+}) {
+  return (
+    <div className={`${compact ? "mt-3" : ""} border-t border-white/10 pt-4 space-y-2`}>
+      {appliedCoupon && discountAmount > 0 && (
+        <>
+          <div className="flex items-center justify-between text-sm text-cream/60">
+            <span>סכום ביניים</span>
+            <span>{formatILS(subtotal)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-emerald-400">
+            <span>{appliedCoupon.label}</span>
+            <span>−{formatILS(discountAmount)}</span>
+          </div>
+        </>
+      )}
+      <div className="flex items-center justify-between text-sm font-bold text-cream">
+        <span>סה&quot;כ</span>
+        <span className={compact ? "text-base" : "text-lg"}>{formatILS(payableTotal)}</span>
+      </div>
+    </div>
   );
 }
 
