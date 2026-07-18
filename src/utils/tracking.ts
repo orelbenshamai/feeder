@@ -713,6 +713,42 @@ export function trackViewPage(params: {
   });
 }
 
+/**
+ * Landing-page sections observed for element-visibility (`view_section`).
+ * IDs must match the DOM `id` attributes (IntersectionObserver).
+ *
+ * Mapping (home):
+ *   hero-section      → Hero
+ *   benefits-section  → BundleSection (bundle / benefits pitch)
+ *   footer-section    → Footer (main layout)
+ *
+ * Before/After is NOT listed here — it is a scroll-scrubbed reveal with two
+ * distinct visual states, tracked separately as:
+ *   before-after-before  → "messy before" state visible
+ *   before-after-after   → "clean after" state visible
+ * (see BeforeAfterSection / StickyReveal)
+ */
+export const SECTION_IDS = [
+  "hero-section",
+  "benefits-section",
+  "footer-section",
+] as const;
+
+export type SectionId = (typeof SECTION_IDS)[number];
+
+/** Canonical section_name values for the before/after scroll reveal. */
+export const BEFORE_AFTER_SECTION_NAMES = {
+  before: "before-after-before",
+  after: "before-after-after",
+} as const;
+
+export function trackViewSection(sectionName: string) {
+  pushEvent("view_section", {
+    section_name: sectionName,
+    content_name: sectionName,
+  });
+}
+
 export function trackCheckoutCancel(orderId?: string | null) {
   pushEvent("checkout_cancel", {
     order_id: orderId ?? undefined,
@@ -783,6 +819,7 @@ export const TRACKING_EVENTS = [
   "nav_click",
   "faq_open",
   "view_page",
+  "view_section",
   // System
   "checkout_error",
 ] as const;
@@ -831,6 +868,7 @@ export const DATA_LAYER_KEYS = [
   "page_type",
   "page_path",
   "page_title",
+  "section_name",
   "enabled",
   "error_message",
   "checkout_step",

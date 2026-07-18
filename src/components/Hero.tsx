@@ -80,7 +80,7 @@ function HeroCopy({
 export default function Hero() {
   return (
     <section
-      id="hero"
+      id="hero-section"
       className="relative isolate h-below-header max-h-below-header overflow-hidden bg-ink"
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"

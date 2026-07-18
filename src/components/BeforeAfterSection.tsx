@@ -3,11 +3,17 @@ import { useEffect, useRef } from "react";
 import { media } from "@/lib/media";
 import ResponsiveMediaImage from "@/components/ResponsiveMediaImage";
 import { getStableViewportHeight } from "@/lib/stable-viewport";
+import {
+  BEFORE_AFTER_SECTION_NAMES,
+  trackViewSection,
+} from "@/utils/tracking";
 
 function StickyReveal() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const beforeRef  = useRef<HTMLDivElement>(null);
   const afterRef   = useRef<HTMLDivElement>(null);
+  const trackedBefore = useRef(false);
+  const trackedAfter = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -44,8 +50,25 @@ function StickyReveal() {
         return getStableViewportHeight() * (isMobile ? 2.75 : 4);
       };
 
+      const trackBeforeOnce = () => {
+        if (trackedBefore.current) return;
+        trackedBefore.current = true;
+        trackViewSection(BEFORE_AFTER_SECTION_NAMES.before);
+      };
+
+      const trackAfterOnce = () => {
+        if (trackedAfter.current) return;
+        trackedAfter.current = true;
+        trackViewSection(BEFORE_AFTER_SECTION_NAMES.after);
+      };
+
         ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
+
+        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+        // Brief "before" (~5% scroll), snappy fade, then long "after" hold (~85%).
+        const revealAt = isMobile ? 0.05 : 0.22;
+        const fadeDuration = 0.10;
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -58,13 +81,15 @@ function StickyReveal() {
             scrub: 0.9,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            // "Before" state is what the user sees when the sticky section engages.
+            onEnter: trackBeforeOnce,
+            onEnterBack: trackBeforeOnce,
+            onUpdate: (self) => {
+              // Fire "after" once the scrub passes the reveal point.
+              if (self.progress >= revealAt) trackAfterOnce();
+            },
           },
         });
-
-        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        // Brief "before" (~5% scroll), snappy fade, then long "after" hold (~85%).
-        const revealAt = isMobile ? 0.05 : 0.22;
-        const fadeDuration = 0.10;
 
         tl.to(after,  { opacity: 1, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
         tl.to(before, { opacity: 0, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
@@ -84,7 +109,13 @@ function StickyReveal() {
     >
       <div className="absolute inset-0 overflow-hidden">
         {/* After — starts hidden; GSAP animates opacity from 0→1 on scroll */}
-        <div ref={afterRef} className="absolute inset-0" style={{ opacity: 0 }}>
+        <div
+          ref={afterRef}
+          id="before-after-after"
+          data-section-state="after"
+          className="absolute inset-0"
+          style={{ opacity: 0 }}
+        >
           <ResponsiveMediaImage
             mobileSrc={media("messy-after_mobile.png")}
             desktopSrc={media("messy-after.png")}
@@ -107,7 +138,12 @@ function StickyReveal() {
         </div>
 
         {/* Before — on top, fades out on scroll. Hint lives here so it fades with it. */}
-        <div ref={beforeRef} className="absolute inset-0">
+        <div
+          ref={beforeRef}
+          id="before-after-before"
+          data-section-state="before"
+          className="absolute inset-0"
+        >
           <ResponsiveMediaImage
             mobileSrc={media("messy-before_mobile.png")}
             desktopSrc={media("messy-before.png")}
@@ -157,7 +193,7 @@ function StickyReveal() {
 export default function BeforeAfterSection() {
   return (
     <section
-      id="before-after"
+      id="before-after-section"
       dir="rtl"
       className="relative isolate z-10 bg-ink text-cream"
     >

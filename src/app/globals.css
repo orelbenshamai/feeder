@@ -106,19 +106,19 @@ body.breakdown-scroll-locked {
 }
 
 /* Anchor / in-view targets sit below the sticky site header */
-section[id]:not(#hero):not(#bundle) {
+section[id]:not(#hero-section):not(#benefits-section) {
   scroll-margin-top: var(--site-header-h);
 }
 
-#hero {
+#hero-section {
   scroll-margin-top: 0;
 }
 
-#bundle {
+#benefits-section {
   scroll-margin-top: 0;
 }
 
-#bundle .section-eyebrow {
+#benefits-section .section-eyebrow {
   display: inline-flex;
   margin-inline: auto;
   white-space: nowrap;
@@ -128,7 +128,7 @@ section[id]:not(#hero):not(#bundle) {
 }
 
 @media (min-width: 1024px) {
-  #bundle .section-eyebrow {
+  #benefits-section .section-eyebrow {
     width: max-content;
     max-width: none;
     font-size: 1.875rem;
@@ -137,7 +137,7 @@ section[id]:not(#hero):not(#bundle) {
 }
 
 @media (min-width: 1280px) {
-  #bundle .section-eyebrow {
+  #benefits-section .section-eyebrow {
     font-size: 2.125rem;
   }
 }

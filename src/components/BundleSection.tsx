@@ -165,7 +165,7 @@ export default function BundleSection() {
   return (
     <section
       ref={ref}
-      id="bundle"
+      id="benefits-section"
       dir="rtl"
       aria-labelledby="bundle-heading"
       className="relative isolate overflow-x-clip bg-ink text-cream max-lg:pt-6 max-lg:pb-10 lg:min-h-[calc(100svh-var(--site-header-h))] lg:flex lg:items-center lg:pt-10 lg:pb-16"
