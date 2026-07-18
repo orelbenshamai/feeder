@@ -9,6 +9,7 @@ import {
 } from "react";
 import { readCart, removeLineItem, updateLineItemQty } from "@/lib/cart";
 import type { CartLineItem } from "@/types/product";
+import { trackRemoveFromCart, trackUpdateCart, trackViewCart } from "@/utils/tracking";
 
 type CartContextValue = {
   items: CartLineItem[];
@@ -42,25 +43,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [sync]);
 
-  // Open drawer whenever an item is added
-  useEffect(() => {
-    const onAdd = () => {
-      setItems(readCart());
-      setIsOpen(true);
-    };
-    window.addEventListener("mesudar:cart-updated", onAdd);
-    return () => window.removeEventListener("mesudar:cart-updated", onAdd);
+  const openCart = useCallback(() => {
+    setIsOpen((wasOpen) => {
+      // Fire view_cart only when transitioning closed → open
+      if (!wasOpen) trackViewCart(readCart());
+      return true;
+    });
   }, []);
-
-  const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
   const removeItem = useCallback((sku: string) => {
+    const existing = readCart().find((i) => i.sku === sku);
     setItems(removeLineItem(sku));
+    if (existing) trackRemoveFromCart({ items: [existing] });
   }, []);
 
   const updateQty = useCallback((sku: string, qty: number) => {
-    setItems(updateLineItemQty(sku, qty) ?? readCart());
+    const existing = readCart().find((i) => i.sku === sku);
+    if (!existing) {
+      setItems(updateLineItemQty(sku, qty) ?? readCart());
+      return;
+    }
+    if (qty <= 0) {
+      setItems(removeLineItem(sku));
+      trackRemoveFromCart({ items: [existing] });
+      return;
+    }
+    const next = updateLineItemQty(sku, qty) ?? readCart();
+    setItems(next);
+    trackUpdateCart({
+      item: existing,
+      previousQuantity: existing.quantity,
+      quantity: qty,
+    });
   }, []);
 
   const totalPrice = items.reduce((sum, l) => sum + l.price * l.quantity, 0);

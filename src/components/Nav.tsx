@@ -3,6 +3,7 @@ import { media } from "@/lib/media";
 
 import { useEffect, useState } from "react";
 import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
+import { trackWhatsAppClick } from "@/utils/tracking";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -58,6 +59,7 @@ export default function Nav() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="שיחה בוואטסאפ עם נציג מסודר"
+            onClick={() => trackWhatsAppClick("nav")}
             className="grid h-10 w-10 place-items-center rounded-full bg-[#25D366] text-white shadow-sm transition hover:bg-[#20bd5a]"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
@@ -123,6 +125,7 @@ export default function Nav() {
             href={whatsAppHref(WHATSAPP_PREFILL_HE)}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("nav_menu")}
             className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/15 px-5 py-3 text-sm text-ink"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>

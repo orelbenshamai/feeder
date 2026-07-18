@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/$/, "");
     const successUrl = `${baseUrl}/checkout/success`;
-    const cancelUrl  = `${baseUrl}/checkout`;
+    const cancelUrl  = `${baseUrl}/checkout?cancelled=1`;
 
     const signParams: Record<string, string | number | boolean> = {
       action: "APISign",

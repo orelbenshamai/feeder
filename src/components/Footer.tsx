@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { whatsAppHref } from "@/lib/whatsapp";
 import { media } from "@/lib/media";
+import { trackNavClick, trackWhatsAppClick } from "@/utils/tracking";
 
 export default function Footer() {
   return (
@@ -31,10 +34,26 @@ export default function Footer() {
             <p className="text-base font-semibold uppercase tracking-wider text-stone/60">החנות</p>
             <ul className="mt-4 space-y-3 text-lg">
               <li>
-                <Link href="/feeder" className="text-ink transition-colors hover:text-clay">עמדת ההאכלה</Link>
+                <Link
+                  href="/feeder"
+                  onClick={() =>
+                    trackNavClick({ linkText: "עמדת ההאכלה", linkUrl: "/feeder", source: "footer" })
+                  }
+                  className="text-ink transition-colors hover:text-clay"
+                >
+                  עמדת ההאכלה
+                </Link>
               </li>
               <li>
-                <Link href="/mat" className="text-ink transition-colors hover:text-clay">משטח ההאכלה</Link>
+                <Link
+                  href="/mat"
+                  onClick={() =>
+                    trackNavClick({ linkText: "משטח ההאכלה", linkUrl: "/mat", source: "footer" })
+                  }
+                  className="text-ink transition-colors hover:text-clay"
+                >
+                  משטח ההאכלה
+                </Link>
               </li>
             </ul>
           </div>
@@ -44,13 +63,41 @@ export default function Footer() {
             <p className="text-base font-semibold uppercase tracking-wider text-stone/60">עזרה</p>
             <ul className="mt-4 space-y-3 text-lg">
               <li>
-                <Link href="/faq" className="text-ink transition-colors hover:text-clay">שאלות נפוצות</Link>
+                <Link
+                  href="/faq"
+                  onClick={() =>
+                    trackNavClick({ linkText: "שאלות נפוצות", linkUrl: "/faq", source: "footer" })
+                  }
+                  className="text-ink transition-colors hover:text-clay"
+                >
+                  שאלות נפוצות
+                </Link>
               </li>
               <li>
-                <Link href="/about" className="text-ink transition-colors hover:text-clay">אודות</Link>
+                <Link
+                  href="/about"
+                  onClick={() =>
+                    trackNavClick({ linkText: "אודות", linkUrl: "/about", source: "footer" })
+                  }
+                  className="text-ink transition-colors hover:text-clay"
+                >
+                  אודות
+                </Link>
               </li>
               <li>
-                <Link href="/faq#shipping" className="text-ink transition-colors hover:text-clay">משלוחים והחזרות</Link>
+                <Link
+                  href="/faq#shipping"
+                  onClick={() =>
+                    trackNavClick({
+                      linkText: "משלוחים והחזרות",
+                      linkUrl: "/faq#shipping",
+                      source: "footer",
+                    })
+                  }
+                  className="text-ink transition-colors hover:text-clay"
+                >
+                  משלוחים והחזרות
+                </Link>
               </li>
             </ul>
           </div>
@@ -64,6 +111,7 @@ export default function Footer() {
                   href={whatsAppHref()}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackWhatsAppClick("footer")}
                   className="inline-flex items-center gap-2 text-ink transition-colors hover:text-clay"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="currentColor" aria-hidden>

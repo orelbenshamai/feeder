@@ -15,6 +15,8 @@ import type {
   ProductColorId,
   ProductVariant,
 } from "@/types/product";
+import { buildInventorySku } from "@/lib/inventory-sku";
+import { trackNotifyMeStock, trackNotifyMeStockError, trackNotifyMeStockOpen } from "@/utils/tracking";
 
 type StockNotifyActionProps = {
   product: Product;
@@ -39,12 +41,26 @@ export default function StockNotifyAction({
   className = "",
 }: StockNotifyActionProps) {
   const [open, setOpen] = useState(false);
+  const inventorySku = buildInventorySku(variant.sku, colorId);
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          trackNotifyMeStockOpen({
+            sku: inventorySku,
+            productId: product.id,
+            productName: product.name,
+            sizeLabel: variant.sizeLabel,
+            colorLabel,
+            bundleSku:
+              bundleEnabled && bundleUpsell
+                ? bundleUpsell.bundleSkuBySize[variant.id]
+                : undefined,
+          });
+          setOpen(true);
+        }}
         className={`
           group relative inline-flex w-full min-w-0 items-center justify-center
           overflow-hidden rounded-sm border-2 border-cream/70 bg-transparent
@@ -158,6 +174,7 @@ function StockNotifyModal({
       bundleEnabled && bundleUpsell
         ? bundleUpsell.bundleSkuBySize[variant.id]
         : undefined;
+    const inventorySku = buildInventorySku(variant.sku, colorId);
 
     try {
       const res = await fetch("/api/stock-notify", {
@@ -173,7 +190,7 @@ function StockNotifyModal({
           sizeLabel: variant.sizeLabel,
           colorId,
           colorLabel,
-          sku: variant.sku,
+          sku: inventorySku,
           bundleEnabled,
           bundleSku,
         }),
@@ -186,9 +203,25 @@ function StockNotifyModal({
         );
       }
 
+      trackNotifyMeStock({
+        sku: inventorySku,
+        productId: product.id,
+        productName: product.name,
+        sizeLabel: variant.sizeLabel,
+        colorLabel,
+        bundleSku,
+      });
+
       setDone(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "שגיאה, נסו שוב");
+      const message = err instanceof Error ? err.message : "שגיאה, נסו שוב";
+      trackNotifyMeStockError({
+        sku: inventorySku,
+        productId: product.id,
+        productName: product.name,
+        errorMessage: message,
+      });
+      setError(message);
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import { clearCart } from "@/lib/cart";
 import { formatILS } from "@/lib/pricing";
 import { media } from "@/lib/media";
 import Link from "next/link";
+import { trackPaymentFailed, trackPurchase } from "@/utils/tracking";
 
 type OrderItem = {
   productName?: string;
@@ -16,12 +17,16 @@ type OrderItem = {
   quantity: number;
   imageUrl?: string;
   productId: string;
+  sku?: string;
 };
 
 type Order = {
   orderId: string;
   status: string;
   totalPrice: number;
+  subtotal?: number;
+  discountAmount?: number;
+  couponCode?: string;
   items: OrderItem[];
   contact: {
     firstName: string;
@@ -63,6 +68,38 @@ function CheckoutSuccessInner() {
   const [status, setStatus] = useState<Status>("verifying");
   const [order, setOrder] = useState<Order | null>(null);
   const [paidAmount, setPaidAmount] = useState<string | null>(null);
+  const purchaseTracked = useRef(false);
+  const failureTracked = useRef(false);
+
+  function firePurchase(nextOrder: Order, amount?: string | null) {
+    if (purchaseTracked.current) return;
+    purchaseTracked.current = true;
+    trackPurchase({
+      transactionId: nextOrder.orderId,
+      value: amount ? Number(amount) : nextOrder.totalPrice,
+      coupon: nextOrder.couponCode,
+      discount: nextOrder.discountAmount,
+      items: nextOrder.items.map((item) => ({
+        item_id: item.sku ?? item.productId,
+        item_name: item.bundleLabel ?? item.productName ?? item.productId,
+        item_variant: `${item.sizeLabel} / ${item.colorLabel}`,
+        item_category: item.bundleLabel ? "bundle" : "product",
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    });
+  }
+
+  function firePaymentFailed(reason: string) {
+    if (failureTracked.current) return;
+    failureTracked.current = true;
+    trackPaymentFailed({
+      orderId: params.get("Order"),
+      value: params.get("Amount") ? Number(params.get("Amount")) : null,
+      ccode: params.get("CCode"),
+      reason,
+    });
+  }
 
   // Break out of iframe if loaded inside Hyp's modal
   useEffect(() => {
@@ -79,7 +116,7 @@ function CheckoutSuccessInner() {
     if (params.get("preview") === "true") {
       setStatus("success");
       setPaidAmount("179");
-      setOrder({
+      const previewOrder: Order = {
         orderId: "ORD-PREVIEW",
         status: "paid",
         totalPrice: 179,
@@ -91,6 +128,7 @@ function CheckoutSuccessInner() {
             price: 179,
             quantity: 1,
             productId: "prod_mesudar_feeder_001",
+            sku: "preview-sku",
           },
         ],
         contact: {
@@ -103,7 +141,9 @@ function CheckoutSuccessInner() {
           zip: "6100000",
         },
         createdAt: new Date().toISOString(),
-      });
+      };
+      setOrder(previewOrder);
+      firePurchase(previewOrder, "179");
       return;
     }
 
@@ -115,6 +155,7 @@ function CheckoutSuccessInner() {
 
     if (!id || !ccode || !sign) {
       setStatus("error");
+      firePaymentFailed("missing_verify_params");
       return;
     }
 
@@ -131,7 +172,13 @@ function CheckoutSuccessInner() {
       .then(r => r.json())
       .then(async (data: { valid?: boolean; error?: string }) => {
         if (data.error || !data.valid) {
-          setStatus(data.valid === false ? "failed" : "error");
+          const failed = data.valid === false;
+          setStatus(failed ? "failed" : "error");
+          firePaymentFailed(
+            failed
+              ? `payment_declined:${data.error ?? ccode}`
+              : `verify_error:${data.error ?? "unknown"}`
+          );
           return;
         }
 
@@ -142,11 +189,38 @@ function CheckoutSuccessInner() {
         if (orderId) {
           try {
             const res = await fetch(`/api/checkout/order?orderId=${encodeURIComponent(orderId)}`);
-            if (res.ok) setOrder(await res.json());
-          } catch { /* non-critical */ }
+            if (res.ok) {
+              const fullOrder = (await res.json()) as Order;
+              setOrder(fullOrder);
+              firePurchase(fullOrder, amount);
+            } else if (amount) {
+              firePurchase(
+                {
+                  orderId,
+                  status: "paid",
+                  totalPrice: Number(amount),
+                  items: [],
+                  contact: {
+                    firstName: "",
+                    lastName: "",
+                    phone: "",
+                    street: "",
+                    city: "",
+                  },
+                  createdAt: new Date().toISOString(),
+                },
+                amount
+              );
+            }
+          } catch {
+            /* non-critical */
+          }
         }
       })
-      .catch(() => setStatus("error"));
+      .catch(() => {
+        setStatus("error");
+        firePaymentFailed("verify_network_error");
+      });
   }, [params]);
 
   return (

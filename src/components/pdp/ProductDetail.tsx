@@ -32,6 +32,8 @@ import AddToCartButton from "./AddToCartButton";
 import ProductCompanionLink from "./ProductCompanionLink";
 import { formatILS } from "@/lib/pricing";
 import { STOCK_MODE } from "@/lib/flags";
+import { trackBundleToggle, trackSelectItem, trackViewItem } from "@/utils/tracking";
+import { buildInventorySku } from "@/lib/inventory-sku";
 
 type ProductCompanionLinkConfig = {
   href: string;
@@ -77,9 +79,11 @@ export default function ProductDetail({
       }
     }
     setBundleEnabled(next);
+    trackBundleToggle(next, product.id);
   };
 
   const desktopPanelRef = useRef<HTMLDivElement>(null);
+  const viewedItem = useRef(false);
 
   useEffect(() => {
     document.documentElement.dataset.pdp = "";
@@ -88,21 +92,59 @@ export default function ProductDetail({
     };
   }, []);
 
+  const selectedVariant = useMemo(
+    () => getVariantBySize(product, selectedSizeId),
+    [product, selectedSizeId],
+  );
+
+  useEffect(() => {
+    if (viewedItem.current) return;
+    viewedItem.current = true;
+    trackViewItem({
+      sku: buildInventorySku(selectedVariant.sku, selectedColorId),
+      productId: product.id,
+      productName: product.name,
+      value: selectedVariant.price,
+      sizeLabel: selectedVariant.sizeLabel,
+      colorLabel:
+        product.colors.find((c) => c.id === selectedColorId)?.label ?? selectedColorId,
+    });
+  }, [product, selectedVariant, selectedColorId]);
+
   const handleSelectSize = (sizeId: ProductSizeId) => {
     setSelectedSizeId(sizeId);
-    setSelectedColorId((current) => resolveColorForSize(product, sizeId, current));
+    const nextColor = resolveColorForSize(product, sizeId, selectedColorId);
+    setSelectedColorId(nextColor);
     setQty(1);
     setBundleOutOfStock(false);
     if (bundleEnabled && bundleUpsell) {
       const inStock = bundleUpsell.addonInStockBySize?.[sizeId] ?? true;
       if (!inStock) setBundleEnabled(false);
     }
+    const variant = getVariantBySize(product, sizeId);
+    trackSelectItem({
+      sku: buildInventorySku(variant.sku, nextColor),
+      productId: product.id,
+      productName: product.name,
+      value: variant.price,
+      sizeLabel: variant.sizeLabel,
+      colorLabel: product.colors.find((c) => c.id === nextColor)?.label ?? nextColor,
+      listName: "pdp_size",
+    });
   };
 
-  const selectedVariant = useMemo(
-    () => getVariantBySize(product, selectedSizeId),
-    [product, selectedSizeId],
-  );
+  const handleSelectColor = (colorId: ProductColorId) => {
+    setSelectedColorId(colorId);
+    trackSelectItem({
+      sku: buildInventorySku(selectedVariant.sku, colorId),
+      productId: product.id,
+      productName: product.name,
+      value: selectedVariant.price,
+      sizeLabel: selectedVariant.sizeLabel,
+      colorLabel: product.colors.find((c) => c.id === colorId)?.label ?? colorId,
+      listName: "pdp_color",
+    });
+  };
 
   const baseGalleryImages = useMemo(
     () => getGalleryImagesForSelection(product, selectedSizeId, selectedColorId),
@@ -224,7 +266,7 @@ export default function ProductDetail({
             <VariantColorSelector
               colors={availableColors}
               selectedId={selectedColorId}
-              onSelect={setSelectedColorId}
+              onSelect={handleSelectColor}
               labelClassName="pdp-option-label"
             />
             <div className="mt-3.5">
@@ -361,7 +403,7 @@ export default function ProductDetail({
               <VariantColorSelector
                 colors={availableColors}
                 selectedId={selectedColorId}
-                onSelect={setSelectedColorId}
+                onSelect={handleSelectColor}
                 labelClassName="purchase-label"
               />
               <VariantSizeSelector

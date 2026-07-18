@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import { AnimatePresence, motion } from "framer-motion";
+import { trackNavClick } from "@/utils/tracking";
 
 const SHOP_LINKS = [
   {
@@ -110,6 +111,9 @@ export default function SiteHeader() {
               <Link
                 key={href}
                 href={href}
+                onClick={() =>
+                  trackNavClick({ linkText: label, linkUrl: href, source: "header" })
+                }
                 className={`group flex items-center gap-2 rounded-sm border px-4 py-1.5 text-[16px] font-semibold transition-all ${
                   isActive
                     ? "border-clay/60 bg-clay/15 text-clay"
@@ -137,6 +141,9 @@ export default function SiteHeader() {
               <Link
                 key={href}
                 href={href}
+                onClick={() =>
+                  trackNavClick({ linkText: label, linkUrl: href, source: "header" })
+                }
                 className={`text-[16px] font-medium transition-colors ${
                   isActive ? "text-cream/80" : "text-cream/50 hover:text-cream/80"
                 }`}
@@ -219,7 +226,14 @@ export default function SiteHeader() {
                       <li key={href}>
                         <Link
                           href={href}
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            trackNavClick({
+                              linkText: label,
+                              linkUrl: href,
+                              source: "header_menu",
+                            });
+                            setMenuOpen(false);
+                          }}
                           className={`group flex items-center gap-4 rounded-sm px-5 py-4 transition-all ${
                             isActive
                               ? "bg-clay/12 ring-1 ring-clay/30"
@@ -256,7 +270,14 @@ export default function SiteHeader() {
                       <li key={href}>
                         <Link
                           href={href}
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            trackNavClick({
+                              linkText: label,
+                              linkUrl: href,
+                              source: "header_menu",
+                            });
+                            setMenuOpen(false);
+                          }}
                           className={`group flex items-center gap-3 rounded-sm px-3 py-3.5 transition-colors ${isActive ? "text-clay" : "text-cream/60 hover:text-cream"}`}
                         >
                           {icon}

@@ -118,7 +118,7 @@ export default function StickyPageCTA() {
         ${visible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-5 pointer-events-none"}
       `}
     >
-      <GhostCTAButton className="w-full max-w-md lg:w-auto" />
+      <GhostCTAButton className="w-full max-w-md lg:w-auto" source="sticky" />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   BundleUpsellOffer,
   CartBundleComponent,
@@ -12,7 +12,8 @@ import { formatILS } from "@/lib/pricing";
 import { addLineItem } from "@/lib/cart";
 import { buildInventorySku } from "@/lib/inventory-sku";
 import { getBundleAddonPrice } from "@/lib/bundles/pricing";
-import { trackAddToCart, trackAddToCartBundle } from "@/lib/pixel";
+import { trackAddToCart, trackAddToCartBundle } from "@/utils/tracking";
+import { trackViewOutOfStock } from "@/utils/tracking";
 import StockNotifyAction from "./StockNotifyAction";
 import { STOCK_MODE } from "@/lib/flags";
 import { useCart } from "@/context/CartContext";
@@ -46,6 +47,27 @@ export default function AddToCartButton({
   const { openCart } = useCart();
   const outOfStock = STOCK_MODE === "notify" ? true : !variant.inStock;
   const isBundle = bundleEnabled && bundleUpsell;
+
+  useEffect(() => {
+    if (!outOfStock) return;
+    trackViewOutOfStock({
+      sku: buildInventorySku(variant.sku, colorId),
+      productId: product.id,
+      productName: product.name,
+      value: variant.price,
+      sizeLabel: variant.sizeLabel,
+      colorLabel,
+    });
+  }, [
+    outOfStock,
+    product.id,
+    product.name,
+    variant.sku,
+    variant.price,
+    variant.sizeLabel,
+    colorId,
+    colorLabel,
+  ]);
 
   const handleClick = () => {
     if (outOfStock) return;
@@ -99,7 +121,8 @@ export default function AddToCartButton({
         bundleSku,
         componentSkus: [feederSku, matInventorySku],
         productName: `${product.name} + Bundle`,
-        value: totalPrice,
+        value: quantity > 0 ? totalPrice / quantity : totalPrice,
+        quantity,
       });
     } else {
       const inventorySku = buildInventorySku(variant.sku, colorId);
@@ -121,6 +144,9 @@ export default function AddToCartButton({
         productId: product.id,
         productName: product.name,
         value: variant.price,
+        quantity,
+        sizeLabel: variant.sizeLabel,
+        colorLabel,
       });
     }
 

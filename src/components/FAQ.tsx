@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { whatsAppHref } from "@/lib/whatsapp";
+import { trackFaqOpen, trackViewPage, trackWhatsAppClick } from "@/utils/tracking";
 import { media } from "@/lib/media";
 
 const faqs = [
@@ -88,7 +89,18 @@ function FaqItem({ f, i, open, setOpen }: {
         <button
           type="button"
           aria-expanded={isOpen}
-          onClick={() => setOpen(isOpen ? null : i)}
+          onClick={() => {
+            if (isOpen) {
+              setOpen(null);
+              return;
+            }
+            trackFaqOpen({
+              question: f.q,
+              category: f.category,
+              index: i,
+            });
+            setOpen(i);
+          }}
           className="flex w-full items-center justify-between gap-4 px-5 py-4 text-start transition hover:bg-soft/30 sm:px-6 sm:py-5"
         >
           <span
@@ -129,6 +141,10 @@ function FaqItem({ f, i, open, setOpen }: {
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
+  useEffect(() => {
+    trackViewPage({ pageType: "faq", pagePath: "/faq", pageTitle: "FAQ" });
+  }, []);
+
   // On mount: if URL hash matches a category slug, scroll to it and open
   // the most relevant question in that category.
   useEffect(() => {
@@ -147,7 +163,15 @@ export default function FAQ() {
 
     // Auto-open the first question in that category
     const firstIndex = faqs.findIndex((f) => f.category === cat);
-    if (firstIndex !== -1) setOpen(firstIndex);
+    if (firstIndex !== -1) {
+      const f = faqs[firstIndex];
+      trackFaqOpen({
+        question: f.q,
+        category: f.category,
+        index: firstIndex,
+      });
+      setOpen(firstIndex);
+    }
   }, []);
 
   return (
@@ -175,6 +199,7 @@ export default function FAQ() {
               href={whatsAppHref()}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackWhatsAppClick("faq_hero")}
               className="font-semibold text-clay hover:text-clay/80 transition-colors"
             >
               כתבו לנו בוואטסאפ
@@ -235,6 +260,7 @@ export default function FAQ() {
             href={whatsAppHref()}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("faq_bottom")}
             className="btn-clay mt-6 inline-flex items-center gap-2 px-10 py-4 text-lg font-bold"
           >
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden>

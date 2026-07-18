@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { formatILS } from "@/lib/pricing";
 import { media } from "@/lib/media";
 import type { ContactData } from "@/app/api/checkout/contact/route";
+import {
+  trackAddPaymentInfo,
+  trackAddShippingInfo,
+  trackApplyCoupon,
+  trackBeginCheckout,
+  trackCheckoutCancel,
+  trackCheckoutError,
+  trackCouponRejected,
+  trackRemoveCoupon,
+} from "@/utils/tracking";
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
   prod_mesudar_feeder_001: media("medium_gray_1.png"),
@@ -46,6 +56,23 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCouponPreview | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const beganCheckout = useRef(false);
+  const cancelTracked = useRef(false);
+
+  useEffect(() => {
+    if (cancelTracked.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("cancelled") !== "1") return;
+    cancelTracked.current = true;
+    trackCheckoutCancel();
+    window.history.replaceState({}, "", "/checkout");
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated || items.length === 0 || beganCheckout.current) return;
+    beganCheckout.current = true;
+    trackBeginCheckout(items);
+  }, [hydrated, items]);
 
   if (hydrated && items.length === 0) {
     router.replace("/");
@@ -66,6 +93,7 @@ export default function CheckoutPage() {
     const code = couponInput.trim();
     if (!code) {
       setCouponError("נא להזין קוד קופון");
+      trackCouponRejected("", "empty_code");
       return;
     }
 
@@ -80,7 +108,9 @@ export default function CheckoutPage() {
 
       if (!res.ok || !data.code) {
         setAppliedCoupon(null);
-        setCouponError(data.error ?? "קוד הקופון לא תקין");
+        const message = data.error ?? "קוד הקופון לא תקין";
+        setCouponError(message);
+        trackCouponRejected(code, message);
         return;
       }
 
@@ -90,14 +120,24 @@ export default function CheckoutPage() {
         label: data.label,
       });
       setCouponInput(data.code);
+      const discount = Math.round((totalPrice * data.percentOff) / 100);
+      trackApplyCoupon({
+        coupon: data.code,
+        percentOff: data.percentOff,
+        discountAmount: discount,
+        value: totalPrice - discount,
+      });
     } catch {
-      setCouponError("שגיאה בבדיקת הקופון");
+      const message = "שגיאה בבדיקת הקופון";
+      setCouponError(message);
+      trackCouponRejected(code, message);
     } finally {
       setCouponLoading(false);
     }
   }
 
   function handleRemoveCoupon() {
+    if (appliedCoupon?.code) trackRemoveCoupon(appliedCoupon.code);
     setAppliedCoupon(null);
     setCouponInput("");
     setCouponError(null);
@@ -118,12 +158,30 @@ export default function CheckoutPage() {
           couponCode: appliedCoupon?.code,
         }),
       });
-      const contactData = await contactRes.json() as { orderId?: string; error?: string };
+      const contactData = await contactRes.json() as {
+        orderId?: string;
+        error?: string;
+        totalPrice?: number;
+        discountAmount?: number;
+      };
 
       if (!contactData.orderId) {
-        setSubmitState({ status: "error", message: contactData.error ?? "שגיאה בשמירת הפרטים" });
+        const message = contactData.error ?? "שגיאה בשמירת הפרטים";
+        trackCheckoutError(message, "contact");
+        setSubmitState({ status: "error", message });
         return;
       }
+
+      const paidValue = contactData.totalPrice ?? payableTotal;
+      const discountValue = contactData.discountAmount ?? discountAmount;
+
+      trackAddShippingInfo({
+        items,
+        value: paidValue,
+        coupon: appliedCoupon?.code,
+        discount: discountValue || undefined,
+        city: form.city,
+      });
 
       // Step 2: Get signed Hyp Pay URL (charges order.totalPrice from DB)
       const payRes = await fetch("/api/checkout", {
@@ -134,12 +192,23 @@ export default function CheckoutPage() {
       const payData = await payRes.json() as { paymentUrl?: string; error?: string };
 
       if (!payData.paymentUrl) {
-        setSubmitState({ status: "error", message: payData.error ?? "שגיאה בתהליך התשלום" });
+        const message = payData.error ?? "שגיאה בתהליך התשלום";
+        trackCheckoutError(message, "payment");
+        setSubmitState({ status: "error", message });
         return;
       }
 
+      trackAddPaymentInfo({
+        items,
+        value: paidValue,
+        coupon: appliedCoupon?.code,
+        discount: discountValue || undefined,
+        orderId: contactData.orderId,
+      });
+
       window.location.href = payData.paymentUrl;
     } catch {
+      trackCheckoutError("שגיאה בחיבור לשרת", "network");
       setSubmitState({ status: "error", message: "שגיאה בחיבור לשרת" });
     }
   }

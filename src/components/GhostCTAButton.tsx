@@ -1,9 +1,19 @@
-import Link from "next/link";
+"use client";
 
-export default function GhostCTAButton({ className = "" }: { className?: string }) {
+import Link from "next/link";
+import { trackCtaShop } from "@/utils/tracking";
+
+export default function GhostCTAButton({
+  className = "",
+  source = "hero",
+}: {
+  className?: string;
+  source?: string;
+}) {
   return (
     <Link
       href="/feeder"
+      onClick={() => trackCtaShop(source)}
       className={`
         group inline-flex items-center justify-center gap-4
         border-2 border-cream/70 bg-transparent

@@ -2,9 +2,10 @@
 import { media } from "@/lib/media";
 import Link from "next/link";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import ResponsiveLayout from "./ResponsiveLayout";
+import { trackCtaShop, trackViewPage } from "@/utils/tracking";
 
 const EASE = [0.25, 1, 0.4, 1] as const;
 
@@ -69,6 +70,7 @@ function StoryCTA({ className = "" }: { className?: string }) {
   return (
     <Link
       href="/feeder"
+      onClick={() => trackCtaShop("about")}
       className={`
         group inline-flex w-full max-w-sm items-center justify-center gap-3
         border-2 border-cream/70 bg-transparent
@@ -278,6 +280,10 @@ function AboutDesktopContent() {
 }
 
 export default function AboutSection() {
+  useEffect(() => {
+    trackViewPage({ pageType: "about", pagePath: "/about", pageTitle: "About" });
+  }, []);
+
   return (
     <article
       id="about"

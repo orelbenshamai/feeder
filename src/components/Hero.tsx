@@ -71,7 +71,7 @@ function HeroCopy({
         className={`hero-rise hero-copy-panel${mobile ? " hero-copy-panel--mobile" : ""}`}
       >
         <HeroTitle headingId={headingId} mobile={mobile} />
-        <GhostCTAButton className={`mx-auto ${mobile ? "mt-2" : "mt-8"}`} />
+        <GhostCTAButton className={`mx-auto ${mobile ? "mt-2" : "mt-8"}`} source="hero" />
       </article>
     </div>
   );
@@ -112,7 +112,7 @@ export default function Hero() {
           <HeroTitle headingId="hero-heading" mobile />
         </div>
         <div className="relative flex w-full -translate-y-9 justify-center px-4 pb-1 sm:px-6 sm:pb-2">
-          <GhostCTAButton className="hero-rise-delay-sm px-16 py-6 text-xl gap-5 [&_svg]:h-6 [&_svg]:w-6" />
+          <GhostCTAButton className="hero-rise-delay-sm px-16 py-6 text-xl gap-5 [&_svg]:h-6 [&_svg]:w-6" source="hero" />
         </div>
       </div>
 
