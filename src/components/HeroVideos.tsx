@@ -16,7 +16,7 @@ export default function HeroVideos({
   mobilePoster,
   desktopPoster,
 }: Props) {
-  // Default mobile-first so SSR and first paint match the phone layout.
+  // Default mobile-first so SSR HTML includes the LCP mobile poster immediately.
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function HeroVideos({
       <HeroAutoplayVideo
         src={mobileSrc}
         poster={mobilePoster}
+        priorityPoster
         className="absolute inset-0 z-0 h-full w-full object-cover object-center md:hidden"
       />
     );

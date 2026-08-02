@@ -11,6 +11,8 @@ type Props = {
   posterObjectPosition?: string;
   /** Scale/translate inside the crop slot when object-position has no room to move. */
   mediaNudge?: string;
+  /** LCP poster: fetchPriority=high, eager, preload (mobile hero). */
+  priorityPoster?: boolean;
 };
 
 function splitVideoClasses(
@@ -47,6 +49,7 @@ export default function HeroAutoplayVideo({
   className = "",
   posterObjectPosition,
   mediaNudge,
+  priorityPoster = false,
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [showPoster, setShowPoster] = useState(Boolean(poster));
@@ -159,7 +162,9 @@ export default function HeroAutoplayVideo({
           alt=""
           aria-hidden
           fill
-          priority
+          priority={priorityPoster}
+          // Already AVIF on R2 — skip /_next/image (was ~1s of LCP load time).
+          unoptimized={priorityPoster}
           sizes="100vw"
           className={`${posterMedia} z-[1]`}
           draggable={false}

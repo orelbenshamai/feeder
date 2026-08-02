@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import { Heebo, Nunito } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
-import { GoogleTagManager } from '@next/third-parties/google'
+import DeferredGTM from "@/components/DeferredGTM";
 
 const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["latin", "hebrew"],
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  // Variable font — one family file covers 100–900 (far less @font-face CSS).
+  weight: "variable",
 });
 
 const nunito = Nunito({
@@ -17,6 +18,7 @@ const nunito = Nunito({
   subsets: ["latin"],
   display: "swap",
   weight: ["800"],
+  preload: false, // brand wordmark only — not LCP
 });
 
 export const metadata: Metadata = {
@@ -49,7 +51,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${heebo.variable} ${nunito.variable} antialiased font-sans`}
     >
-      <GoogleTagManager gtmId="GTM-MC36BKQK" />
+      <DeferredGTM gtmId="GTM-MC36BKQK" />
       <head>
         {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
         <script

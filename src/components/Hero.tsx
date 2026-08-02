@@ -1,3 +1,4 @@
+import { preload } from "react-dom";
 import { media } from "@/lib/media";
 import HeroVideos from "./HeroVideos";
 import GhostCTAButton from "./GhostCTAButton";
@@ -78,6 +79,13 @@ function HeroCopy({
 }
 
 export default function Hero() {
+  // Direct AVIF preload (same URL the LCP <img> uses — no /_next/image hop).
+  preload(HERO_POSTER_MOBILE, {
+    as: "image",
+    fetchPriority: "high",
+    type: "image/avif",
+  });
+
   return (
     <section
       id="hero-section"

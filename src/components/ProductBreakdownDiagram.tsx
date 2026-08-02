@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import MediaImage from "@/components/MediaImage";
 import BreakdownScrollSync from "./BreakdownScrollSync";
 import { useIsLgUp } from "@/lib/use-media-query";
+import "@/app/breakdown-scroll.css";
 
 /* ─── Data ────────────────────────────────────────────────────────────────── */
 

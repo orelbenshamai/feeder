@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./breakdown-scroll.css";
 
 @theme inline {
   --color-cream: #F7F5F0;
