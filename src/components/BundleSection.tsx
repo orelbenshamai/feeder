@@ -12,7 +12,7 @@ import { formatILS } from "@/lib/pricing";
 const FEEDER_MEDIUM_PRICE = 219;
 const BUNDLE_ADDON_MEDIUM = FEEDER_MAT_BUNDLE.addonPriceBySize.medium;
 const BUNDLE_FROM_PRICE = FEEDER_MEDIUM_PRICE + BUNDLE_ADDON_MEDIUM;
-const BUNDLE_IMAGE = media("bundle.png");
+const BUNDLE_IMAGE = media("bundle");
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const DURATION = 0.7;

@@ -3,6 +3,7 @@ import { media } from "@/lib/media";
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import MediaImage from "@/components/MediaImage";
 import { useIsLgUp } from "@/lib/use-media-query";
 
 /* ── Easing ──────────────────────────────────────────────────────────────── */
@@ -203,12 +204,13 @@ export default function ProductIntroduction() {
           {/* Mobile: image first — scaled up inside a fixed layout slot */}
           {!desktop && (
           <motion.div variants={imgV} className="w-full">
-            <div className="mx-auto aspect-[1920/1088] max-h-[calc(var(--screen-h)*0.38)] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={media("product_image.png")}
+            <div className="relative mx-auto aspect-[1920/1088] max-h-[calc(var(--screen-h)*0.38)] w-full max-w-[min(100%,24rem)] overflow-hidden sm:max-w-[28rem]">
+              <MediaImage
+                src={media("product_image")}
                 alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
-                className="mx-auto block h-full w-full origin-center scale-[1.1] select-none object-contain"
+                fill
+                sizes="(max-width: 640px) 100vw, 28rem"
+                className="origin-center scale-[1.1] select-none object-contain"
                 draggable={false}
               />
             </div>
@@ -219,17 +221,14 @@ export default function ProductIntroduction() {
           {desktop && (
           <motion.div
             variants={imgV}
-            className="min-w-0 overflow-visible lg:col-start-1 lg:row-start-1 lg:flex lg:items-center lg:justify-start"
+            className="relative min-h-[min(98vh,calc(100svh-var(--site-header-h)-0.5rem))] min-w-0 overflow-visible lg:col-start-1 lg:row-start-1 lg:flex lg:items-center lg:justify-start"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={media("product_image.png")}
+            <MediaImage
+              src={media("product_image")}
               alt="עמדת ההאכלה של מסודר — מבט מלא על המוצר"
-              className="
-                block h-auto w-auto max-h-[min(98vh,calc(100svh-var(--site-header-h)-0.5rem))]
-                max-w-full origin-left scale-[1.14]
-                select-none object-contain object-left
-              "
+              fill
+              sizes="(max-width: 1024px) 100vw, 55vw"
+              className="origin-left scale-[1.14] select-none object-contain object-left"
               draggable={false}
             />
           </motion.div>

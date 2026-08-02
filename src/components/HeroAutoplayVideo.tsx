@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import MediaImage from "@/components/MediaImage";
 
 type Props = {
   src: string;
@@ -151,16 +152,16 @@ export default function HeroAutoplayVideo({
   ).media;
 
   return (
-    <div className={`overflow-hidden ${layout}`}>
+    <div className={`relative overflow-hidden ${layout}`}>
       {showPoster ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={poster}
+        <MediaImage
+          src={poster!}
           alt=""
           aria-hidden
+          fill
+          priority
+          sizes="100vw"
           className={`${posterMedia} z-[1]`}
-          fetchPriority="high"
-          decoding="sync"
           draggable={false}
         />
       ) : null}

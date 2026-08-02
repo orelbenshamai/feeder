@@ -6,11 +6,11 @@ import type { Product } from "@/types/product";
 const MAT_VIMEO_ID = "1201045944";
 
 const MAT_GRAY_GALLERY = [
-  media("mat_gray_1.png"),
+  media("mat_gray_1"),
   toVimeoGalleryItem(MAT_VIMEO_ID),
-  media("mat_gray_2.png"),
-  media("mat_gray_3.png"),
-  media("mat_gray_4.png"),
+  media("mat_gray_2"),
+  media("mat_gray_3"),
+  media("mat_gray_4"),
 ];
 
 export const mesudarMat: Product = {
@@ -49,19 +49,19 @@ export const mesudarMat: Product = {
       title: "שוליים מוגבהים — מונע מים שנשפכים",
       description:
         "המשטח מתוכנן עם היקף מוגבה במדויק שלוכד מים שנשפכים ושאריות מזון ומונע מהן להגיע לרצפה. מתאים בדיוק לעמדת ההאכלה MESUDAR — מבטיח סביבת האכלה נקייה בכל פעם.",
-      imageUrl: media("mat_feat_containment.png"),
+      imageUrl: media("mat_feat_containment"),
     },
     {
       title: "סיליקון איכותי — בריא לחיית המחמד",
       description:
         "עשוי מסיליקון עמיד ואיכותי, בטוח למגע עם מזון. המגש יוצר משטח יציב שנשאר במקומו, עדין לרצפות, עמיד לחום ומותאם לשגרת היומיום של כל חיית מחמד.",
-      imageUrl: media("mat_feat_quality.png"),
+      imageUrl: media("mat_feat_quality"),
     },
     {
       title: "קל לניקוי - ניקוי במדיח",
       description:
         "בשגרה — שטיפה מהירה במים וסבון. לניקוי יסודי — פשוט לשים במדיח (מדף עליון). המשטח לא נשאר עם כתמים או ריחות, ונשמר נקי לאורך זמן.",
-      imageUrl: media("mat_feat_clean.png"),
+      imageUrl: media("mat_feat_clean"),
     },
   ],
   accordions: [
@@ -85,7 +85,7 @@ export const mesudarMat: Product = {
       id: "gray",
       label: "אפור",
       hex: "#9CA3AF",
-      imageUrl: media("mat_gray_1.png"),
+      imageUrl: media("mat_gray_1"),
     },
   ],
   variants: [
@@ -95,7 +95,7 @@ export const mesudarMat: Product = {
       sizeDimensions: "41×26×1.3 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("mat_gray_1.png"),
+      imageUrl: media("mat_gray_1"),
       sku: "MSD-MAT-S",
       inStock: true,
       availableColors: ["gray"],
@@ -109,7 +109,7 @@ export const mesudarMat: Product = {
       sizeDimensions: "49×31×1.3 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("mat_gray_1.png"),
+      imageUrl: media("mat_gray_1"),
       sku: "MSD-MAT-M",
       inStock: true,
       availableColors: ["gray"],
@@ -123,7 +123,7 @@ export const mesudarMat: Product = {
       sizeDimensions: "61×41×1.3 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("mat_gray_1.png"),
+      imageUrl: media("mat_gray_1"),
       sku: "MSD-MAT-L",
       inStock: true,
       availableColors: ["gray"],

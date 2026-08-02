@@ -4,8 +4,8 @@ import GhostCTAButton from "./GhostCTAButton";
 
 const HERO_VIDEO_MOBILE = media("media_mesudar_main_video_compressed_mobile.mp4");
 const HERO_VIDEO_DESKTOP = media("media_mesudar_main_video_compressed_desktop.mp4");
-const HERO_POSTER_MOBILE = media("mesudar_main_video_poster_mobile.png");
-const HERO_POSTER_DESKTOP = media("mesudar_main_video_poster_desktop.png");
+const HERO_POSTER_MOBILE = media("mesudar_main_video_poster_mobile");
+const HERO_POSTER_DESKTOP = media("mesudar_main_video_poster_desktop");
 
 const HERO_SCRIM =
   "linear-gradient(to top, rgba(31,58,82,0.92) 0%, rgba(31,58,82,0.62) 32%, rgba(31,58,82,0.18) 62%, transparent 78%)";

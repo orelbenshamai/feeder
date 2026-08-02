@@ -1,5 +1,6 @@
 "use client";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 
 import { useEffect, useState } from "react";
 import { whatsAppHref, WHATSAPP_PREFILL_HE } from "@/lib/whatsapp";
@@ -31,12 +32,14 @@ export default function Nav() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-14 sm:h-16 flex items-center justify-between">
-        <a href="#" aria-label="מסודר — חזרה לראש הדף">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("logo.png")}
+        <a href="#" aria-label="מסודר — חזרה לראש הדף" className="relative block h-12 w-[7.5rem] md:h-14 md:w-[8.75rem]">
+          <MediaImage
+            src={media("logo")}
             alt="מסודר"
-            className="h-12 w-auto md:h-14"
+            fill
+            priority
+            sizes="140px"
+            className="object-contain object-right"
             draggable={false}
           />
         </a>

@@ -37,6 +37,9 @@ yarn-error.log*
 # local media symlink if used
 /public/media
 
+# local R2/S3 media download (scripts/download-media.mjs)
+/scripts/media-local/
+
 # vercel
 .vercel
 

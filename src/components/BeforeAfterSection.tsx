@@ -117,8 +117,8 @@ function StickyReveal() {
           style={{ opacity: 0 }}
         >
           <ResponsiveMediaImage
-            mobileSrc={media("messy-after_mobile.png")}
-            desktopSrc={media("messy-after.png")}
+            mobileSrc={media("messy-after_mobile")}
+            desktopSrc={media("messy-after")}
             alt="אחרי עמדת ההאכלה"
             fill
             mobileClassName="object-cover object-[center_42%]"
@@ -145,8 +145,8 @@ function StickyReveal() {
           className="absolute inset-0"
         >
           <ResponsiveMediaImage
-            mobileSrc={media("messy-before_mobile.png")}
-            desktopSrc={media("messy-before.png")}
+            mobileSrc={media("messy-before_mobile")}
+            desktopSrc={media("messy-before")}
             alt="לפני עמדת ההאכלה"
             fill
             mobileClassName="object-cover object-[center_35%]"

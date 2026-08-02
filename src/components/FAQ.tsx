@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { whatsAppHref } from "@/lib/whatsapp";
 import { trackFaqOpen, trackViewPage, trackWhatsAppClick } from "@/utils/tracking";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 
 const faqs = [
   {
@@ -178,13 +179,15 @@ export default function FAQ() {
     <section id="faq" dir="rtl" className="relative isolate overflow-hidden bg-cream">
 
       {/* Page hero */}
-      <div className="relative overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media("faqs_image.png")}
+      <div className="relative h-[40vh] overflow-hidden sm:h-[50vh] lg:h-[55vh]">
+        <MediaImage
+          src={media("faqs_image")}
           alt=""
           aria-hidden
-          className="h-[40vh] w-full object-cover object-[center_70%] sm:h-[50vh] lg:h-[55vh]"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_70%]"
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/70" />

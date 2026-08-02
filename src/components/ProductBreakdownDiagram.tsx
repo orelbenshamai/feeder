@@ -2,6 +2,7 @@
 import { media } from "@/lib/media";
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import MediaImage from "@/components/MediaImage";
 import BreakdownScrollSync from "./BreakdownScrollSync";
 import { useIsLgUp } from "@/lib/use-media-query";
 
@@ -553,11 +554,12 @@ function DesktopBreakdownStage() {
   return (
     <div className="desktop-breakdown-stage-wrap relative mt-3 min-h-0 flex-1">
       <div ref={stageRef} className="desktop-breakdown-stage mx-auto">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media("product_breakdown.png")}
+        <MediaImage
+          src={media("product_breakdown")}
           alt="פירוק המוצר: עמדת ההאכלה עם סימון 4 הרכיבים העיקריים"
-          className="absolute inset-0 m-auto block h-full w-full max-w-[94%] select-none object-contain"
+          fill
+          sizes="(max-width: 1024px) 100vw, 70vw"
+          className="m-auto max-w-[94%] select-none object-contain"
           style={{
             maskImage: IMG_MASK,
             WebkitMaskImage: IMG_MASK,
@@ -913,11 +915,12 @@ export default function ProductBreakdownDiagram() {
 
                 <div className="mobile-diagram-wrap relative mx-auto flex min-h-0 w-full items-center justify-center overflow-hidden">
                   <div className="mobile-diagram-scale relative aspect-[1920/1088] w-full max-w-full origin-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={media("product_breakdown.png")}
+                    <MediaImage
+                      src={media("product_breakdown")}
                       alt="פירוק המוצר"
-                      className="absolute inset-0 h-full w-full select-none object-contain"
+                      fill
+                      sizes="100vw"
+                      className="select-none object-contain"
                       draggable={false}
                     />
                     {ORDERED_LABELS.map((l, i) => (

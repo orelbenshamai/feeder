@@ -39,19 +39,19 @@ export const mesudarFeederStation: Product = {
       title: "מים שנשפכים? נשארים בפנים",
       description:
         "ניקוז חכם עם שיפוע מובנה וחורי סינון מובילים מים ישר למיכל תחתון. גם כלב שמרטיב חצי מטבח, גם חתול שדוחף קערה — הרצפה נשארת יבשה.",
-      imageUrl: media("feeder_feat_no_mess.png"),
+      imageUrl: media("feeder_feat_no_mess"),
     },
     {
       title: "שאריות מזון לא מגיעות לרצפה",
       description:
         "הקירות סביב הקערות לוכדים שאריות מזון ומים לפני שהם מגיעים לרצפה. פחות ניגוב, פחות שאריות מזון על הרצפה.",
-      imageUrl: media("feeder_feat_agronomics.png"),
+      imageUrl: media("feeder_feat_agronomics"),
     },
     {
       title: "ניקיון של 10 שניות — לא 10 דקות",
       description:
         "קערות נירוסטה שנשלפות בקלות ישר למדיח. את העמדה עצמה שוטפים ידנית פעם בכמה ימים. זהו — לא עוד ניקיון יומיומי של הרצפה.",
-      imageUrl: media("feeder_feat_bowls.png"),
+      imageUrl: media("feeder_feat_bowls"),
     },
   ],
   accordions: [
@@ -76,13 +76,13 @@ export const mesudarFeederStation: Product = {
       id: "gray",
       label: "אפור",
       hex: "#6B7280",
-      imageUrl: media("small_gray_1.png"),
+      imageUrl: media("small_gray_1"),
     },
     {
       id: "beige",
       label: "בז'",
       hex: "#D4C4A8",
-      imageUrl: media("small_beige_1.png"),
+      imageUrl: media("small_beige_1"),
     },
   ],
   variants: [
@@ -92,13 +92,13 @@ export const mesudarFeederStation: Product = {
       sizeDimensions: "33×22×14 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("small_gray_1.png"),
+      imageUrl: media("small_gray_1"),
       sku: "MSD-FEED-S",
       inStock: true,
       availableColors: ["gray", "beige"],
       galleryByColor: {
-        gray: [media("small_gray_1.png"), media("small_gray_2.png")],
-        beige: [media("small_beige_1.png"), media("small_beige_2.png")],
+        gray: [media("small_gray_1"), media("small_gray_2")],
+        beige: [media("small_beige_1"), media("small_beige_2")],
       },
     },
     {
@@ -107,15 +107,15 @@ export const mesudarFeederStation: Product = {
       sizeDimensions: "42×28×16 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("medium_gray_1.png"),
+      imageUrl: media("medium_gray_1"),
       sku: "MSD-FEED-M",
       inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
         gray: [
-          media("medium_gray_1.png"),
-          media("medium_gray_2.png"),
-          media("medium_gray_3.png"),
+          media("medium_gray_1"),
+          media("medium_gray_2"),
+          media("medium_gray_3"),
         ],
       },
     },
@@ -125,12 +125,12 @@ export const mesudarFeederStation: Product = {
       sizeDimensions: "50×34×18 ס״מ",
       price: 0, // overridden by inventory
       compareAtPrice: 0,
-      imageUrl: media("medium_gray_1.png"),
+      imageUrl: media("medium_gray_1"),
       sku: "MSD-FEED-L",
       inStock: true,
       availableColors: ["gray"],
       galleryByColor: {
-        gray: [media("medium_gray_1.png")],
+        gray: [media("medium_gray_1")],
       },
     },
   ],

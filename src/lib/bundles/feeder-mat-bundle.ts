@@ -35,13 +35,13 @@ export const FEEDER_MAT_BUNDLE: BundleUpsellOffer = {
     large: "MSD-BUNDLE-L",
   },
   bundleImageBySize: {
-    small: media("small_gray_1.png"),
-    medium: media("medium_gray_1.png"),
-    large: media("medium_gray_1.png"),
+    small: media("small_gray_1"),
+    medium: media("medium_gray_1"),
+    large: media("medium_gray_1"),
   },
   matImageBySize: {
-    small: media("mat_gray_1.png"),
-    medium: media("mat_gray_1.png"),
-    large: media("mat_gray_1.png"),
+    small: media("mat_gray_1"),
+    medium: media("mat_gray_1"),
+    large: media("mat_gray_1"),
   },
 };

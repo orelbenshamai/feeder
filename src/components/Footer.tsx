@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { whatsAppHref } from "@/lib/whatsapp";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 import { trackNavClick, trackWhatsAppClick } from "@/utils/tracking";
 
 export default function Footer() {
@@ -15,13 +16,16 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={media("full_logo.png")}
-              alt="מסודר"
-              className="mx-auto h-50 w-auto sm:h-20 lg:mx-0 lg:h-50"
-              draggable={false}
-            />
+            <div className="relative mx-auto h-50 w-48 sm:h-20 sm:w-40 lg:mx-0 lg:h-50 lg:w-48">
+              <MediaImage
+                src={media("full_logo")}
+                alt="מסודר"
+                fill
+                sizes="(max-width: 640px) 192px, 160px"
+                className="object-contain"
+                draggable={false}
+              />
+            </div>
             <p className="-mt-6 max-w-xs text-lg leading-relaxed sm:max-w-sm sm:text-xl">
               <span style={{ fontFamily: "var(--font-nunito)" }}>MESUDAR</span> מפתחת פתרונות האכלה שמתוכננות לשמור על פינת האכילה נקייה ומסודרת.
               עמדת ההאכלה המוגבהת מפרידה בין מזון ומים שנשפכים, כך שהם מתנקזים לתוך מיכל מים —

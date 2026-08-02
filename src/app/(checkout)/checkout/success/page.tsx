@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { clearCart } from "@/lib/cart";
 import { formatILS } from "@/lib/pricing";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 import Link from "next/link";
 import { trackPaymentFailed, trackPurchase } from "@/utils/tracking";
 
@@ -41,8 +42,8 @@ type Order = {
 };
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
-  prod_mesudar_feeder_001: media("medium_gray_1.png"),
-  prod_mesudar_mat_001: media("mat_gray_1.png"),
+  prod_mesudar_feeder_001: media("medium_gray_1"),
+  prod_mesudar_mat_001: media("mat_gray_1"),
 };
 
 type Status = "verifying" | "success" | "failed" | "error";
@@ -267,12 +268,13 @@ function CheckoutSuccessInner() {
                 <ul className="divide-y divide-line/40">
                   {order.items.map((item, i) => (
                     <li key={i} className="flex items-center gap-4 px-5 py-4">
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-cream">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-cream">
+                        <MediaImage
+                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image")}
                           alt=""
-                          className="h-full w-full object-contain p-1"
+                          fill
+                          sizes="56px"
+                          className="object-contain p-1"
                           draggable={false}
                         />
                       </div>

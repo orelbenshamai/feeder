@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { formatILS } from "@/lib/pricing";
 import { media } from "@/lib/media";
+import MediaImage from "@/components/MediaImage";
 import type { ContactData } from "@/app/api/checkout/contact/route";
 import {
   trackAddPaymentInfo,
@@ -19,8 +20,8 @@ import {
 } from "@/utils/tracking";
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
-  prod_mesudar_feeder_001: media("medium_gray_1.png"),
-  prod_mesudar_mat_001: media("mat_gray_1.png"),
+  prod_mesudar_feeder_001: media("medium_gray_1"),
+  prod_mesudar_mat_001: media("mat_gray_1"),
 };
 
 type FormState = ContactData;
@@ -254,12 +255,13 @@ export default function CheckoutPage() {
                 {items.map((item, i) => (
                   <li key={item.sku} className={`flex items-center gap-3 py-4 ${i > 0 ? "border-t border-white/10" : ""}`}>
                     <div className="relative shrink-0">
-                      <div className="h-14 w-14 overflow-hidden rounded-sm bg-cream/10">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
+                      <div className="relative h-14 w-14 overflow-hidden rounded-sm bg-cream/10">
+                        <MediaImage
+                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image")}
                           alt=""
-                          className="h-full w-full object-contain p-1.5"
+                          fill
+                          sizes="56px"
+                          className="object-contain p-1.5"
                           draggable={false}
                         />
                       </div>
@@ -294,12 +296,14 @@ export default function CheckoutPage() {
 
           {/* Logo */}
           <div className="flex shrink-0 justify-center px-12 pt-6" style={{ marginBottom: "-24px" }}>
-            <Link href="/" aria-label="מסודר">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={media("full_logo.png")}
+            <Link href="/" aria-label="מסודר" className="relative block h-32 w-40 sm:h-40 sm:w-52">
+              <MediaImage
+                src={media("full_logo")}
                 alt="מסודר"
-                className="h-32 w-auto sm:h-40"
+                fill
+                priority
+                sizes="(max-width: 640px) 160px, 208px"
+                className="object-contain"
                 draggable={false}
               />
             </Link>
@@ -496,12 +500,13 @@ export default function CheckoutPage() {
                 >
                   {/* Image tile — outer div unclipped so badge is always visible */}
                   <div className="relative shrink-0">
-                    <div className="h-[72px] w-[72px] overflow-hidden rounded-sm bg-cream">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
+                    <div className="relative h-[72px] w-[72px] overflow-hidden rounded-sm bg-cream">
+                      <MediaImage
+                        src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image")}
                         alt=""
-                        className="h-full w-full object-contain p-2"
+                        fill
+                        sizes="72px"
+                        className="object-contain p-2"
                         draggable={false}
                       />
                     </div>

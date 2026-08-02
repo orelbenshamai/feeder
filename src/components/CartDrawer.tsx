@@ -4,13 +4,14 @@ import { media } from "@/lib/media";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import MediaImage from "@/components/MediaImage";
 import { useCart } from "@/context/CartContext";
 import { formatILS } from "@/lib/pricing";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 
 const PRODUCT_FALLBACK_IMAGE: Record<string, string> = {
-  prod_mesudar_feeder_001: media("medium_gray_1.png"),
-  prod_mesudar_mat_001: media("mat_gray_1.png"),
+  prod_mesudar_feeder_001: media("medium_gray_1"),
+  prod_mesudar_mat_001: media("mat_gray_1"),
 };
 
 const EASE = [0.32, 0, 0.18, 1] as const;
@@ -131,12 +132,13 @@ export default function CartDrawer() {
                   {items.map((item) => (
                     <li key={item.sku} className="flex gap-4 py-5">
                       {/* Thumbnail */}
-                      <div className="h-20 w-20 shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image.png")}
+                      <div className="relative h-20 w-20 shrink-0">
+                        <MediaImage
+                          src={item.imageUrl ?? PRODUCT_FALLBACK_IMAGE[item.productId] ?? media("product_image")}
                           alt=""
-                          className="h-full w-full object-contain"
+                          fill
+                          sizes="80px"
+                          className="object-contain"
                           draggable={false}
                         />
                       </div>

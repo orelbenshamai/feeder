@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import MediaImage from "@/components/MediaImage";
 import ResponsiveLayout from "./ResponsiveLayout";
 import { trackCtaShop, trackViewPage } from "@/utils/tracking";
 
@@ -100,11 +101,13 @@ function AboutMobileContent() {
     <>
       {/* ── Block 1: Hero ── */}
       <div className="relative h-below-header w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media("senior_golden_mobile.png")}
+        <MediaImage
+          src={media("senior_golden_mobile")}
           alt="האצ׳י הגולדן"
-          className="h-full w-full object-cover object-[center_40%]"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_40%]"
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/0 via-ink/20 to-ink/80" />
@@ -131,11 +134,12 @@ function AboutMobileContent() {
       {/* ── Block 3: Founder story + image ── */}
       <div className="flex min-h-below-header flex-col">
         <div className="relative w-full overflow-hidden bg-ink" style={{ flex: "0 0 52%" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("before_mesudar_mobile.png")}
+          <MediaImage
+            src={media("before_mesudar_mobile")}
             alt="האצ׳י לפני מסודר"
-            className="h-full w-full object-cover object-[center_38%]"
+            fill
+            sizes="100vw"
+            className="object-cover object-[center_38%]"
             draggable={false}
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-ink" />
@@ -169,11 +173,12 @@ function AboutMobileContent() {
           </FadeIn>
         </div>
         <div className="relative flex-1 overflow-hidden bg-ink">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={media("after_mesudar_mobile.png")}
+          <MediaImage
+            src={media("after_mesudar_mobile")}
             alt="האצ׳י אחרי מסודר"
-            className="h-full w-full object-cover object-[center_38%]"
+            fill
+            sizes="100vw"
+            className="object-cover object-[center_38%]"
             draggable={false}
           />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink to-transparent" />
@@ -188,11 +193,13 @@ function AboutDesktopContent() {
     <>
       {/* ── Block 1: Hero ── */}
       <div className="relative h-below-header w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media("senior_golden.png")}
+        <MediaImage
+          src={media("senior_golden")}
           alt="האצ׳י הגולדן"
-          className="h-full w-full object-cover object-center"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/0 via-ink/20 to-ink/80" />
@@ -225,12 +232,13 @@ function AboutDesktopContent() {
       {/* ── Block 3: Founder story + image ── */}
       <div dir="rtl" className="w-full py-28">
         <div className="mx-auto flex max-w-[1600px] flex-row items-stretch gap-12 px-10 xl:gap-16 xl:px-14">
-          <FadeIn className="w-[52%] shrink-0 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={media("before_mesudar.png")}
+          <FadeIn className="relative w-[52%] min-h-[36rem] shrink-0 overflow-hidden">
+            <MediaImage
+              src={media("before_mesudar")}
               alt="האצ׳י לפני מסודר"
-              className="h-full min-h-[36rem] w-full object-cover object-[center_42%]"
+              fill
+              sizes="52vw"
+              className="object-cover object-[center_42%]"
               draggable={false}
             />
           </FadeIn>
@@ -264,12 +272,13 @@ function AboutDesktopContent() {
               </p>
             </FadeIn>
           </div>
-          <FadeIn className="w-[52%] shrink-0 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={media("after_mesudar.png")}
+          <FadeIn className="relative w-[52%] min-h-[36rem] shrink-0 overflow-hidden">
+            <MediaImage
+              src={media("after_mesudar")}
               alt="האצ׳י אחרי מסודר"
-              className="h-full min-h-[36rem] w-full object-cover object-[center_42%]"
+              fill
+              sizes="52vw"
+              className="object-cover object-[center_42%]"
               draggable={false}
             />
           </FadeIn>

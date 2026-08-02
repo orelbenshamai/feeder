@@ -4,6 +4,7 @@ import { media } from "@/lib/media";
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import MediaImage from "@/components/MediaImage";
 import ResponsiveLayout from "@/components/ResponsiveLayout";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -81,7 +82,7 @@ const features: Feature[] = [
   },
 ];
 
-const MAT_IMAGE = media("mat_gray_1.png");
+const MAT_IMAGE = media("mat_gray_1");
 const MAT_ALT = "משטח ההאכלה מסודר — הגנה על הרצפה סביב קערות ההאכלה";
 
 function MatLandingMobile() {
@@ -102,13 +103,16 @@ function MatLandingMobile() {
       </div>
 
       <motion.div variants={imgV} className="flex w-full justify-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={MAT_IMAGE}
-          alt={MAT_ALT}
-          className="max-h-[calc(var(--screen-h)*0.4)] w-auto max-w-full select-none object-contain"
-          draggable={false}
-        />
+        <div className="relative h-[calc(var(--screen-h)*0.4)] w-full max-w-md">
+          <MediaImage
+            src={MAT_IMAGE}
+            alt={MAT_ALT}
+            fill
+            sizes="(max-width: 640px) 100vw, 28rem"
+            className="select-none object-contain"
+            draggable={false}
+          />
+        </div>
       </motion.div>
 
       <motion.ul variants={containerV} className="w-full flex flex-col gap-2">
@@ -139,9 +143,15 @@ function MatLandingDesktop() {
       className="mx-auto max-w-7xl lg:grid lg:grid-cols-[minmax(0,58%)_minmax(0,42%)] lg:items-center lg:gap-10 xl:gap-12"
     >
       <motion.div variants={imgV} className="flex items-center justify-center">
-        <div className="flex h-full w-full max-h-[min(72vh,calc(100svh-var(--site-header-h)-3rem))] items-center justify-center overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={MAT_IMAGE} alt={MAT_ALT} className="max-h-full max-w-full select-none object-contain object-center" draggable={false} />
+        <div className="relative flex h-full w-full max-h-[min(72vh,calc(100svh-var(--site-header-h)-3rem))] min-h-[20rem] items-center justify-center overflow-hidden">
+          <MediaImage
+            src={MAT_IMAGE}
+            alt={MAT_ALT}
+            fill
+            sizes="58vw"
+            className="select-none object-contain object-center"
+            draggable={false}
+          />
         </div>
       </motion.div>
 
