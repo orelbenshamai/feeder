@@ -1,48 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import HeroAutoplayVideo from "./HeroAutoplayVideo";
 
 type Props = {
   mobileSrc: string;
   desktopSrc: string;
-  mobilePoster: string;
-  desktopPoster: string;
 };
 
-export default function HeroVideos({
-  mobileSrc,
-  desktopSrc,
-  mobilePoster,
-  desktopPoster,
-}: Props) {
-  // Default mobile-first so SSR HTML includes the LCP mobile poster immediately.
-  const [isMobile, setIsMobile] = useState(true);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const sync = () => setIsMobile(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  if (isMobile) {
-    return (
+/**
+ * Both shells stay in the HTML; CSS toggles visibility.
+ * Posters are server-rendered in Hero (LCP) — videos only fade in on top.
+ */
+export default function HeroVideos({ mobileSrc, desktopSrc }: Props) {
+  return (
+    <>
       <HeroAutoplayVideo
         src={mobileSrc}
-        poster={mobilePoster}
-        priorityPoster
-        className="absolute inset-0 z-0 h-full w-full object-cover object-center md:hidden"
+        fadeInOverPoster
+        activeQuery="(max-width: 767px)"
+        className="absolute inset-0 z-[1] h-full w-full object-cover object-center md:hidden"
       />
-    );
-  }
-
-  return (
-    <HeroAutoplayVideo
-      src={desktopSrc}
-      poster={desktopPoster}
-      className="absolute inset-0 z-0 hidden h-full w-full object-cover object-[center_50%] md:block"
-    />
+      <HeroAutoplayVideo
+        src={desktopSrc}
+        fadeInOverPoster
+        activeQuery="(min-width: 768px)"
+        className="absolute inset-0 z-[1] hidden h-full w-full object-cover object-[center_50%] md:block"
+      />
+    </>
   );
 }

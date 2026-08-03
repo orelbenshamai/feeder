@@ -2,31 +2,43 @@
 
 import { useEffect } from "react";
 
-const INTERACTION_EVENTS = ["scroll", "pointerdown", "keydown", "touchstart"] as const;
+/**
+ * Real user intent only — never `scroll` (PageSpeed auto-scrolls and would
+ * pull ~440KB GTM into the lab TBT window).
+ */
+const INTERACTION_EVENTS = ["pointerdown", "keydown", "touchstart"] as const;
+
+/** No third-party tags during the early TBT / LCP window. */
+const MIN_DELAY_MS = 8_000;
+/** If the user never interacts, still load analytics eventually. */
+const FALLBACK_MS = 30_000;
 
 /**
- * Inject GTM after first interaction, or after a long idle fallback.
- * Long main-thread tasks from gtag/gtm can't be shortened in-app — only deferred
- * so they don't sit on the early TBT window. dataLayer stays ready for queuing.
+ * Inject GTM only after (a) a real interaction AND (b) MIN_DELAY_MS, or
+ * after FALLBACK_MS. dataLayer queues events via sendGTMEvent in the meantime.
  */
 export default function DeferredGTM({ gtmId }: { gtmId: string }) {
   useEffect(() => {
     const w = window as Window & { dataLayer?: unknown[]; __gtmLoaded?: boolean };
     w.dataLayer = w.dataLayer || [];
-    w.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
 
-    let fallbackTimer = 0;
-    let idleId = 0;
-    let injectTimer = 0;
+    const startedAt = Date.now();
+    let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
+    let armedTimer: ReturnType<typeof setTimeout> | undefined;
+    let idleId: number | undefined;
+    let interacted = false;
 
     const inject = () => {
       if (w.__gtmLoaded) return;
       w.__gtmLoaded = true;
 
-      window.clearTimeout(fallbackTimer);
+      if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+      if (armedTimer !== undefined) clearTimeout(armedTimer);
       for (const e of INTERACTION_EVENTS) {
-        window.removeEventListener(e, inject);
+        window.removeEventListener(e, onInteract);
       }
+
+      w.dataLayer!.push({ "gtm.start": Date.now(), event: "gtm.js" });
 
       const run = () => {
         const s = document.createElement("script");
@@ -35,28 +47,43 @@ export default function DeferredGTM({ gtmId }: { gtmId: string }) {
         document.head.appendChild(s);
       };
 
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(run, { timeout: 2000 });
+      if (typeof window.requestIdleCallback === "function") {
+        idleId = window.requestIdleCallback(run, { timeout: 3000 });
       } else {
-        injectTimer = window.setTimeout(run, 1);
+        armedTimer = setTimeout(run, 1);
       }
     };
 
+    const scheduleInject = () => {
+      const elapsed = Date.now() - startedAt;
+      const wait = Math.max(0, MIN_DELAY_MS - elapsed);
+      if (armedTimer !== undefined) clearTimeout(armedTimer);
+      armedTimer = setTimeout(inject, wait);
+    };
+
+    const onInteract = () => {
+      if (interacted) return;
+      interacted = true;
+      for (const e of INTERACTION_EVENTS) {
+        window.removeEventListener(e, onInteract);
+      }
+      scheduleInject();
+    };
+
     for (const e of INTERACTION_EVENTS) {
-      window.addEventListener(e, inject, { once: true, passive: true });
+      window.addEventListener(e, onInteract, { passive: true });
     }
 
-    // Late fallback — keeps analytics if nobody interacts; stays out of early TBT.
-    fallbackTimer = window.setTimeout(inject, 12_000);
+    fallbackTimer = setTimeout(inject, FALLBACK_MS);
 
     return () => {
-      window.clearTimeout(fallbackTimer);
-      window.clearTimeout(injectTimer);
-      if (idleId && "cancelIdleCallback" in window) {
+      if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
+      if (armedTimer !== undefined) clearTimeout(armedTimer);
+      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
         window.cancelIdleCallback(idleId);
       }
       for (const e of INTERACTION_EVENTS) {
-        window.removeEventListener(e, inject);
+        window.removeEventListener(e, onInteract);
       }
     };
   }, [gtmId]);

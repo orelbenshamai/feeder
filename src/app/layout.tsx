@@ -7,21 +7,21 @@ import DeferredGTM from "@/components/DeferredGTM";
 
 const heebo = Heebo({
   variable: "--font-heebo",
-  subsets: ["latin", "hebrew"],
-  display: "swap",
-  // Variable font — one family file covers 100–900 (far less @font-face CSS).
+  // Hebrew UI only — MESUDAR wordmark uses Nunito; dropping latin shrinks the woff2.
+  subsets: ["hebrew"],
+  // optional = short block, no late swap — keeps the font off the LCP critical path.
+  // (swap still discovers/fetches the file from inlined @font-face during HTML parse.)
+  display: "optional",
   weight: "variable",
-  // LCP is the hero poster image, not text — don't put the font on the
-  // critical request chain via <link rel="preload">. display:swap keeps FCP.
   preload: false,
 });
 
 const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   weight: ["800"],
-  preload: false, // brand wordmark only — not LCP
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -56,11 +56,14 @@ export default function RootLayout({
     >
       <DeferredGTM gtmId="GTM-MC36BKQK" />
       <head>
-        {/* Lock iOS viewport height once (px) — never update on URL bar show/hide. */}
+        {/*
+          Lock iOS viewport height once (px). Deferred to after first paint so
+          readH() + setProperty don't force a synchronous reflow on the critical path.
+          CSS already falls back to 100svh until this runs.
+        */}
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              "(function(){var root=document.documentElement;var locked=Infinity;function readH(){var vv=window.visualViewport;var ih=window.innerHeight||0;var vh=vv&&vv.height?vv.height:ih;return Math.min(ih,vh);}function snap(){var h=readH();if(!(h>0))return;locked=Math.min(locked,h);root.style.setProperty('--ios-vh',locked+'px');}function init(){locked=Infinity;snap();setTimeout(snap,120);setTimeout(snap,380);}init();window.addEventListener('orientationchange',function(){setTimeout(init,350);});})();",
+            __html: `(function(){var root=document.documentElement;var locked=Infinity;function readH(){var vv=window.visualViewport;var ih=window.innerHeight||0;var vh=vv&&vv.height?vv.height:ih;return Math.min(ih,vh);}function snap(){var h=readH();if(!(h>0))return;locked=Math.min(locked,h);root.style.setProperty("--ios-vh",locked+"px");}function init(){locked=Infinity;requestAnimationFrame(function(){requestAnimationFrame(snap);});}if(document.readyState==="complete"){init();}else{window.addEventListener("load",init,{once:true});}window.addEventListener("orientationchange",function(){setTimeout(init,350);});})();`,
           }}
         />
       </head>

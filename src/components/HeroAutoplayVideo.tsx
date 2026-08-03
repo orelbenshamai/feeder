@@ -1,29 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import MediaImage from "@/components/MediaImage";
 
 type Props = {
   src: string;
+  /** Optional overlay poster (used by HeroMedia). Hero LCP uses server posters instead. */
   poster?: string;
   className?: string;
-  /** Object-position for the poster overlay only (e.g. `object-[center_50%]`). */
-  posterObjectPosition?: string;
   /** Scale/translate inside the crop slot when object-position has no room to move. */
   mediaNudge?: string;
-  /** LCP poster: fetchPriority=high, eager, preload (mobile hero). */
-  priorityPoster?: boolean;
+  /**
+   * Only attach video `src` + autoplay when this media query matches.
+   * Lets both mobile/desktop shells stay in SSR HTML without downloading both.
+   */
+  activeQuery?: string;
+  /**
+   * Stay transparent until a real frame paints — server LCP poster shows underneath.
+   */
+  fadeInOverPoster?: boolean;
 };
 
-function splitVideoClasses(
-  className: string,
-  objectPositionOverride?: string,
-  mediaNudge?: string,
-) {
-  const objectPosition =
-    objectPositionOverride ??
-    className.match(/object-\[[^\]]+\]/)?.[0] ??
-    "";
+function splitVideoClasses(className: string, mediaNudge?: string) {
+  const objectPosition = className.match(/object-\[[^\]]+\]/)?.[0] ?? "";
   const layout = className
     .replace(/\bobject-\[[^\]]+\]/g, "")
     .replace(/\bobject-cover\b/g, "")
@@ -39,29 +37,39 @@ function splitVideoClasses(
  * Mobile Safari often ignores `autoplay` until playback is requested from JS
  * with `muted` locked on. This wrapper re-applies mute + `.play()` on mount and
  * after the clip can render (Low Power Mode / data saver can still block).
- *
- * When a poster is provided, it is rendered as an overlay <img> (not the native
- * video poster) and stays visible until the browser paints an actual video frame.
  */
 export default function HeroAutoplayVideo({
   src,
   poster,
   className = "",
-  posterObjectPosition,
   mediaNudge,
-  priorityPoster = false,
+  activeQuery,
+  fadeInOverPoster = false,
 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [showPoster, setShowPoster] = useState(Boolean(poster));
-  const usePosterOverlay = Boolean(poster);
+  const [active, setActive] = useState(!activeQuery);
+  const [frameReady, setFrameReady] = useState(!fadeInOverPoster && !poster);
+  const useOverlayPoster = Boolean(poster) && !fadeInOverPoster;
 
   useEffect(() => {
-    if (usePosterOverlay) setShowPoster(true);
-  }, [src, poster, usePosterOverlay]);
+    if (!activeQuery) {
+      setActive(true);
+      return;
+    }
+    const mq = window.matchMedia(activeQuery);
+    const sync = () => setActive(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [activeQuery]);
+
+  useEffect(() => {
+    if (fadeInOverPoster || useOverlayPoster) setFrameReady(false);
+  }, [src, fadeInOverPoster, useOverlayPoster]);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !active) return;
 
     let cancelled = false;
     let onTime: (() => void) | null = null;
@@ -74,9 +82,8 @@ export default function HeroAutoplayVideo({
       });
     };
 
-    const hidePoster = () => {
-      if (cancelled || !usePosterOverlay) return;
-      setShowPoster(false);
+    const markReady = () => {
+      if (!cancelled) setFrameReady(true);
     };
 
     const waitForPaintedFrame = () => {
@@ -87,18 +94,17 @@ export default function HeroAutoplayVideo({
         typeof el.requestVideoFrameCallback === "function"
       ) {
         el.requestVideoFrameCallback(() => {
-          if (!cancelled) hidePoster();
+          if (!cancelled) markReady();
         });
         return;
       }
 
-      // Safari < 15.4 and other browsers without rVFC
       onTime = () => {
         if (cancelled || !onTime) return;
         if (el.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA && el.currentTime > 0) {
           el.removeEventListener("timeupdate", onTime);
           onTime = null;
-          hidePoster();
+          markReady();
         }
       };
       el.addEventListener("timeupdate", onTime);
@@ -119,24 +125,28 @@ export default function HeroAutoplayVideo({
       el.removeEventListener("canplay", kick);
       document.removeEventListener("visibilitychange", onVis);
       if (onTime) el.removeEventListener("timeupdate", onTime);
+      el.pause();
     };
-  }, [src, usePosterOverlay]);
+  }, [src, active]);
+
+  const { layout, media } = splitVideoClasses(className, mediaNudge);
+  const needsWrapper = fadeInOverPoster || useOverlayPoster || className.includes("absolute");
 
   const video = (
     <video
       ref={ref}
       className={
-        usePosterOverlay
-          ? `${splitVideoClasses(className, undefined, mediaNudge).media} z-0`
+        needsWrapper
+          ? `${media} ${fadeInOverPoster && !frameReady ? "opacity-0" : "opacity-100"}`
           : className
       }
-      src={src}
-      autoPlay
+      src={active ? src : undefined}
+      autoPlay={active}
       muted
       playsInline
       loop
-      preload="auto"
-      poster={usePosterOverlay ? undefined : poster}
+      preload={active ? "auto" : "none"}
+      poster={useOverlayPoster ? undefined : poster}
       width={1920}
       height={1080}
       disablePictureInPicture
@@ -145,28 +155,17 @@ export default function HeroAutoplayVideo({
     />
   );
 
-  if (!usePosterOverlay) return video;
-
-  const { layout, media: videoMedia } = splitVideoClasses(className, undefined, mediaNudge);
-  const posterMedia = splitVideoClasses(
-    className,
-    posterObjectPosition,
-    mediaNudge,
-  ).media;
+  if (!needsWrapper) return video;
 
   return (
-    <div className={`relative overflow-hidden ${layout}`}>
-      {showPoster ? (
-        <MediaImage
-          src={poster!}
+    <div className={`overflow-hidden ${layout}`}>
+      {useOverlayPoster && !frameReady ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={poster}
           alt=""
           aria-hidden
-          fill
-          priority={priorityPoster}
-          // Already AVIF on R2 — skip /_next/image (was ~1s of LCP load time).
-          unoptimized={priorityPoster}
-          sizes="100vw"
-          className={`${posterMedia} z-[1]`}
+          className={`${media} z-[1]`}
           draggable={false}
         />
       ) : null}

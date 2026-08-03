@@ -87,18 +87,19 @@ export default function MediaImage({
     : style;
 
   // Direct R2/proxy URLs — no image optimizer round-trip (LCP path).
+  // Preload hints are owned by the page (e.g. Hero <link media=…>) to avoid
+  // double-fetching both mobile + desktop posters.
   if (unoptimized && typeof avifSrc === "string") {
-    if (priority) {
-      preload(avifSrc, { as: "image", fetchPriority: "high", type: "image/avif" });
-    }
-
-    const imgClass = fill
-      ? `absolute inset-0 h-full w-full ${className ?? ""}`.trim()
+    // Never use display:contents with fill — absolute children escape and can
+    // cover hero copy. Keep a real positioning box on <picture>.
+    const pictureClass = fill
+      ? `absolute inset-0 block h-full w-full ${className ?? ""}`.trim()
       : className;
+    const imgClass = fill ? "absolute inset-0 h-full w-full object-cover" : className;
 
     if (usePicture && pngSrc) {
       return (
-        <picture style={{ display: "contents" }}>
+        <picture className={pictureClass}>
           <source type="image/avif" srcSet={avifSrc} sizes={resolvedSizes} />
           <img
             {...applyPriorityAttrs(
@@ -124,7 +125,7 @@ export default function MediaImage({
           {
             src: avifSrc,
             alt: alt ?? "",
-            className: imgClass,
+            className: fill ? `${imgClass} ${className ?? ""}`.trim() : className,
             sizes: resolvedSizes,
             style: fillStyle,
             draggable: props.draggable,
@@ -160,7 +161,7 @@ export default function MediaImage({
   if (priority) preloadImage(avifProps);
 
   return (
-    <picture style={{ display: "contents" }}>
+    <picture className={fill ? "absolute inset-0 block h-full w-full" : undefined}>
       <source
         type="image/avif"
         srcSet={avifProps.srcSet}

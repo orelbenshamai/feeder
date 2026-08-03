@@ -1,5 +1,4 @@
-import { preload } from "react-dom";
-import { media } from "@/lib/media";
+import { media, mediaPng } from "@/lib/media";
 import HeroVideos from "./HeroVideos";
 import GhostCTAButton from "./GhostCTAButton";
 
@@ -7,6 +6,8 @@ const HERO_VIDEO_MOBILE = media("media_mesudar_main_video_compressed_mobile.mp4"
 const HERO_VIDEO_DESKTOP = media("media_mesudar_main_video_compressed_desktop.mp4");
 const HERO_POSTER_MOBILE = media("mesudar_main_video_poster_mobile");
 const HERO_POSTER_DESKTOP = media("mesudar_main_video_poster_desktop");
+const HERO_POSTER_MOBILE_PNG = mediaPng("mesudar_main_video_poster_mobile");
+const HERO_POSTER_DESKTOP_PNG = mediaPng("mesudar_main_video_poster_desktop");
 
 const HERO_SCRIM =
   "linear-gradient(to top, rgba(31,58,82,0.92) 0%, rgba(31,58,82,0.62) 32%, rgba(31,58,82,0.18) 62%, transparent 78%)";
@@ -78,14 +79,37 @@ function HeroCopy({
   );
 }
 
-export default function Hero() {
-  // Direct AVIF preload (same URL the LCP <img> uses — no /_next/image hop).
-  preload(HERO_POSTER_MOBILE, {
-    as: "image",
-    fetchPriority: "high",
-    type: "image/avif",
-  });
+/** Server-rendered LCP poster — in the initial HTML, no next/image, no lazy. */
+function HeroLcpPoster({
+  avif,
+  png,
+  className,
+  objectPositionClass,
+}: {
+  avif: string;
+  png: string;
+  className: string;
+  objectPositionClass: string;
+}) {
+  return (
+    <picture className={`absolute inset-0 z-0 block ${className}`}>
+      <source type="image/avif" srcSet={avif} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={png}
+        alt=""
+        aria-hidden
+        fetchPriority="high"
+        loading="eager"
+        decoding="sync"
+        draggable={false}
+        className={`absolute inset-0 h-full w-full object-cover ${objectPositionClass}`}
+      />
+    </picture>
+  );
+}
 
+export default function Hero() {
   return (
     <section
       id="hero-section"
@@ -93,19 +117,46 @@ export default function Hero() {
       aria-labelledby="hero-heading"
       aria-describedby="hero-visual-desc"
     >
+      <link
+        rel="preload"
+        as="image"
+        href={HERO_POSTER_MOBILE}
+        type="image/avif"
+        media="(max-width: 767px)"
+        {...{ fetchPriority: "high" as const }}
+      />
+      <link
+        rel="preload"
+        as="image"
+        href={HERO_POSTER_DESKTOP}
+        type="image/avif"
+        media="(min-width: 768px)"
+        {...{ fetchPriority: "high" as const }}
+      />
+
       <span id="hero-visual-desc" className="sr-only">
         סרטון לולאה: כלב אוכל בעמדת ההאכלה והרצפה נשארת יבשה לגמרי.
       </span>
 
-      <HeroVideos
-        mobileSrc={HERO_VIDEO_MOBILE}
-        desktopSrc={HERO_VIDEO_DESKTOP}
-        mobilePoster={HERO_POSTER_MOBILE}
-        desktopPoster={HERO_POSTER_DESKTOP}
+      {/* LCP images in the server HTML — discoverable immediately. */}
+      <HeroLcpPoster
+        avif={HERO_POSTER_MOBILE}
+        png={HERO_POSTER_MOBILE_PNG}
+        className="md:hidden"
+        objectPositionClass="object-center"
+      />
+      <HeroLcpPoster
+        avif={HERO_POSTER_DESKTOP}
+        png={HERO_POSTER_DESKTOP_PNG}
+        className="hidden md:block"
+        objectPositionClass="object-[center_50%]"
       />
 
+      {/* Videos fade in over the server posters (no client MediaImage LCP). */}
+      <HeroVideos mobileSrc={HERO_VIDEO_MOBILE} desktopSrc={HERO_VIDEO_DESKTOP} />
+
       {/* ── PHONE — title top, CTA bottom ─────────────────────────────── */}
-      <div className="relative z-10 flex h-full flex-col justify-between md:hidden">
+      <div className="relative z-20 flex h-full flex-col justify-between md:hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 -top-px h-[36%]"
@@ -125,7 +176,7 @@ export default function Hero() {
       </div>
 
       {/* ── TABLET + DESKTOP — copy overlaid on video ─────────────────── */}
-      <div className="relative z-10 hidden h-full md:block">
+      <div className="relative z-20 hidden h-full md:block">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
