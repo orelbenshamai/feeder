@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
-import { AnimatePresence, motion } from "framer-motion";
 import { trackNavClick } from "@/utils/tracking";
 
 const SHOP_LINKS = [
@@ -237,33 +236,24 @@ export default function SiteHeader() {
         aria-hidden
       />
 
-      {/* Mobile slide-in sidebar */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[60] touch-none overscroll-none bg-ink/40 sm:hidden"
-              onClick={() => setMenuOpen(false)}
-            />
-
-            {/* Drawer — full-width storefront, slides in from the side */}
-            <motion.nav
-              key="drawer"
-              dir="rtl"
-              aria-label="תפריט נייד"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 320, damping: 34 }}
-              className="fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[65] flex flex-col overflow-y-auto bg-ink sm:hidden"
-              data-scroll-lock-scrollable
-            >
+      {/* Mobile slide-in sidebar — CSS only (keeps framer-motion out of the header bundle). */}
+      <div
+        aria-hidden={!menuOpen}
+        className={`fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[60] touch-none overscroll-none bg-ink/40 transition-opacity duration-200 sm:hidden ${
+          menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
+      <nav
+        dir="rtl"
+        aria-label="תפריט נייד"
+        aria-hidden={!menuOpen}
+        {...(!menuOpen ? { inert: true as const } : {})}
+        className={`fixed inset-x-0 bottom-0 top-[var(--site-header-h)] z-[65] flex flex-col overflow-y-auto bg-ink transition-transform duration-300 ease-out sm:hidden ${
+          menuOpen ? "translate-x-0" : "pointer-events-none translate-x-full"
+        }`}
+        data-scroll-lock-scrollable
+      >
               {/* ── Shop section ── */}
               <div className="px-5 pt-5">
                 <p className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-cream/35">
@@ -342,29 +332,26 @@ export default function SiteHeader() {
                 </ul>
               </div>
 
-              {/* ── Cart CTA ── */}
-              <div className="mt-auto px-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-4">
-                <button
-                  type="button"
-                  onClick={() => { openCart(); setMenuOpen(false); }}
-                  className="flex w-full items-center justify-center gap-2.5 rounded-sm bg-clay px-6 py-4 text-base font-bold text-ink transition-opacity active:opacity-80"
-                >
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-                    <path d="M6 7h15l-2 10H8L6 7Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-                    <path d="M6 7 5 3H2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                    <circle cx="9.5" cy="19.5" r="1.2" fill="currentColor"/>
-                    <circle cx="16.5" cy="19.5" r="1.2" fill="currentColor"/>
-                  </svg>
-                  עגלת הקניות
-                  {cartCount > 0 ? (
-                    <span className="rounded-sm bg-ink/20 px-2 py-0.5 text-sm">{cartCount}</span>
-                  ) : null}
-                </button>
-              </div>
-            </motion.nav>
-          </>
-        )}
-      </AnimatePresence>
+        {/* ── Cart CTA ── */}
+        <div className="mt-auto px-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-4">
+          <button
+            type="button"
+            onClick={() => { openCart(); setMenuOpen(false); }}
+            className="flex w-full items-center justify-center gap-2.5 rounded-sm bg-clay px-6 py-4 text-base font-bold text-ink transition-opacity active:opacity-80"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
+              <path d="M6 7h15l-2 10H8L6 7Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+              <path d="M6 7 5 3H2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+              <circle cx="9.5" cy="19.5" r="1.2" fill="currentColor"/>
+              <circle cx="16.5" cy="19.5" r="1.2" fill="currentColor"/>
+            </svg>
+            עגלת הקניות
+            {cartCount > 0 ? (
+              <span className="rounded-sm bg-ink/20 px-2 py-0.5 text-sm">{cartCount}</span>
+            ) : null}
+          </button>
+        </div>
+      </nav>
     </>
   );
 }

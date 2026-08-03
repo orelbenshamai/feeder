@@ -27,6 +27,9 @@
   --screen-h: 100svh;
   /* Fixed clearance for PDP floating buy bar — never tied to visualViewport. */
   --pdp-floating-bar-clearance: 5.5rem;
+  /* System stacks until /fonts/fonts.css loads (deferred, off the critical path). */
+  --font-heebo: "Heebo", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-nunito: "Nunito", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 @media (min-width: 640px) {
