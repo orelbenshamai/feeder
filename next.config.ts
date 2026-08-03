@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   // Good fit for Tailwind (small atomic CSS) + first-visit LCP/FCP.
   experimental: {
     inlineCss: true,
+    optimizePackageImports: ["framer-motion"],
   },
   images: {
     formats: ["image/avif", "image/webp"],

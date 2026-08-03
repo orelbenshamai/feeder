@@ -11,6 +11,9 @@ const heebo = Heebo({
   display: "swap",
   // Variable font — one family file covers 100–900 (far less @font-face CSS).
   weight: "variable",
+  // LCP is the hero poster image, not text — don't put the font on the
+  // critical request chain via <link rel="preload">. display:swap keeps FCP.
+  preload: false,
 });
 
 const nunito = Nunito({

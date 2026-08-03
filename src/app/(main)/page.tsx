@@ -1,7 +1,9 @@
 import Hero from "@/components/Hero";
-import BeforeAfterSection from "@/components/BeforeAfterSection";
-import BundleSection from "@/components/BundleSection";
-import StickyPageCTA from "@/components/StickyPageCTA";
+import dynamic from "next/dynamic";
+
+const StickyPageCTA = dynamic(() => import("@/components/StickyPageCTA"));
+const BeforeAfterSection = dynamic(() => import("@/components/BeforeAfterSection"));
+const BundleSection = dynamic(() => import("@/components/BundleSection"));
 
 export default function Home() {
   return (

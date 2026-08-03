@@ -1,7 +1,9 @@
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
-import CartDrawer from "@/components/CartDrawer";
 import SectionVisibilityTracker from "@/components/SectionVisibilityTracker";
+import dynamic from "next/dynamic";
+
+const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
 
 export default function MainLayout({
   children,
