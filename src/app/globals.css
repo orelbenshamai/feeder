@@ -948,7 +948,9 @@ body {
 /* Hero-only: subtle entrance + gentle product float */
 @keyframes hero-rise {
   from {
-    opacity: 0;
+    /* Non-zero: opacity:0 paints are ignored for LCP and can yield NO_LCP when the
+       full-bleed hero image is also excluded as a "viewport background". */
+    opacity: 0.001;
     transform: translateY(14px);
   }
   to {

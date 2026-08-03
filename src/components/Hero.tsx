@@ -92,18 +92,21 @@ function HeroLcpPoster({
   objectPositionClass: string;
 }) {
   return (
-    <picture className={`absolute inset-0 z-0 block ${className}`}>
+    <picture className={`absolute inset-0 z-0 block bg-ink ${className}`}>
       <source type="image/avif" srcSet={avif} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={png}
         alt=""
-        aria-hidden
+        width={1080}
+        height={1920}
         fetchPriority="high"
         loading="eager"
-        decoding="sync"
+        decoding="async"
         draggable={false}
-        className={`absolute inset-0 h-full w-full object-cover ${objectPositionClass}`}
+        /* 1px short of the viewport so Chromium doesn't treat a full-bleed poster
+           as non-contentful "background" (which + opacity:0 copy = NO_LCP). */
+        className={`absolute inset-x-0 top-0 h-[calc(100%-1px)] w-full object-cover ${objectPositionClass}`}
       />
     </picture>
   );
