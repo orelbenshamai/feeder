@@ -51,6 +51,8 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [menuOpen, setMenuOpen] = useState(false);
+  /** Home mobile: hide chrome until the hero is scrolled past. */
+  const [pastHero, setPastHero] = useState(false);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -67,6 +69,45 @@ export default function SiteHeader() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (!isHome) {
+      setPastHero(true);
+      return;
+    }
+
+    const hero = document.getElementById("hero-section");
+    if (!hero) {
+      setPastHero(true);
+      return;
+    }
+
+    // Assume still in hero until the observer reports otherwise (avoids flash when returning home).
+    setPastHero(false);
+
+    const mq = window.matchMedia("(max-width: 639px)");
+    const syncFromEntry = (isIntersecting: boolean) => {
+      // Desktop/tablet: always show. Mobile: show only after hero leaves the viewport.
+      setPastHero(!mq.matches || !isIntersecting);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => syncFromEntry(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(hero);
+
+    const onMq = () => syncFromEntry(hero.getBoundingClientRect().bottom > 0);
+    mq.addEventListener("change", onMq);
+    onMq();
+
+    return () => {
+      io.disconnect();
+      mq.removeEventListener("change", onMq);
+    };
+  }, [isHome]);
+
+  const hideMobileHeader = isHome && !pastHero && !menuOpen;
+
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (!isHome) return;
     event.preventDefault();
@@ -76,9 +117,10 @@ export default function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[70] w-full shrink-0 overflow-visible bg-ink ${
+        data-mobile-hidden={hideMobileHeader ? "" : undefined}
+        className={`fixed inset-x-0 top-0 z-[70] w-full shrink-0 overflow-visible bg-ink transition-transform duration-300 ease-out ${
           isHome ? "border-b border-transparent" : "border-b border-ink/20"
-        }`}
+        } ${hideMobileHeader ? "max-sm:-translate-y-full max-sm:pointer-events-none" : "translate-y-0"}`}
       >
         {/* Cart: pinned to viewport inline-end */}
         <div className="absolute inset-y-0 end-3 z-10 flex items-center sm:end-4 md:end-5 lg:end-6">
@@ -186,6 +228,14 @@ export default function SiteHeader() {
 
         <div className="relative mx-auto h-11 max-w-[1440px] sm:h-12 md:h-[3.5rem]" aria-hidden/>
       </header>
+
+      {/* Spacer for fixed header — collapses on home mobile while hero is in view */}
+      <div
+        className={`h-11 shrink-0 transition-[height] duration-300 ease-out sm:h-12 md:h-14 ${
+          hideMobileHeader ? "max-sm:h-0" : ""
+        }`}
+        aria-hidden
+      />
 
       {/* Mobile slide-in sidebar */}
       <AnimatePresence>

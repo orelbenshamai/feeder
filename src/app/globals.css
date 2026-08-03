@@ -41,6 +41,13 @@
   }
 }
 
+/* Home hero on mobile: header hidden until scrolled past — full-bleed hero. */
+@media (max-width: 639px) {
+  body:has(header[data-mobile-hidden]) {
+    --site-header-h: 0px;
+  }
+}
+
 @media (max-width: 1023px) {
   :root {
     --screen-h: var(--ios-vh);

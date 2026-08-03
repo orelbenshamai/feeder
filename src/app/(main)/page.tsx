@@ -1,8 +1,8 @@
 import Hero from "@/components/Hero";
+import BeforeAfterSection from "@/components/BeforeAfterSection";
 import dynamic from "next/dynamic";
 
 const StickyPageCTA = dynamic(() => import("@/components/StickyPageCTA"));
-const BeforeAfterSection = dynamic(() => import("@/components/BeforeAfterSection"));
 const BundleSection = dynamic(() => import("@/components/BundleSection"));
 
 export default function Home() {
@@ -10,6 +10,7 @@ export default function Home() {
     <main id="main" className="flex flex-col bg-ink">
       <StickyPageCTA />
       <Hero />
+      {/* Keep ScrollTrigger section as a static import — dynamic() races pin math. */}
       <BeforeAfterSection />
       <BundleSection />
     </main>

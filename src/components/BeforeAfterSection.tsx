@@ -19,6 +19,7 @@ function StickyReveal() {
     let mounted = true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let ctx: any;
+    let onVh: (() => void) | undefined;
 
     (async () => {
       const { gsap }          = await import("gsap");
@@ -62,7 +63,7 @@ function StickyReveal() {
         trackViewSection(BEFORE_AFTER_SECTION_NAMES.after);
       };
 
-        ctx = gsap.context(() => {
+      ctx = gsap.context(() => {
         gsap.set(after, { opacity: 0 });
 
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
@@ -94,10 +95,24 @@ function StickyReveal() {
         tl.to(after,  { opacity: 1, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
         tl.to(before, { opacity: 0, duration: fadeDuration, ease: "power2.inOut" }, revealAt);
       });
+
+      if (!mounted) {
+        ctx.revert();
+        return;
+      }
+
+      // Refresh when the deferred --ios-vh px lock lands (see layout head script).
+      onVh = () => ScrollTrigger.refresh();
+      window.addEventListener("mesudar:ios-vh", onVh);
+      window.addEventListener("load", onVh, { once: true });
     })();
 
     return () => {
       mounted = false;
+      if (onVh) {
+        window.removeEventListener("mesudar:ios-vh", onVh);
+        window.removeEventListener("load", onVh);
+      }
       ctx?.revert();
     };
   }, []);

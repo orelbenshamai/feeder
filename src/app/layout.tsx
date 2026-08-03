@@ -63,7 +63,7 @@ export default function RootLayout({
         */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var root=document.documentElement;var locked=Infinity;function readH(){var vv=window.visualViewport;var ih=window.innerHeight||0;var vh=vv&&vv.height?vv.height:ih;return Math.min(ih,vh);}function snap(){var h=readH();if(!(h>0))return;locked=Math.min(locked,h);root.style.setProperty("--ios-vh",locked+"px");}function init(){locked=Infinity;requestAnimationFrame(function(){requestAnimationFrame(snap);});}if(document.readyState==="complete"){init();}else{window.addEventListener("load",init,{once:true});}window.addEventListener("orientationchange",function(){setTimeout(init,350);});})();`,
+            __html: `(function(){var root=document.documentElement;var locked=Infinity;function readH(){var vv=window.visualViewport;var ih=window.innerHeight||0;var vh=vv&&vv.height?vv.height:ih;return Math.min(ih,vh);}function snap(){var h=readH();if(!(h>0))return;locked=Math.min(locked,h);root.style.setProperty("--ios-vh",locked+"px");window.dispatchEvent(new Event("mesudar:ios-vh"));}function init(){locked=Infinity;requestAnimationFrame(function(){requestAnimationFrame(snap);});}if(document.readyState==="complete"){init();}else{window.addEventListener("load",init,{once:true});}window.addEventListener("orientationchange",function(){setTimeout(init,350);});})();`,
           }}
         />
       </head>

@@ -5,10 +5,12 @@ export function getStableViewportHeight(): number {
   const raw = getComputedStyle(document.documentElement)
     .getPropertyValue("--ios-vh")
     .trim();
-  const parsed = parseFloat(raw);
 
-  if (Number.isFinite(parsed) && parsed > 0) {
-    return parsed;
+  // Only trust the layout script's px lock. CSS fallback is `100svh` —
+  // parseFloat("100svh") === 100 and would collapse GSAP scroll distances.
+  if (raw.endsWith("px")) {
+    const parsed = parseFloat(raw);
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
   }
 
   return window.innerHeight;
